@@ -99,3 +99,13 @@ CREATE TABLE Goods(
     order_id int(10) not null,
     foreign key (order_id) references Orders(order_id)
 );
+
+CREATE TABLE Contacts(
+    sender_id int(10),
+    receiver_id int(10),
+    `message` text,
+    sent_datetime datetime not null default now(),
+    primary key (sender_id, receiver_id),
+    foreign key (sender_id) references User(account_id),
+    foreign key (receiver_id) references User(account_id)
+);
