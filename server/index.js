@@ -4,7 +4,7 @@ const cors = require('cors')
 const PORT = 25800
 const APIRouter = require('./src/routes/APIRouter')
 app.use(cors())
-
+app.use(express.json())
 app.use((req, res, next) => {
     console.log(`requested at ${req.url} method ${req.method}`)
     next()
