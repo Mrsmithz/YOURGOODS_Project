@@ -1,0 +1,14 @@
+POST http://localhost:25800/api/register/customer HTTP/1.1
+content-type: application/json
+
+{
+    "username": "tester13",
+    "password": "123456",
+    "name":"kpun nongming",
+    "email":"kpunzaza@hotmail.com",
+    "tel":"0152983589",
+    "address":"559/10 latkrabang bangkok 10520",
+    "gender":"female",
+    "order_manager_id":4,
+    "vehicle_id":1
+}
