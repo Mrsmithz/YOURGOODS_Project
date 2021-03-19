@@ -4,6 +4,7 @@ CREATE TABLE User(
     account_id int(10) primary key auto_increment,
     account_username varchar(255) not null unique,
     account_password varchar(255) not null,
+    user_type enum('customer', 'staff') not null,
     created_datetime datetime not null default now()
 );
 
@@ -14,6 +15,7 @@ CREATE TABLE Staff(
     staff_tel char(10) not null,
     staff_gender enum('female', 'male') not null,
     staff_address varchar(255) not null,
+    staff_type enum('messenger', 'order_manager', 'supervisor') not null,
     account_id int(10),
     primary key (staff_id, account_id),
     foreign key (account_id) references User(account_id)
@@ -42,22 +44,22 @@ CREATE TABLE Order_manager(
     foreign key (supervisor_staff_id) references Supervisor(staff_id)
 );
 
+CREATE TABLE Messenger(
+    staff_id int(10) primary key,
+    order_manager_staff_id int(10) not null,
+    foreign key (staff_id) references Staff(staff_id),
+    foreign key (order_manager_staff_id) references Order_manager(staff_id)
+);
+
 CREATE TABLE Vehicle(
     vehicle_id int(10) primary key auto_increment,
+    staff_id int(10) not null,
     plate_number varchar(255) not null unique,
     vehicle_brand varchar(255) not null,
     vehicle_type varchar(255) not null,
     vehicle_name varchar(255) not null,
-    manufacture_date date not null
-);
-
-CREATE TABLE Messenger(
-    staff_id int(10) primary key,
-    order_manager_staff_id int(10) not null,
-    vehicle_id int(10) not null,
-    foreign key (staff_id) references Staff(staff_id),
-    foreign key (order_manager_staff_id) references Order_manager(staff_id),
-    foreign key (vehicle_id) references Vehicle(vehicle_id)
+    manufacture_date date not null,
+    foreign key (staff_id) references Messenger(staff_id)
 );
 
 CREATE TABLE Problem(
