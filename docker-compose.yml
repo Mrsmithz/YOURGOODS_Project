@@ -36,7 +36,6 @@ services:
     command: ['mysqld', '--default-authentication-plugin=mysql_native_password']
   redis:
     image: redis
-    container_name: redis_cache
     ports:
       - 25803:6379
 volumes:
