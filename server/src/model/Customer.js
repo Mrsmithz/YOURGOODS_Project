@@ -16,6 +16,21 @@ class Customer extends User{
         values(?,?,?,?,?)'
         return await mysql_query(stmt, [this.customer_name, this.customer_email, this.customer_tel, this.customer_address, this.account_id])
     }
+    async getCustomerData(){
+        var stmt = 'select * from Customer where account_id = ?'
+        try{
+            var data = JSON.parse(JSON.stringify(await mysql_query(stmt, [this.account_id])))[0]
+            this.customer_id = data.customer_id
+            this.customer_name = data.customer_name
+            this.customer_email = data.customer_email
+            this.customer_tel = data.customer_tel
+            this.customer_address = data.customer_address
+            return Promise.resolve(this.customer_id)
+        }
+        catch(err){
+            return Promise.reject(err)
+        }
+    }
     async getCustomerId(){
         var stmt = 'select customer_id from Customer where account_id = ?'
         try{

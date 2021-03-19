@@ -1,6 +1,7 @@
 class Vehicle{
-    constructor(id, plate_number, brand, type, name, manu_date){
+    constructor(id, plate_number, brand, type, name, manu_date, staff_id){
         this.vehicle_id = id
+        this.staff_id = staff_id
         this.plate_number = plate_number
         this.vehicle_brand = brand
         this.vehicle_type = type

@@ -6,15 +6,31 @@ class User{
         this.account_id = id
         this.account_username = username
         this.account_password = password
-        this.type = type
+        this.user_type = type
     }
     async createUser(){
-        var stmt = 'insert into User(account_username, account_password, type) values(?,?,?)'
-        return await mysql_query(stmt, [this.account_username, this.account_password, this.type])
+        var stmt = 'insert into User(account_username, account_password, user_type) values(?,?,?)'
+        return await mysql_query(stmt, [this.account_username, this.account_password, this.user_type])
     }
-    async login(){
-        var stmt = 'select account_id, account_username, account_password, type from User where account_id = ?'
-        return await mysql_query(stmt, [this.account_id])
+    async getUserData(){
+        var stmt = 'select * from User where account_id = ?'
+        try{
+            var data = JSON.parse(JSON.stringify(await mysql_query(stmt, [this.account_id])))[0]
+            if (this.account_password == data.account_password){
+                this.account_id = data.account_id
+                this.account_username = data.account_username
+                this.account_password = data.account_password
+                this.user_type = data.type
+                return Promise.resolve(this.account_id)
+            }
+            else{
+                return Promise.reject('password did not match')
+            }
+
+        }
+        catch(err){
+            return Promise.reject(err)
+        }
     }
     async logout(){
 
