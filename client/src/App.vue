@@ -8,20 +8,19 @@
     />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
     <v-main>
-      <Navbar v-show="true"></Navbar>
-      <Loginregister ref="Login"/>
+      <router-view></router-view>
     </v-main>
   </v-app>
 </template>
 
 <script>
-import Loginregister from "./components/Loginregister";
-import Navbar from "./components/Navbar";
+//import Loginregister from "./components/Loginregister";
+//import Navbar from "./components/Navbar";
 export default {
   name: "App",
   components: {
-    Loginregister,
-    Navbar,
+    //Loginregister,
+    //Navbar,
   },
 
   data: () => ({}),
@@ -31,7 +30,7 @@ export default {
 // @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600&family=Short+Stack&display=swap');
 @import "https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css";
 #app{
-  font-family: "Short Stack", cursive;
+
 }
 
 </style>

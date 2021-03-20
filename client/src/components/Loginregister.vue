@@ -29,20 +29,21 @@
                             lazy-validation
                             class="text-center"
                             :value="0"
+                            @submit="login"
                           >
                             <v-text-field
                               class="pl-15 pr-15 field"
                               prepend-icon="fas fa-user"
-                              v-model="name"
+                              v-model="username_login"
                               label="Username"
                               color="#aa96da"
-                              :rules="nameRules"
+                              :rules="usernameRules"
                               required
                             />
                             <v-text-field
                               class="pl-15 pr-15 field"
                               prepend-icon="fas fa-lock"
-                              v-model="email"
+                              v-model="password_login"
                               type="password"
                               label="Password"
                               color="#aa96da"
@@ -160,10 +161,12 @@
                                 ref="form"
                                 v-model="valid"
                                 lazy-validation
+                                @submit="createAccount"
+                                method="POST"
                               >
                                 <v-text-field
                                   v-model="username_register"
-                                  :rules="nameRules"
+                                  :rules="usernameRules"
                                   label="Username"
                                   required
                                 ></v-text-field>
@@ -172,6 +175,7 @@
                                   v-model="password_register"
                                   :rules="passwordRules"
                                   label="Password"
+                                  type="password"
                                   required
                                 ></v-text-field>
 
@@ -182,6 +186,41 @@
                                   type="email"
                                   required
                                 ></v-text-field>
+
+                                <v-text-field
+                                  v-model="name_register"
+                                  :rules="nameRules"
+                                  label="Name"
+                                  required
+                                ></v-text-field>
+
+                                <v-text-field
+                                  v-model="tel_register"
+                                  :rules="telRules"
+                                  label="Mobile number"
+                                  required
+                                ></v-text-field>
+
+                                <v-slide-y-transition>
+                                  <div v-show="checkIsSpecialType()">
+                                    <v-select
+                                      :items="gender"
+                                      label="Gender"
+                                      v-model="gender_register"
+                                      :rules="selectRules"
+                                      v-if="checkIsSpecialType()"
+                                    ></v-select>
+
+                                    <v-textarea
+                                      label="Address"
+                                      v-model="address_register"
+                                      rows="2"
+                                      row-height="20"
+                                      :rules="addressRules"
+                                      v-if="checkIsSpecialType()"
+                                    ></v-textarea>
+                                  </div>
+                                </v-slide-y-transition>
 
                                 <v-radio-group v-model="select_account_type">
 
@@ -274,7 +313,6 @@
                                   required
                                   class="mt-0 mb-5"
                                 ></v-checkbox>
-
                               </v-form>
                               <v-btn color="#eabf9f" @click="checkForm()">
                                 Continue
@@ -297,11 +335,32 @@
 
                             <v-stepper-content step="3">
                               <v-card
-                                color="grey lighten-1"
-                                class="mb-12"
-                                height="200px"
-                              ></v-card>
-                              <v-btn color="#eabf9f" @click="e6 = 4">
+                                color="#faf3e0"
+                                class="mb-12 p-3"
+                              >
+                                <p class="checkAcc">Username : {{username_register}}</p>
+                                <p class="checkAcc">Name : {{name_register}}</p>
+                                <p class="checkAcc">Email : {{email_register}}</p>
+                                <p class="checkAcc">Mobile Number : {{tel_register}}</p>
+
+                                <div v-show="checkIsSpecialType()">
+                                  <p class="checkAcc">Gender : {{gender_register}}</p>
+                                  <p class="checkAcc">Address : {{address_register}}</p>
+                                </div>
+
+                                <div class="secretCode" v-show="select_account_type == 'supervisor'">
+                                  <p class="checkAcc">Supervisor code : {{supervisor_password}}</p>
+                                </div>
+
+                                <div class="secretCode" v-show="select_account_type == 'order_manager'">
+                                  <p class="checkAcc">Your supervisor's code : {{order_manager_password}}</p>
+                                </div>
+
+                                <div class="secretCode" v-show="select_account_type == 'messenger'">
+                                  <p class="checkAcc">Your order manager's code : {{order_manager_password}}</p>
+                                </div>
+                              </v-card>
+                              <v-btn color="#eabf9f" @click="createAccount">
                                 Continue
                               </v-btn>
                               <v-btn text @click="e6 = 2">
@@ -323,15 +382,22 @@
   </div>
 </template>
 <script>
+import AccountService from '../services/AccoundService'
+
 export default {
   name: "Loginregister",
   data: () => ({
-    name: "",
+    gender: ["Male", "Female"],
+    username_login: "",
     valid: "",
-    email: "",
+    password_login: "",
     username_register: "",
     password_register: "",
     email_register: "",
+    name_register: "",
+    tel_register: "",
+    gender_register: "",
+    address_register: "",
     supervisor_password: "",
     order_manager_password: "",
     messenger_password: "",
@@ -339,9 +405,13 @@ export default {
     checkbox: false,
     rotation: 0,
     is_supervisor: false,
-    select_account_type: "",
+    select_account_type: "customer",
     is_register_alert: false,
     register_alert_message: "",
+    usernameRules:[
+      (v) => !!v || "Username is required",
+      (v) => /^(\w|\d)+$/.test(v) || "Username must contain only letter or number only"
+    ],
     nameRules: [
       (v) => !!v || "Name is required",
     ],
@@ -358,6 +428,16 @@ export default {
         /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/.test(v) ||
         "Password must contain at least lowercase letter, one number, a special character and one uppercase letter",
     ],
+    telRules: [
+      (v) => !!v || "Mobile number is required",
+      (v) => /^0\d{9}$/.test(v) || "Mobile number is invalid."
+    ],
+    selectRules: [
+      (v) => !!v || "Please select gender"
+    ],
+    addressRules: [
+      (v) => !!v || "Address is required"
+    ]
   }),
   methods:{
     checkForm(){
@@ -374,6 +454,67 @@ export default {
     switchToSignin(){
       this.$store.commit('switch_to_login')
     },
+    async createAccount(){
+      try{
+        var result = await AccountService.createAccount(this.createJSON());
+        console.log(result)
+      }catch(err){
+        console.log(err)
+      }
+      
+      if(result.status == 201){
+        //
+      } else if(result.status == 400){
+        //
+      }
+    },
+    createJSON(){
+      var form = new FormData();
+      form.append('username', this.username_register);
+      form.append('password', this.password_register);
+      form.append('name', this.name_register);
+      form.append('email', this.email_register);
+      form.append('tel', this.tel_register);
+      form.append('register_type', this.select_account_type);
+      form.append('api_key', 'my_doggo_name_jeff');
+
+      if (this.select_account_type == "supervisor" || this.select_account_type == 'order_manager' || this.select_account_type == 'messenger'){
+        form.append('gender', this.gender_register);
+        form.append('address', this.address_register);
+      }
+
+      if (this.select_account_type == "supervisor"){
+        form.append('secret_key', this.supervisor_password);
+      }
+
+      if (this.select_account_type == 'order_manager'){
+        form.append('supervisor_id', this.order_manager_password);
+      }
+
+      if (this.select_account_type == 'messenger'){
+        form.append('order_manager_id', this.messenger_password);
+      }
+      return form;
+    },
+    checkIsSpecialType(){
+      return (this.select_account_type == 'supervisor' || this.select_account_type == 'order_manager' || this.select_account_type == 'messenger')
+    },
+    async login(e){
+      e.preventDefault();
+      try{
+        var result = await AccountService.Login(this.createLoginJSON());
+        console.log(result)
+      }catch(err){
+        console.log(err)
+      }
+    },
+    createLoginJSON(){
+      var form = new FormData();
+      form.append('username', this.username_login);
+      form.append('password', this.password_login);
+      form.append('api_key', 'my_doggo_name_jeff');
+      return form;
+    }
     // rotate(){
     //   return new Promise(resolve => {
     //     var self = this;
@@ -450,5 +591,12 @@ h1.register_head {
   color: #FF5252;
   font-size: 0.75em;
   padding-top: 7.5px;
+}
+.checkAcc{
+  font-size: 0.9em;
+  margin-bottom: 5px !important;
+}
+.secretCode{
+  margin-top: 20px;
 }
 </style>
