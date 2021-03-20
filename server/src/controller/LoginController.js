@@ -11,6 +11,7 @@ exports.customerLogin = async (req, res) => {
         await customer.getUserId()
         await customer.getUserData()
         await customer.getCustomerData()
+        req.session.user_data = JSON.parse(JSON.stringify(customer))
         res.status(200).send(customer)
     }
     catch (err){
@@ -26,6 +27,7 @@ exports.supervisorLogin = async (req, res) => {
         await supervisor.getUserId()
         await supervisor.getUserData()
         await supervisor.getSupervirsorData()
+        req.session.user_data = JSON.parse(JSON.stringify(supervisor))
         res.status(200).send(supervisor)
     }
     catch (err){
@@ -41,6 +43,7 @@ exports.orderManagerLogin = async (req, res) => {
         await orderManager.getUserId()
         await orderManager.getUserData()
         await orderManager.getOrderManagerData()
+        req.session.user_data = JSON.parse(JSON.stringify(orderManager))
         res.status(200).send(orderManager)
     }
     catch (err){
@@ -56,6 +59,7 @@ exports.messengerLogin = async (req, res) => {
         await messenger.getUserId()
         await messenger.getUserData()
         await messenger.getMessengerData()
+        req.session.user_data = JSON.parse(JSON.stringify(messenger))
         res.status(200).send(messenger)
 
     }
@@ -75,5 +79,14 @@ exports.checkLoginRoute = async (req, res, next) => {
     catch (err){
         console.log(err)
         res.sendStatus(400)
+    }
+}
+
+exports.getSession = async (req, res) => {
+    if (req.session.user_data){
+        res.status(200).send(req.session.user_data)
+    }
+    else{
+        res.sendStatus(404)
     }
 }
