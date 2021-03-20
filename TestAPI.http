@@ -1,16 +1,23 @@
-POST http://localhost:25800/api/auth/login HTTP/1.1
+get http://localhost:25800/api/contacts/get/receiver/2 HTTP/1.1
 content-type: application/json
 
 {
-    "username": "customer1",
-    "password": "123456",
-    "name":"kpun nongming",
-    "email":"messenger123@hotmail.com",
-    "tel":"0152983589",
-    "address":"559/10 latkrabang bangkok 10520",
-    "gender":"female",
-    "order_manager_id":2,
-    "supervisor_id":1,
-    "register_type":"messenger",
-    "secret_key":"test"
+    "sender_id":1,
+    "message":"asdijasldjkasdj",
+    "api_key":"my_doggo_name_jeff"
 }
+
+# {
+#     "username": "customer1",
+#     "password": "123456",
+#     "name":"kpun nongming",
+#     "email":"messenger123@hotmail.com",
+#     "tel":"0152983589",
+#     "address":"559/10 latkrabang bangkok 10520",
+#     "gender":"female",
+#     "order_manager_id":2,
+#     "supervisor_id":1,
+#     "register_type":"messenger",
+#     "secret_key":"test",
+#     "api_key":"my_doggo_name_jeff"
+# }
