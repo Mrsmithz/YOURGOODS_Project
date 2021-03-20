@@ -7,7 +7,14 @@ exports.customerRegister = async (req, res) => {
     var data = req.body
     var customer = new Customer(null, data.username, data.password, null, data.name, data.email, data.tel, data.address)
     try{
-        await customer.checkIfEmailDuplicate()
+        try{
+            await customer.checkIfUsernameDuplicate()
+            await customer.checkIfEmailDuplicate()
+        }
+        catch(err){
+            res.status(200).send(err)
+            return
+        }
         await customer.createUser()
         await customer.getUserId()
         await customer.createCustomerAccount()
@@ -25,7 +32,14 @@ exports.supervisorRegister = async (req, res) => {
     if (data.secret_key === 'doggo'){
         var supervisor = new Supervisor(null, data.username, data.password, null, data.name, data.email, data.tel, data.gender, data.address)
         try{
-            await supervisor.checkIfEmailDuplicate()
+            try {
+                await supervisor.checkIfUsernameDuplicate()
+                await supervisor.checkIfEmailDuplicate()
+            }
+            catch (err){
+                res.status(200).send(err)
+                return
+            }
             await supervisor.createUser()
             await supervisor.getUserId()
             await supervisor.createStaffAccount()
@@ -39,7 +53,7 @@ exports.supervisorRegister = async (req, res) => {
         }
     }
     else{
-        res.sendStatus(400)
+        res.status(200).send('secret key did not match')
     }
 }
 exports.orderManagerRegister = async (req, res) => {
@@ -47,8 +61,15 @@ exports.orderManagerRegister = async (req, res) => {
     var order_manager = new OrderManager(null, data.username, data.password, null, data.name, data.email, data.tel, data.gender, data.address,
         data.supervisor_id)
     try{
-        await order_manager.checkIfEmailDuplicate()
-        await order_manager.checkSupervirsorId()
+        try {
+            await order_manager.checkIfUsernameDuplicate()
+            await order_manager.checkIfEmailDuplicate()
+            await order_manager.checkSupervirsorId()
+        }
+        catch (err){
+            res.status(200).send(err)
+            return
+        }
         await order_manager.createUser()
         await order_manager.getUserId()
         await order_manager.createStaffAccount()
@@ -66,8 +87,15 @@ exports.messengerRegister = async (req, res) => {
     var messenger = new Messenger(null, data.username, data.password, null, data.name, data.email, data.tel, data.gender, data.address,
         data.vehicle_id, data.order_manager_id)
     try{
-        await messenger.checkIfEmailDuplicate()
-        await messenger.checkOrderManagerId()
+        try{
+            await messenger.checkIfUsernameDuplicate()
+            await messenger.checkIfEmailDuplicate()
+            await messenger.checkOrderManagerId()
+        }
+        catch(err){
+            res.status(200).send(err)
+            return
+        }
         await messenger.createUser()
         await messenger.getUserId()
         await messenger.createStaffAccount()
