@@ -5,9 +5,9 @@
         <v-container class="fill-height" fluid>
           <v-row align="center" justify="center">
             <v-col cols="12" sm="10" md="10">
-              <v-card class="elevation-12" :style="`transform: rotate(${rotation}deg);`">
+              <v-card class="elevation-12">
                 <div class="pa-6 whole_pane">
-                  <v-window v-model="page" >
+                  <v-window v-model="page">
                     <v-window-item :value="1">
                       <v-row>
                         <v-col
@@ -183,98 +183,15 @@
                                   required
                                 ></v-text-field>
 
-                                <v-radio-group v-model="select_account_type">
-
-                                  <v-row>
-                                    <div class="col-md-5 mt-0 py-0">
-                                      <v-radio
-                                    label="Are you customer?"
-                                    required
-                                    class="my-0"
-                                    style="padding-bottom: 34px"
-                                    :value="'customer'"
-                                  ></v-radio>
-                                    </div>
-                                  </v-row>
-
-                                  <v-row>
-                                    <div class="col-md-5 mt-0 py-0">
-                                      <v-radio
-                                    label="Are you supervisor?"
-                                    required
-                                    class="my-0"
-                                    style="padding-bottom: 34px"
-                                    :value="'supervisor'"
-                                  ></v-radio>
-                                    </div>
-                                    <v-slide-x-transition>
-                                    <div class="col-md-7 mt-0 py-0" v-show="select_account_type == 'supervisor'">
-                                      <v-text-field
-                                    v-model="supervisor_password"
-                                    label="Supervisor code"
-                                    required
-                                    class="pt-0"
-                                  ></v-text-field>
-                                    </div>
-                                    </v-slide-x-transition>
-                                  </v-row>
-
-                                  <v-row>
-                                    <div class="col-md-5 mt-0 py-0">
-                                      <v-radio
-                                    label="Are you order manager?"
-                                    required
-                                    class="my-0"
-                                    style="padding-bottom: 34px"
-                                    :value="'order_manager'"
-                                  ></v-radio>
-                                    </div>
-                                    <v-slide-x-transition>
-                                    <div class="col-md-7 mt-0 py-0" v-show="select_account_type == 'order_manager'">
-                                      <v-text-field
-                                    v-model="order_manager_password"
-                                    label="Your supervisor's code"
-                                    required
-                                    class="pt-0"
-                                  ></v-text-field>
-                                    </div>
-                                    </v-slide-x-transition>
-                                  </v-row>
-
-                                  <v-row>
-                                    <div class="col-md-5 mt-0 py-0">
-                                      <v-radio
-                                    label="Are you messenger?"
-                                    required
-                                    class="my-0"
-                                    style="padding-bottom: 34px"
-                                    :value="'messenger'"
-                                  ></v-radio>
-                                    </div>
-                                    <v-slide-x-transition>
-                                    <div class="col-md-7 mt-0 py-0" v-show="select_account_type == 'messenger'">
-                                      <v-text-field
-                                    v-model="messenger_password"
-                                    label="Your Order Manager's code"
-                                    required
-                                    class="pt-0"
-                                  ></v-text-field>
-                                    </div>
-                                    </v-slide-x-transition>
-                                  </v-row>
-
-                                </v-radio-group>
-
-                              <v-checkbox
+                                <v-checkbox
                                   v-model="checkbox"
                                   :rules="[
                                     (v) => !!v || 'You must agree to continue!',
                                   ]"
-                                  label="Do you agree to the policy?"
+                                  label="Do you agree?"
                                   required
-                                  class="mt-0 mb-5"
+                                  style="margin-top: 20px; margin-bottom: 20px;"
                                 ></v-checkbox>
-
                               </v-form>
                               <v-btn color="#eabf9f" @click="checkForm()">
                                 Continue
@@ -282,9 +199,6 @@
                               <v-btn text @click="e6 = 1">
                                 Cancel
                               </v-btn>
-                              <v-slide-y-transition>
-                              <p v-show="is_register_alert" class="regis_alert">{{register_alert_message}}</p>
-                              </v-slide-y-transition>
                             </v-stepper-content>
 
                             <v-stepper-step
@@ -332,16 +246,8 @@ export default {
     username_register: "",
     password_register: "",
     email_register: "",
-    supervisor_password: "",
-    order_manager_password: "",
-    messenger_password: "",
     e6: 1,
     checkbox: false,
-    rotation: 0,
-    is_supervisor: false,
-    select_account_type: "",
-    is_register_alert: false,
-    register_alert_message: "",
     nameRules: [
       (v) => !!v || "Name is required",
     ],
@@ -367,27 +273,10 @@ export default {
     },
     switchToSignup(){
       this.$store.commit('switch_to_signup')
-      //this.rotate().then((value) => {this.$
-      //store.commit('switch_to_signup'); console.log(value); this.rotateToNormal()})
-      //this.rotate()
     },
     switchToSignin(){
       this.$store.commit('switch_to_login')
-    },
-    // rotate(){
-    //   return new Promise(resolve => {
-    //     var self = this;
-    //     var ms = 100;
-    //     var inteval = setInterval(function(){ self.rotation += 1 * 100-ms; ms -= 5; if(ms < 1){clearInterval(inteval);resolve();}}, ms);
-    //   });
-    // },
-    // rotateToNormal(){
-    //   return new Promise(resolve => {
-    //     var self = this;
-    //     var ms = 1;
-    //     var inteval = setInterval(function(){ self.rotation += 1 * 100-ms; ms += 5; if(self.rotation%360 == 0){clearInterval(inteval);resolve();}}, ms);
-    //   });
-    // }
+    }
   },
   computed:{
     show_login(){
@@ -445,10 +334,5 @@ h1.register_head {
 }
 .register_pane{
   background-color: #fdfaf2 !important;
-}
-.regis_alert{
-  color: #FF5252;
-  font-size: 0.75em;
-  padding-top: 7.5px;
 }
 </style>

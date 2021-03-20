@@ -3,11 +3,11 @@
     <v-app-bar color="transparent" fixed width="100%" >
       <v-toolbar-title>YOURGOODS</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn color="#a8d8ea" class="mr-8" @click="show_login">
+      <v-btn class="text-white" color="#b68973" @click="switchToSignin" v-show="navbar_show_signin_button">
           Sign IN
       </v-btn>
 
-      <v-btn color="#ffffd2">
+      <v-btn class="text-white" color="#eabf9f" @click="switchToSignup" v-show="navbar_show_signup_button">
         Sign UP
       </v-btn>
     </v-app-bar>
@@ -43,8 +43,22 @@ export default {
     show_login(){
         console.log(this.$store)
         this.$store.commit('show_login')
+    },
+    switchToSignup(){
+      this.$store.commit('switch_to_signup')
+    },
+    switchToSignin(){
+      this.$store.commit('switch_to_login')
     }
   },
+  computed: {
+    navbar_show_signin_button() {
+      return this.$store.state.navbar_show_signin_button
+    },
+    navbar_show_signup_button() {
+      return this.$store.state.navbar_show_signup_button
+    }
+  }
 };
 </script>
 <style scoped>
