@@ -12,6 +12,21 @@ class User{
         var stmt = 'insert into User(account_username, account_password, user_type) values(?,?,?)'
         return await mysql_query(stmt, [this.account_username, this.account_password, this.user_type])
     }
+    async checkIfUsernameDuplicate(){
+        var stmt = 'select account_username from User'
+        try{
+            var data = JSON.parse(JSON.stringify(await mysql_query(stmt)))
+            for(var object of data){
+                if (object.account_username == this.account_username){
+                    return Promise.reject('Username duplicated')
+                }
+            }
+            return Promise.resolve('Username not duplicated')
+        }
+        catch(err){
+            return Promise.reject(err)
+        }
+    }
     async getUserData(){
         var stmt = 'select * from User where account_id = ?'
         try{
