@@ -1,6 +1,5 @@
 const express = require('express')
 const router = express.Router()
-const User = require('../model/User')
 const RegisterController = require('../controller/RegisterController')
 const LoginController = require('../controller/LoginController')
 router.post('/login', LoginController.checkLoginRoute)
@@ -14,4 +13,6 @@ router.post('/register/customer', RegisterController.customerRegister)
 router.post('/register/supervisor', RegisterController.supervisorRegister)
 router.post('/register/order_manager', RegisterController.orderManagerRegister)
 router.post('/register/messenger', RegisterController.messengerRegister)
+
+router.get('/login/session', LoginController.getSession)
 module.exports = router
