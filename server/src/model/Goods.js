@@ -1,3 +1,6 @@
+const util = require('util')
+const conn = require('../database/mysql_connector')
+const mysql_query = util.promisify(conn.query).bind(conn)
 class Goods{
     constructor(id, name, type, quantity, status, order_id){
         this.goods_id = id
