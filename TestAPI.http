@@ -1,9 +1,9 @@
-get http://localhost:25800/api/contacts/get/receiver/2 HTTP/1.1
+post http://localhost:25800/api/auth/login/session HTTP/1.1
 content-type: application/json
 
 {
-    "sender_id":1,
-    "message":"asdijasldjkasdj",
+    "username":"customer1",
+    "password":"123456",
     "api_key":"my_doggo_name_jeff"
 }
 

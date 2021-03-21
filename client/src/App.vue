@@ -16,6 +16,7 @@
 <script>
 //import Loginregister from "./components/Loginregister";
 //import Navbar from "./components/Navbar";
+import AccountService from './services/AccoundService'
 export default {
   name: "App",
   components: {
@@ -23,7 +24,15 @@ export default {
     //Navbar,
   },
 
-  data: () => ({}),
+  data: () => ({
+
+  }),
+  methods:{
+  },
+  async beforeCreate(){
+        var result = await AccountService.getSession()
+        console.log(result)
+    },
 };
 </script>
 <style lang="scss">

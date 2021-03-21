@@ -12,6 +12,7 @@ exports.customerLogin = async (req, res) => {
         await customer.getUserData()
         await customer.getCustomerData()
         req.session.user_data = JSON.parse(JSON.stringify(customer))
+        console.log(`${customer.account_username} logged in`)
         res.status(200).send(customer)
     }
     catch (err){
@@ -84,6 +85,7 @@ exports.checkLoginRoute = async (req, res, next) => {
 
 exports.getSession = async (req, res) => {
     if (req.session.user_data){
+        console.log(`${req.session.user_data.account_username} has session`)
         res.status(200).send(req.session.user_data)
     }
     else{

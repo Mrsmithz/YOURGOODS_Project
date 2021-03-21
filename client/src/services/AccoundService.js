@@ -1,8 +1,8 @@
 import axios from 'axios'
 
-const register = 'http://192.168.1.10:25800/api/auth/register';
-const login = 'http://192.168.1.10:25800/api/auth/login';
-
+const register = 'http://localhost:25800/api/auth/register';
+const login = 'http://localhost:25800/api/auth/login';
+const session = 'http://localhost:25800/api/auth/login/session'
 class AccountService{
     static async createAccount(form){
         var object = {};
@@ -17,6 +17,11 @@ class AccountService{
         var data = JSON.stringify(object);
         var json = JSON.parse(data);
         return await axios.post(login, json)
+    }
+    static async getSession(){
+        return await axios.post(session, {
+            api_key:'my_doggo_name_jeff'
+        })
     }
 }
 

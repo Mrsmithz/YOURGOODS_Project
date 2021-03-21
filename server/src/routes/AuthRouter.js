@@ -14,5 +14,5 @@ router.post('/register/supervisor', RegisterController.supervisorRegister)
 router.post('/register/order_manager', RegisterController.orderManagerRegister)
 router.post('/register/messenger', RegisterController.messengerRegister)
 
-router.get('/login/session', LoginController.getSession)
+router.post('/login/session', LoginController.getSession)
 module.exports = router

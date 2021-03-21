@@ -10,9 +10,11 @@ const redisClient = redis.createClient({host:'redis'})
 const AuthRouter = require('./src/routes/AuthRouter')
 const ContactsRouter = require('./src/routes/ContactsRouter')
 
-app.use(cors())
+app.use(cors({
+    origin:'http://localhost:25801',
+    credentials:true
+}))
 app.use(express.json())
-
 app.use((req, res, next) => {
     console.log(`requested at ${req.url} method ${req.method}`)
     next()
