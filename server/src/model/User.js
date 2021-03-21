@@ -17,7 +17,7 @@ class User{
         try{
             var data = JSON.parse(JSON.stringify(await mysql_query(stmt)))
             for(var object of data){
-                if (object.account_username == this.account_username){
+                if (object.account_username.toLowerCase() == this.account_username.toLowerCase()){
                     return Promise.reject('Username duplicated')
                 }
             }
