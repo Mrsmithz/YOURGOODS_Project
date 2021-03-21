@@ -51,7 +51,7 @@ class Staff extends User{
         try{
             var data = JSON.parse(JSON.stringify(await mysql_query(stmt)))
             for(var object of data){
-                if (object.staff_email == this.staff_email){
+                if (object.staff_email.toLowerCase() == this.staff_email.toLowerCase()){
                     return Promise.reject('Email duplicated')
                 }
             }

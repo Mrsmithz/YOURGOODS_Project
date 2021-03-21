@@ -48,7 +48,7 @@ class Customer extends User{
         try{
             var data = JSON.parse(JSON.stringify(await mysql_query(stmt)))
             for(var object of data){
-                if (object.customer_email == this.customer_email){
+                if (object.customer_email.toLowerCase() == this.customer_email.toLowerCase()){
                     return Promise.reject('Email duplicated')
                 }
             }
