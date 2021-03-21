@@ -334,9 +334,7 @@
                               <v-btn text @click="e6 = 1">
                                 Cancel
                               </v-btn>
-                              <v-slide-y-transition>
-                              <p v-show="is_register_alert" class="regis_alert">{{register_alert_message}}</p>
-                              </v-slide-y-transition>
+                              
                             </v-stepper-content>
 
                             <v-stepper-step
@@ -350,7 +348,7 @@
                             <v-stepper-content step="3">
                               <v-card
                                 color="#faf3e0"
-                                class="mb-12 p-3"
+                                class="p-3"
                               >
                                 <p class="checkAcc">Username : {{username_register}}</p>
                                 <p class="checkAcc">Name : {{fname_register + " " + lname_register}}</p>
@@ -371,13 +369,16 @@
                                 </div>
 
                                 <div class="secretCode" v-show="select_account_type == 'messenger'">
-                                  <p class="checkAcc">Your order manager's code : {{order_manager_password}}</p>
+                                  <p class="checkAcc">Your order manager's code : {{messenger_password}}</p>
                                 </div>
                               </v-card>
-                              <v-btn color="#eabf9f" @click="createAccount">
+                              <v-slide-y-transition>
+                              <p v-show="is_register_alert" class="regis_alert">{{register_alert_message}}</p>
+                              </v-slide-y-transition>
+                              <v-btn class="mt-12" color="#eabf9f" @click="createAccount">
                                 Continue
                               </v-btn>
-                              <v-btn text @click="e6 = 2">
+                              <v-btn class="mt-12" text @click="e6 = 2">
                                 Cancel
                               </v-btn>
                             </v-stepper-content>
@@ -391,6 +392,9 @@
             </v-col>
           </v-row>
         </v-container>
+        <v-dialog v-model="registerSuccess" width="500">
+
+        </v-dialog>
       </v-main>
     </v-app>
   </div>
@@ -423,6 +427,7 @@ export default {
     select_account_type: "customer",
     is_register_alert: false,
     register_alert_message: "",
+    registerSuccess: false,
     usernameRules:[
       (v) => !!v || "Username is required",
       (v) => /^(\w|\d)+$/.test(v) || "Username must contain only letter or number only",
@@ -459,6 +464,7 @@ export default {
     checkForm(){
       if (this.$refs.form.validate()){
         this.e6 = 3;
+        this.is_register_alert = false;
       }
     },
     switchToSignup(){
@@ -473,13 +479,36 @@ export default {
     async createAccount(){
       try{
         var result = await AccountService.createAccount(this.createJSON());
+        //this.registerSuccess = true;
         console.log(result)
       }catch(err){
         console.log(err)
       }
 
+      //var result = 1;
+
       if(result.status == 201){
-        this.$store.commit('switch_to_login')
+        this.$store.commit('switch_to_login');
+        this.clearRegisterData();
+        this.$refs.form.resetValidation()
+        
+      } else if(result.status == 200){
+        if (result.data == "Username duplicated"){
+          this.register_alert_message = "This username has already been used.";
+        }
+        else if (result.data == "Email duplicated"){
+          this.register_alert_message = "This e-mail has already been used.";
+        }
+        else if (result.data == "secret key did not match"){
+          this.register_alert_message = "Your supervisor code is incorrect.";
+        }
+        else if (result.data == false){
+          this.register_alert_message = "Your supervisor's key is incorrect.";
+        }
+        else if (result.data == "id not found"){
+          this.register_alert_message = "Your order manager's key is incorrect.";
+        }
+        this.is_register_alert = true;
       } else if(result.status == 400){
         //
       }
@@ -521,7 +550,12 @@ export default {
         var result = await AccountService.Login(this.createLoginJSON());
         console.log(result)
       }catch(err){
-        console.log(err)
+        //
+      }
+
+      if (result.status == 200){
+        this.$router.push(`/index`)
+        this.$router.go()
       }
     },
     createLoginJSON(){
@@ -532,7 +566,19 @@ export default {
       return form;
     },
     clearRegisterData(){
-      
+      this.username_register = "";
+      this.password_register = "";
+      this.email_register = "";
+      this.fname_register = "";
+      this.lname_register = "";
+      this.tel_register = "";
+      this.gender_register = "";
+      this.address_register = "";
+      this.supervisor_password = "";
+      this.order_manager_password = "";
+      this.messenger_password = "";
+      this.e6 = 1;
+      this.select_account_type = "customer";
     }
     // rotate(){
     //   return new Promise(resolve => {
@@ -556,7 +602,24 @@ export default {
     page(){
       return this.$store.state.login_regis_page
     }
-  }
+  },
+  async beforeCreate(){
+
+    try{
+      var result = await AccountService.getSession()
+      console.log(result)
+      console.log(this.$router.currentRoute)
+      if (this.$router.currentRoute.path != "/index"){
+        this.$router.push(`/index`)
+      }
+    }
+    catch(err){
+      if (this.$router.currentRoute.path != "/"){
+         this.$router.push(`/`)
+      }
+    }
+
+  },
 };
 </script>
 <style>
@@ -608,8 +671,10 @@ h1.register_head {
 }
 .regis_alert{
   color: #FF5252;
-  font-size: 0.75em;
+  font-size: 0.8em;
   padding-top: 7.5px;
+  padding-left: 5px;
+  margin-bottom: 0px !important;
 }
 .checkAcc{
   font-size: 0.9em;

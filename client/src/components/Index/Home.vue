@@ -1,12 +1,15 @@
 <template>
     <div>
         <v-app id="home">
-            
+            <h1>HOME นะจ้ะ</h1>
         </v-app>
     </div>
 </template>
 <script>
 export default {
-    name: Home,
+    name: "Home",
+    data: () =>({
+        name: "",
+    }),
 }
 </script>

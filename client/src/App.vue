@@ -30,9 +30,22 @@ export default {
   methods:{
   },
   async beforeCreate(){
-        var result = await AccountService.getSession()
-        console.log(result)
-    },
+
+    try{
+      var result = await AccountService.getSession()
+      console.log(result)
+      console.log(this.$router.currentRoute)
+      if (this.$router.currentRoute.path != "/index"){
+        this.$router.push(`/index`)
+      }
+    }
+    catch(err){
+      if (this.$router.currentRoute.path != "/"){
+         this.$router.push(`/`)
+      }
+    }
+
+  },
 };
 </script>
 <style lang="scss">
