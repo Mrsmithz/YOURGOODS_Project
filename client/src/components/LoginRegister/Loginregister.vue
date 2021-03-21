@@ -532,7 +532,7 @@ export default {
       return form;
     },
     clearRegisterData(){
-      console.log("")
+      console.log(" ")
     }
     // rotate(){
     //   return new Promise(resolve => {
