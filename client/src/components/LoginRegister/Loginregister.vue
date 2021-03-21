@@ -187,12 +187,26 @@
                                   required
                                 ></v-text-field>
 
-                                <v-text-field
-                                  v-model="name_register"
+                                <v-row>
+                                    <div class="col-md-6 mt-0 py-0">
+                                      <v-text-field
+                                  v-model="fname_register"
                                   :rules="nameRules"
-                                  label="Name"
+                                  label="Firstname"
                                   required
                                 ></v-text-field>
+                                    </div>
+                                   
+                                    <div class="col-md-6 mt-0 py-0">
+                                      <v-text-field
+                                  v-model="lname_register"
+                                  :rules="nameRules"
+                                  label="Lastname"
+                                  required
+                                ></v-text-field>
+                                    </div>
+
+                                  </v-row>
 
                                 <v-text-field
                                   v-model="tel_register"
@@ -339,7 +353,7 @@
                                 class="mb-12 p-3"
                               >
                                 <p class="checkAcc">Username : {{username_register}}</p>
-                                <p class="checkAcc">Name : {{name_register}}</p>
+                                <p class="checkAcc">Name : {{fname_register + " " + lname_register}}</p>
                                 <p class="checkAcc">Email : {{email_register}}</p>
                                 <p class="checkAcc">Mobile Number : {{tel_register}}</p>
 
@@ -382,7 +396,7 @@
   </div>
 </template>
 <script>
-import AccountService from '../services/AccoundService'
+import AccountService from '../../services/AccoundService'
 
 export default {
   name: "Loginregister",
@@ -394,7 +408,8 @@ export default {
     username_register: "",
     password_register: "",
     email_register: "",
-    name_register: "",
+    fname_register: "",
+    lname_register: "",
     tel_register: "",
     gender_register: "",
     address_register: "",
@@ -410,7 +425,8 @@ export default {
     register_alert_message: "",
     usernameRules:[
       (v) => !!v || "Username is required",
-      (v) => /^(\w|\d)+$/.test(v) || "Username must contain only letter or number only"
+      (v) => /^(\w|\d)+$/.test(v) || "Username must contain only letter or number only",
+      (v) => v.length > 5 || "Username much contain character at least 6",
     ],
     nameRules: [
       (v) => !!v || "Name is required",
@@ -463,7 +479,7 @@ export default {
       }
 
       if(result.status == 201){
-        //
+        this.$store.commit('switch_to_login')
       } else if(result.status == 400){
         //
       }
@@ -472,7 +488,7 @@ export default {
       var form = new FormData();
       form.append('username', this.username_register);
       form.append('password', this.password_register);
-      form.append('name', this.name_register);
+      form.append('name', this.fname_register + " " + this.lname_register);
       form.append('email', this.email_register);
       form.append('tel', this.tel_register);
       form.append('register_type', this.select_account_type);
@@ -514,6 +530,9 @@ export default {
       form.append('password', this.password_login);
       form.append('api_key', 'my_doggo_name_jeff');
       return form;
+    },
+    clearRegisterData(){
+      
     }
     // rotate(){
     //   return new Promise(resolve => {

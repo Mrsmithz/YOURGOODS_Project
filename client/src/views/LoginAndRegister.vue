@@ -6,8 +6,8 @@
 </template>
 
 <script>
-import Navbar from '../components/Navbar'
-import LoginRegister from '../components/Loginregister'
+import Navbar from '../components/Navbar/Navbar'
+import LoginRegister from '../components/LoginRegister/Loginregister'
 export default {
     name:'LoginAndRegister',
     components:{
