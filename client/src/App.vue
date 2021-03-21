@@ -29,8 +29,5 @@ export default {
 <style lang="scss">
 // @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600&family=Short+Stack&display=swap');
 @import "https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css";
-#app{
-
-}
 
 </style>
