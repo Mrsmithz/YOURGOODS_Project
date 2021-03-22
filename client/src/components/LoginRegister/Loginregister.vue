@@ -30,6 +30,7 @@
                             class="text-center"
                             :value="0"
                             @submit="login"
+                            :key="updateKey"
                           >
                             <v-text-field
                               class="pl-15 pr-15 field"
@@ -163,6 +164,7 @@
                                 lazy-validation
                                 @submit="createAccount"
                                 method="POST"
+                                :key="updateKey"
                               >
                                 <v-text-field
                                   v-model="username_register"
@@ -175,6 +177,14 @@
                                   v-model="password_register"
                                   :rules="passwordRules"
                                   label="Password"
+                                  type="password"
+                                  required
+                                ></v-text-field>
+
+                                <v-text-field
+                                  v-model="confirm_password_register"
+                                  :rules="[(password_register === confirm_password_register) || 'Your password do not match.']"
+                                  label="Confirm password"
                                   type="password"
                                   required
                                 ></v-text-field>
@@ -405,12 +415,14 @@ import AccountService from '../../services/AccoundService'
 export default {
   name: "Loginregister",
   data: () => ({
+    updateKey: 1,
     gender: ["Male", "Female"],
-    username_login: "",
     valid: "",
+    username_login: "",
     password_login: "",
     username_register: "",
     password_register: "",
+    confirm_password_register: "",
     email_register: "",
     fname_register: "",
     lname_register: "",
@@ -472,9 +484,11 @@ export default {
       //this.rotate().then((value) => {this.$
       //store.commit('switch_to_signup'); console.log(value); this.rotateToNormal()})
       //this.rotate()
+      this.clearLoginData();
     },
     switchToSignin(){
       this.$store.commit('switch_to_login')
+      this.clearRegisterData();
     },
     async createAccount(){
       try{
@@ -490,7 +504,6 @@ export default {
       if(result.status == 201){
         this.$store.commit('switch_to_login');
         this.clearRegisterData();
-        this.$refs.form.resetValidation()
         
       } else if(result.status == 200){
         if (result.data == "Username duplicated"){
@@ -548,7 +561,7 @@ export default {
       e.preventDefault();
       try{
         var result = await AccountService.Login(this.createLoginJSON());
-        console.log(result)
+        //console.log(result)
       }catch(err){
         //
       }
@@ -556,6 +569,7 @@ export default {
       if (result.status == 200){
         this.$router.push(`/index`)
         this.$router.go()
+        //this.$store.commit('setUserData', result.data);
       }
     },
     createLoginJSON(){
@@ -579,7 +593,15 @@ export default {
       this.messenger_password = "";
       this.e6 = 1;
       this.select_account_type = "customer";
-    }
+      this.$refs.form.resetValidation()
+      this.updateKey++;
+    },
+    clearLoginData(){
+      this.username_login = "";
+      this.password_login = "";
+      this.$refs.form.resetValidation();
+      this.updateKey++;
+    },
     // rotate(){
     //   return new Promise(resolve => {
     //     var self = this;
@@ -601,22 +623,27 @@ export default {
     },
     page(){
       return this.$store.state.login_regis_page
-    }
+    },
+  },
+  created(){
+    this.$root.$refs.Login = this
   },
   async beforeCreate(){
-
     try{
       var result = await AccountService.getSession()
-      console.log(result)
-      console.log(this.$router.currentRoute)
+      this.$store.commit('setUserData', result.data);
+      
       if (this.$router.currentRoute.path != "/index"){
         this.$router.push(`/index`)
       }
+
     }
     catch(err){
+      this.$store.commit('setUserData', null);
       if (this.$router.currentRoute.path != "/"){
          this.$router.push(`/`)
       }
+      
     }
 
   },

@@ -1,7 +1,7 @@
 <template>
     <div>
         <Navbar></Navbar>
-        <LoginRegister></LoginRegister>
+        <LoginRegister ref="login"></LoginRegister>
     </div>
 </template>
 

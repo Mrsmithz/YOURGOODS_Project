@@ -46,9 +46,11 @@ export default {
     },
     switchToSignup(){
       this.$store.commit('switch_to_signup')
+      this.$root.$refs.Login.clearLoginData()
     },
     switchToSignin(){
       this.$store.commit('switch_to_login')
+      this.$root.$refs.Login.clearRegisterData()
     }
   },
   computed: {

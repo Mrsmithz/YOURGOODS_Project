@@ -5,10 +5,14 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
     state:{
+
         login_regis_page: 1,
         navbar_show_signin_button: false,
         navbar_show_signup_button: true,
-        show_login:true
+        show_login:true,
+
+        userData: {},
+
     },
     mutations:{
         show_login(state){
@@ -25,6 +29,9 @@ const store = new Vuex.Store({
         switch_to_signup(state){
             state.login_regis_page++;
             store.commit('toggle_navbar_signInOut_button')
+        },
+        setUserData(state, payload){
+            state.userData = payload;
         }
     }
 })
