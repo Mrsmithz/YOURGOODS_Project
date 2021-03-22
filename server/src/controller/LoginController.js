@@ -12,7 +12,6 @@ exports.customerLogin = async (req, res) => {
         await customer.getUserData()
         await customer.getCustomerData()
         req.session.user_data = JSON.parse(JSON.stringify(customer))
-        console.log(`${customer.account_username} logged in`)
         res.status(200).send(customer)
     }
     catch (err){

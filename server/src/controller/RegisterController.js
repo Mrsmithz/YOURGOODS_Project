@@ -15,10 +15,10 @@ exports.customerRegister = async (req, res) => {
             res.status(200).send(err)
             return
         }
-        await customer.createUser()
-        await customer.getUserId()
-        await customer.createCustomerAccount()
-        await customer.getCustomerId()
+        var user_result = await customer.createUser()
+        customer.setAccountId(user_result.insertId)
+        var customer_result = await customer.createCustomerAccount()
+        customer.setCustomerId(customer_result.insertId)
         res.status(201).send(customer)
     }
     catch(err){
@@ -40,10 +40,10 @@ exports.supervisorRegister = async (req, res) => {
                 res.status(200).send(err)
                 return
             }
-            await supervisor.createUser()
-            await supervisor.getUserId()
-            await supervisor.createStaffAccount()
-            await supervisor.getStaffId()
+            var user_result = await supervisor.createUser()
+            supervisor.setAccountId(user_result.insertId)
+            var staff_result = await supervisor.createStaffAccount()
+            supervisor.setStaffId(staff_result.insertId)
             await supervisor.createSupervisorAccount()
             res.status(201).send(supervisor)
         }
@@ -70,10 +70,10 @@ exports.orderManagerRegister = async (req, res) => {
             res.status(200).send(err)
             return
         }
-        await order_manager.createUser()
-        await order_manager.getUserId()
-        await order_manager.createStaffAccount()
-        await order_manager.getStaffId()
+        var user_result = await order_manager.createUser()
+        order_manager.setAccountId(user_result.insertId)
+        var staff_result = await order_manager.createStaffAccount()
+        order_manager.setStaffId(staff_result.insertId)
         await order_manager.createOrderManagerAccount()
         res.status(201).send(order_manager)
     }
@@ -96,10 +96,10 @@ exports.messengerRegister = async (req, res) => {
             res.status(200).send(err)
             return
         }
-        await messenger.createUser()
-        await messenger.getUserId()
-        await messenger.createStaffAccount()
-        await messenger.getStaffId()
+        var user_result = await messenger.createUser()
+        messenger.setAccountId(user_result.insertId)
+        var staff_result =await messenger.createStaffAccount()
+        messenger.setStaffId(staff_result.insertId)
         await messenger.createMessengerAccount()
         res.status(201).send(messenger)
     }
@@ -112,7 +112,7 @@ exports.messengerRegister = async (req, res) => {
 exports.checkRegisterRoute = async (req, res, next) => {
     try{
         var data = req.body
-        var result = await Authorization.checkRegisterRoute(data.register_type, data.secret_key)
+        var result = await Authorization.checkRegisterRoute(data.register_type)
         req.url = result
         next()
     }

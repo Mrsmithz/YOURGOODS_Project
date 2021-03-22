@@ -13,6 +13,12 @@ class Staff extends User{
         this.staff_address = address
         this.staff_type = type
     }
+    getStaffId(){
+        return this.staff_id
+    }
+    setStaffId(id){
+        this.staff_id = id
+    }
     async createStaffAccount(){
         var stmt = 'insert into Staff(staff_name, staff_email, staff_tel, staff_gender, staff_address, account_id, staff_type) values(?,?,?,?,?,?,?)'
         return await mysql_query(stmt, [this.staff_name, this.staff_email, this.staff_tel, this.staff_gender, this.staff_address, this.account_id, this.staff_type])
@@ -34,7 +40,7 @@ class Staff extends User{
             return Promise.reject(err)
         }
     }
-    async getStaffId(){
+    async getStaffIdFromSQL(){
         var stmt = 'select staff_id from Staff where account_id = ?'
         try{
             var json_string = JSON.stringify(await mysql_query(stmt, [this.account_id]))

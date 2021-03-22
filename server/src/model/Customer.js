@@ -11,6 +11,12 @@ class Customer extends User{
         this.customer_tel = tel
         this.customer_address = address
     }
+    getCustomerId(){
+        return this.customer_id
+    }
+    setCustomerId(id){
+        this.customer_id = id
+    }
     async createCustomerAccount(){
         var stmt = 'insert into Customer(customer_name, customer_email, customer_tel, customer_address, account_id) \
         values(?,?,?,?,?)'
@@ -31,7 +37,7 @@ class Customer extends User{
             return Promise.reject(err)
         }
     }
-    async getCustomerId(){
+    async getCustomerIdFromSQL(){
         var stmt = 'select customer_id from Customer where account_id = ?'
         try{
             var json_string = JSON.stringify(await mysql_query(stmt, [this.account_id]))

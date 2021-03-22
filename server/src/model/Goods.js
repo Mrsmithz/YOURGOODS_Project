@@ -10,6 +10,16 @@ class Goods{
         this.goods_status = status
         this.order_id = order_id
     }
+    async createGoods(){
+        var stmt = 'insert into Goods(goods_name, goods_type, goods_quantity, goods_status, order_id) \
+        values(?,?,?,?,?)'
+        return await mysql_query(stmt, [this.goods_name, this.goods_type, this.goods_quantity, this.goods_status,
+        this.order_id])
+    }
+    async getAllGoods(){
+        var stmt = 'select * form Goods where order_id = ?'
+        return await mysql_query(stmt, [this.order_id])
+    }
 }
 
 module.exports = Goods

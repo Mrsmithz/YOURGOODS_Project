@@ -8,6 +8,30 @@ class User{
         this.account_password = password
         this.user_type = type
     }
+    getAccountId(){
+        return this.account_id
+    }
+    setAccountId(id){
+        this.account_id = id
+    }
+    getAccountUsername(){
+        return this.account_username
+    }
+    setAccountUsername(username){
+        this.account_username = username
+    }
+    getAccountPassword(){
+        return this.account_password
+    }
+    setAccountPassword(password){
+        this.account_password = password
+    }
+    getUserType(){
+        return this.user_type
+    }
+    setUserType(type){
+        this.user_type = type
+    }
     async createUser(){
         var stmt = 'insert into User(account_username, account_password, user_type) values(?,?,?)'
         return await mysql_query(stmt, [this.account_username, this.account_password, this.user_type])
@@ -46,12 +70,6 @@ class User{
         catch(err){
             return Promise.reject(err)
         }
-    }
-    async logout(){
-
-    }
-    async getSession(){
-
     }
     async getUserId(){
         var stmt = 'select account_id from User where account_username = ?'

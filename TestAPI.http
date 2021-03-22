@@ -1,17 +1,19 @@
-post http://localhost:25800/api/auth/login/session HTTP/1.1
+get http://localhost:25800/api/orders/get/messenger/8 HTTP/1.1
 content-type: application/json
 
 {
-    "username":"customer1",
-    "password":"123456",
+    "customer_id": 1,
+    "messenger_id": 4,
+    "receiver":"123/334 KKAKSJDK ajkdmzx 1292 ",
+    "cost":123342,
     "api_key":"my_doggo_name_jeff"
 }
 
 # {
-#     "username": "customer1",
+#     "username": "messenger12",
 #     "password": "123456",
 #     "name":"kpun nongming",
-#     "email":"messenger123@hotmail.com",
+#     "email":"cmesssaldj3@hotmail.com",
 #     "tel":"0152983589",
 #     "address":"559/10 latkrabang bangkok 10520",
 #     "gender":"female",

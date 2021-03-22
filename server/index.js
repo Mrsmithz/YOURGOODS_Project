@@ -7,17 +7,11 @@ const app = express()
 const PORT = 25800
 const RedisStore = connectRedis(session)
 const redisClient = redis.createClient({host:'redis'})
-const AuthRouter = require('./src/routes/AuthRouter')
-const ContactsRouter = require('./src/routes/ContactsRouter')
 const corsConfig = require('./config/cors-config')
 
-app.use(cors(corsConfig))
-app.use(express.json())
-app.use((req, res, next) => {
-    console.log(`requested at ${req.url} method ${req.method}`)
-    next()
-})
-
+const AuthRouter = require('./src/routes/AuthRouter')
+const ContactsRouter = require('./src/routes/ContactsRouter')
+const OrdersRouter = require('./src/routes/OrdersRouter')
 redisClient.on('error', function (err) {
     console.log('Could not establish a connection with redis. ' + err);
 });
@@ -25,6 +19,8 @@ redisClient.on('connect', function (err) {
     console.log('Connected to redis successfully');
 });
 
+app.use(cors(corsConfig))
+app.use(express.json())
 app.use(session({
     store: new RedisStore({client: redisClient}),
     secret:'doggo_doggo',
@@ -36,6 +32,13 @@ app.use(session({
         maxAge: 1000 * 60 * 1
     }
 }))
+
+app.use((req, res, next) => {
+    console.log(`requested at ${req.url} method ${req.method}`)
+    next()
+})
+
+
 app.all('/api/*', (req, res, next) => {
     console.log(req.body)
     if (req.body.api_key == "my_doggo_name_jeff"){
@@ -49,6 +52,7 @@ app.all('/api/*', (req, res, next) => {
 })
 app.use('/api/auth', AuthRouter)
 app.use('/api/contacts', ContactsRouter)
+app.use('/api/orders', OrdersRouter)
 
 app.get('/', (req, res) => {
     res.send('Hello')
