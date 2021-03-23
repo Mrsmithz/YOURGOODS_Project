@@ -7,6 +7,8 @@ router.post('/login/customer', LoginController.customerLogin)
 router.post('/login/supervisor', LoginController.supervisorLogin)
 router.post('/login/order_manager', LoginController.orderManagerLogin)
 router.post('/login/messenger', LoginController.messengerLogin)
+router.get('/logout', LoginController.destroySession)
+
 
 router.post('/register', RegisterController.checkRegisterRoute)
 router.post('/register/customer', RegisterController.customerRegister)

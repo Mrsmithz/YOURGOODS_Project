@@ -91,3 +91,12 @@ exports.getSession = async (req, res) => {
         res.sendStatus(404)
     }
 }
+exports.destroySession = async (req, res) => {
+    if (req.session.user_data){
+        req.session.destroy()
+        res.sendStatus(200)
+    }
+    else{
+        res.sendStatus(404)
+    }
+}
