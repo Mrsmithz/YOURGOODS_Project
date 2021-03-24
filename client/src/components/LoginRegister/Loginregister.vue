@@ -402,8 +402,21 @@
             </v-col>
           </v-row>
         </v-container>
-        <v-dialog v-model="registerSuccess" width="500">
-
+        <v-dialog v-model="registerSuccess" width="500" persistent >
+          <v-card class="text-center" style="height: 230px; padding-top: 55px">
+  
+          <v-progress-circular
+        :size="90"
+        :width="7"
+        color="green darken-3"
+        indeterminate
+        v-show="is_show_loading"
+      ></v-progress-circular>
+      <v-scale-transition>
+        <v-icon v-show="is_show_icon_success" class="icon-checked" color="green darken-3">fa-check-circle</v-icon>
+      </v-scale-transition>
+      <p v-show="is_show_icon_success" class="checked-text">ทำการสมัครสมาชิกเสร็จสิ้น</p>
+        </v-card>
         </v-dialog>
       </v-main>
     </v-app>
@@ -440,6 +453,8 @@ export default {
     is_register_alert: false,
     register_alert_message: "",
     registerSuccess: false,
+    is_show_loading: false,
+    is_show_icon_success: false,
     usernameRules:[
       (v) => !!v || "Username is required",
       (v) => /^(\w|\d)+$/.test(v) || "Username must contain only letter or number only",
@@ -493,15 +508,16 @@ export default {
     async createAccount(){
       try{
         var result = await AccountService.createAccount(this.createJSON());
-        //this.registerSuccess = true;
         console.log(result)
       }catch(err){
         console.log(err)
       }
 
-      //var result = 1;
-
       if(result.status == 201){
+        this.registerSuccess = true;
+        var z = await this.loading();
+        var z2 = await this.showChecked();
+        console.log(z, z2)
         this.$store.commit('switch_to_login');
         this.clearRegisterData();
         
@@ -561,6 +577,7 @@ export default {
       e.preventDefault();
       try{
         var result = await AccountService.Login(this.createLoginJSON());
+        //this.$store.commit('setUserData', result.data);
         //console.log(result)
       }catch(err){
         //
@@ -569,7 +586,6 @@ export default {
       if (result.status == 200){
         this.$router.push(`/index`)
         this.$router.go()
-        //this.$store.commit('setUserData', result.data);
       }
     },
     createLoginJSON(){
@@ -601,6 +617,18 @@ export default {
       this.password_login = "";
       this.$refs.form.resetValidation();
       this.updateKey++;
+    },
+    async loading(){
+      return new Promise((resolve) => {
+        this.is_show_loading = true
+        setTimeout(() => { this.is_show_loading = false; resolve()}, 2000)
+      })
+    },
+    async showChecked(){
+      return new Promise((resolve) => {
+        this.is_show_icon_success = true
+        setTimeout(() => { this.is_show_icon_success = false; this.registerSuccess = false; resolve()}, 2000)
+      })
     },
     // rotate(){
     //   return new Promise(resolve => {
@@ -709,5 +737,12 @@ h1.register_head {
 }
 .secretCode{
   margin-top: 20px;
+}
+.icon-checked{
+  font-size: 6rem !important;
+}
+.checked-text{
+  padding-top: 0.5rem;
+  font-size: 1.4rem;
 }
 </style>
