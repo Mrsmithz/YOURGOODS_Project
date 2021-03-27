@@ -40,8 +40,8 @@ app.use((req, res, next) => {
 
 
 app.all('/api/*', (req, res, next) => {
-    console.log(req.body)
-    if (req.body.api_key == "my_doggo_name_jeff"){
+    console.log(req.headers)
+    if (req.headers.key == "my_doggo_name_jeff"){
         console.log("API KEY CHECK PASS")
         next()
     }

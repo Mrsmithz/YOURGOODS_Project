@@ -1,86 +1,34 @@
-const Orders = require('../model/Orders')
+const Order = require('../model/Order')
+
 exports.createOrder = async (req, res) => {
     try{
         var data = req.body
-        var order = new Orders(null, data.customer_id, data.messenger_id, null, data.receiver, null, data.cost)
-        var result = await order.createOrder()
-        order.setOrderId(result.insertId)
-        res.status(201).send(order)
+        var order = new Order(null, data.company_name, data.receiver_address, data.pickup_address,
+            data.invoice_id, data.container_id, data.customer_id, data.operator_id)
+        await order.createOrder()
+        res.send(order)
     }
     catch(err){
         console.log(err)
-        res.sendStatus(400)
     }
 }
-exports.getAllOrderByMessenger = async (req, res) => {
+exports.updateOrderById = async (req, res) => {
     try{
+        var id = req.params.id
         var data = req.body
-        var order = new Orders()
-        var result = await order.getAllOrdersByMessenger(data.messenger_id)
-        res.status(200).send(result)
+        var order = new Order()
+        await order.updateOrderById(id, data.company_name, data.receiver_address, data.pickup_address,
+            data.invoice_id, data.container_id)
     }
     catch(err){
         console.log(err)
-        res.sendStatus(404)
     }
 }
-exports.getAllOrderByCustomer = async (req, res) => {
+exports.getOrdersByCustomer = async (req, res) => {
     try{
-        var data = req.body
-        var order = new Orders()
-        var result = await order.getAllOrdersByCustomer(data.customer_id)
-        res.status(200).send(result)
-    }
-    catch(err){
-        console.log(err)
-        res.sendStatus(404)
-    }
-}
-exports.editOrderReceiverByCustomer = async (req, res) => {
-    try{
-        var data = req.body
-        var id = req.params.order_id
-        var order = new Orders()
-        var result = await order.editOrderReceiverByCustomer(id, data.customer_id, data.receiver)
-        res.status(200).send(result)
-    }
-    catch(err){
-        console.log(err)
-        res.sendStatus(400)
-    }
-}
-exports.deleteOrder = async (req, res) => {
-    try{
-        var data = req.body
-        var id = req.params.order_id
-        var order = new Orders()
-        await order.deleteOrder(id, data.customer_id)
-        res.sendStatus(200)
-    }
-    catch(err){
-        console.log(err)
-        res.sendStatus(400)
-    }
-}
-exports.getOrderByCustomer = async (req, res) => {
-    try{
-        var id = req.params.order_id
-        var data = req.body
-        var order = new Orders()
-        var result = await order.getOrderByCustomer(id, data.customer_id)
-        res.status(200).send(result)
-    }
-    catch(err){
-        console.log(err)
-        res.sendStatus(404)
-    }
-}
-exports.getOrderByMessenger = async (req, res, next) => {
-    try{
-        var id = req.params.order_id
-        var data = req.body
-        var order = new Orders()
-        var result = await order.getOrderByMessenger(id, data.messenger_id)
+        var id = req.params.id
+        var order = new Order()
+        let result = await order.getOrdersByCustomer(id)
         res.status(200).send(result)
     }
     catch(err){
