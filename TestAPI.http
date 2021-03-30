@@ -1,23 +1,25 @@
-post http://localhost:25800/api/auth/login/session HTTP/1.1
+post http://localhost:25800/api/auth/register HTTP/1.1
 content-type: application/json
-
-{
-    "username":"customer1",
-    "password":"123456",
-    "api_key":"my_doggo_name_jeff"
-}
-
 # {
-#     "username": "customer1",
-#     "password": "123456",
-#     "name":"kpun nongming",
-#     "email":"messenger123@hotmail.com",
-#     "tel":"0152983589",
-#     "address":"559/10 latkrabang bangkok 10520",
-#     "gender":"female",
-#     "order_manager_id":2,
-#     "supervisor_id":1,
-#     "register_type":"messenger",
-#     "secret_key":"test",
+#     "customer_id": 1,
+#     "operator_id": 11,
+#     "receiver_address":"123/334 KKAKSJDK ajkdmzx 1292 ",
+#     "pickup_address":"12938/12 askdj aklsdj zxc",
+#     "invoice_id":"ABC12345",
+#     "container_id":"ALSD5555",
+#     "company_name":"Tester2",
 #     "api_key":"my_doggo_name_jeff"
 # }
+
+{
+    "username": "operator1",
+    "password": "123456",
+    "name":"kpun nongming",
+    "email":"asdfghsdds3@hotmail.com",
+    "telephone":"0152983589",
+    "address":"559/10 latkrabang bangkok 10520",
+    "gender":"female",
+    "api_key":"my_doggo_name_jeff",
+    "manage_by":null,
+    "type":"operator"
+}

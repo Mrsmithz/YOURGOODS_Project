@@ -1,70 +1,161 @@
-const conn = require('../database/mysql_connector')
-const util = require('util')
-const mysql_query = util.promisify(conn.query).bind(conn)
+const pool = require('../database/mysql_connector')
+
 class User{
-    constructor(id, username, password, type){
-        this.account_id = id
-        this.account_username = username
-        this.account_password = password
-        this.user_type = type
+    constructor(id, username, password, name, email, gender, telephone, address, type, manage_by){
+        this.id = id
+        this.username = username
+        this.password = password
+        this.name = name
+        this.email = email
+        this.gender = gender
+        this.telephone = telephone
+        this.address = address
+        this.type = type
+        this.manage_by = manage_by
     }
-    async createUser(){
-        var stmt = 'insert into User(account_username, account_password, user_type) values(?,?,?)'
-        return await mysql_query(stmt, [this.account_username, this.account_password, this.user_type])
-    }
-    async checkIfUsernameDuplicate(){
-        var stmt = 'select account_username from User'
+    async createAccount(){
+        let conn = await pool.getConnection()
+        await conn.beginTransaction()
         try{
-            var data = JSON.parse(JSON.stringify(await mysql_query(stmt)))
-            for(var object of data){
-                if (object.account_username.toLowerCase() == this.account_username.toLowerCase()){
-                    return Promise.reject('Username duplicated')
-                }
+            var stmt = 'insert into USER(username, password, name, email, gender, telephone, address, type, manage_by) \
+            values(?,?,?,?,?,?,?,?,?)'
+            let result = await conn.query(stmt, [this.username, this.password, this.name, this.email,
+                this.gender, this.telephone, this.address, this.type, this.manage_by])
+            this.id = result[0].insertId
+            await conn.commit()
+            return Promise.resolve()
+        }
+        catch(err){
+            await conn.rollback()
+            return Promise.reject(err)
+        }
+        finally{
+            conn.release()
+        }
+    }
+    async updateUserProfile(id, name, gender, telephone, address){
+        let conn = await pool.getConnection()
+        await conn.beginTransaction()
+        try{
+            var stmt = 'update USER set name = ?, gender = ?, telephone = ?, address = ? where id = ?'
+            let result = await conn.query(stmt, [name, email, gender, telephone, address, id])
+            await conn.commit()
+            return Promise.resolve(result)
+        }
+        catch(err){
+            await conn.rollback()
+            return Promise.reject(err)
+        }
+        finally{
+            conn.release()
+        }
+    }
+    async updateUserPassword(id, old_password, new_password){
+        let conn = await pool.getConnection()
+        await conn.beginTransaction()
+        try{
+            var stmt = 'update USER set password = ? where id = ? and password = ?'
+            let result = await conn.query(stmt, [new_password, id, old_password])
+            await conn.commit()
+            if (result[0].affectedRows == 0){
+                return Promise.reject('password did not matched')
             }
-            return Promise.resolve('Username not duplicated')
+            return Promise.resolve(result)
+        }
+        catch(err){
+            await conn.rollback()
+            return Promise.reject(err)
+        }
+        finally{
+            conn.release()
+        }
+    }
+    async updateUserEmail(id, old_email, new_email){
+        let conn = await pool.getConnection()
+        await conn.beginTransaction()
+        try{
+            var stmt = 'update USER set email = ? where id = ? and email = ?'
+            let result = await conn.query(stmt, [new_email, id, old_email])
+            await conn.commit()
+            if (result[0].affectedRows == 0){
+                return Promise.reject('email did not matched')
+            }
+            return Promise.resolve(result)
+        }
+        catch(err){
+            await conn.rollback()
+            return Promise.reject(err)
+        }
+        finally{
+            conn.release()
+        }
+    }
+    async userLogin(username, password){
+        let conn = await pool.getConnection()
+        await conn.beginTransaction()
+        try{
+            var stmt = 'select * from USER where username = ? and password = ?'
+            let [rows, field] = await conn.query(stmt, [username, password])
+            await conn.commit()
+            var data = rows[0]
+            this.id = data.id
+            this.username = data.username
+            // this.password = data.password
+            this.name = data.name
+            this.email = data.email
+            this.telephone = data.telephone
+            this.gender = data.gender
+            this.address = data.address
+            this.type = data.type
+            this.manage_by = data.manage_by
+            return Promise.resolve()
+        }
+        catch(err){
+            await conn.rollback()
+            return Promise.reject(err)
+        }
+        finally{
+            conn.release()
+        }
+    }
+    async checkUsernameDuplicate(username){
+        let conn = await pool.getConnection()
+        await conn.beginTransaction()
+        try{
+            var stmt = 'select * from USER where username = ?'
+            let [rows, fields] = await conn.query(stmt, [username])
+            await conn.commit()
+            if (rows.length > 0){
+                return Promise.reject('username duplicated')
+            }
+            return Promise.resolve()
         }
         catch(err){
             return Promise.reject(err)
         }
+        finally{
+            conn.release()
+        }
     }
-    async getUserData(){
-        var stmt = 'select * from User where account_id = ?'
+    async checkEmailDuplicate(email){
+        let conn = await pool.getConnection()
+        await conn.beginTransaction()
         try{
-            var data = JSON.parse(JSON.stringify(await mysql_query(stmt, [this.account_id])))[0]
-            if (this.account_password == data.account_password){
-                this.account_id = data.account_id
-                this.account_username = data.account_username
-                this.account_password = data.account_password
-                this.user_type = data.type
-                return Promise.resolve(this.account_id)
+            var stmt = 'select * from USER where email = ?'
+            let [rows, fields] = await conn.query(stmt, [email])
+            await conn.commit()
+            if (rows.length > 0){
+                return Promise.reject('email duplicated')
             }
-            else{
-                return Promise.reject('password did not match')
-            }
-
+            return Promise.resolve()
         }
         catch(err){
             return Promise.reject(err)
         }
-    }
-    async logout(){
-
-    }
-    async getSession(){
-
-    }
-    async getUserId(){
-        var stmt = 'select account_id from User where account_username = ?'
-        try{
-            var json_string = JSON.stringify(await mysql_query(stmt, [this.account_username]))
-            var id = JSON.parse(json_string)[0].account_id
-            this.account_id = id
-            return Promise.resolve(this.account_id)
+        finally{
+            conn.release()
         }
-        catch(err){
-            return Promise.reject(err)
-        }
-
     }
 }
+
 module.exports = User

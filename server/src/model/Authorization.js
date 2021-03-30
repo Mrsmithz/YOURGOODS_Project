@@ -39,7 +39,7 @@ class Authorization{
             return Promise.reject(err)
         }
     }
-    static async checkRegisterRoute(type, secret_key){
+    static async checkRegisterRoute(type){
         if (type === 'customer'){
             return Promise.resolve('/register/customer')
         }
@@ -54,6 +54,21 @@ class Authorization{
         }
         else{
             return Promise.reject('BAD REQUEST')
+        }
+    }
+    static async checkGetRoute(id, params){
+        var stmt1 = 'select * from Customer where customer_id = ?'
+        var stmt2 = 'select * from Messenger where staff_id = ?'
+        var customer_data = JSON.parse(JSON.stringify(await mysql_query(stmt1, [id])))[0]
+        var messenger_data = JSON.parse(JSON.stringify(await mysql_query(stmt2, [id])))[0]
+        if (customer_data){
+            return Promise.resolve(`/get/customer/${params}`)
+        }
+        else if (messenger_data){
+            return Promise.resolve(`/get/messenger/${params}`)
+        }
+        else{
+            return Promise.reject('id not found')
         }
     }
 }
