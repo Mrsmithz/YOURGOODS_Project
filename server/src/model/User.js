@@ -131,6 +131,7 @@ class User{
             return Promise.resolve()
         }
         catch(err){
+            await conn.rollback()
             return Promise.reject(err)
         }
         finally{
@@ -148,6 +149,33 @@ class User{
                 return Promise.reject('email duplicated')
             }
             return Promise.resolve()
+        }
+        catch(err){
+            await conn.rollback()
+            return Promise.reject(err)
+        }
+        finally{
+            conn.release()
+        }
+    }
+    async checkSupervisorId(id){
+        let conn = await pool.getConnection()
+        await conn.beginTransaction()
+        try{
+            var stmt = 'select id, type from USER where id = ?'
+            let [rows, fields] =  await conn.query(stmt, [id])
+            await conn.commit()
+            if (rows.length > 0){
+                if (rows[0].id == id && rows[0].type == 'supervisor'){
+                    return Promise.resolve('ID valid')
+                }
+                else{
+                    return Promise.reject('ID invalid')
+                }
+            }
+            else{
+                return Promise.reject('ID not found')
+            }
         }
         catch(err){
             return Promise.reject(err)

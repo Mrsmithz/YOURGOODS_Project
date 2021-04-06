@@ -8,7 +8,7 @@ router.post('/register', RegisterController.createAccount)
 
 router.post('/login', LoginController.userLogin)
 router.get('/get/session', LoginController.getSession)
-
+router.get('/logout', LoginController.destroySession)
 router.put('/update/user/profile/:id', RegisterController.updateUserProfile)
 router.post('/update/user/password/:id', RegisterController.updateUserPassword)
 module.exports = router

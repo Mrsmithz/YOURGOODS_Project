@@ -7,6 +7,9 @@ exports.createAccount = async (req, res, next) => {
         data.telephone, data.address, data.type, data.manage_by)
         await user.checkUsernameDuplicate(data.username)
         await user.checkEmailDuplicate(data.email)
+        if (data.manage_by != undefined){
+            await user.checkSupervisorId(data.manage_by)
+        }
         await user.createAccount()
         res.status(201).send(user)
     }

@@ -18,7 +18,9 @@ create table USER(
 create table CUSTOMER_OPERATOR(
     id int primary key auto_increment,
     document varchar(255) not null,
+    `status` enum('pending', 'completed', 'in progress') not null,
     created_datetime datetime not null default now(),
+    modified_datetime datetime not null default now() on update now(),
     customer_id int not null,
     operator_id int not null,
     foreign key (customer_id) references USER(id),
