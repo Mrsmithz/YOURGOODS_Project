@@ -1,6 +1,8 @@
 import axios from 'axios'
 import url from '../api-config/api_url'
 
+axios.defaults.headers.common['key'] = 'my_doggo_name_jeff'
+
 class AccountService{
     static async createAccount(form){
         var object = {};

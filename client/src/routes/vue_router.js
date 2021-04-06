@@ -8,12 +8,12 @@ export default new Router({
     mode:'history',
     routes:[
         {
-            path:'/',
+            path:'/login',
             name:'Login',
             component:LoginAndRegister,
         },
         {
-            path:'/index',
+            path:'/',
             name:'Home',
             component: Home,
         },

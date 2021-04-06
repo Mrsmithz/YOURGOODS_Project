@@ -188,7 +188,14 @@
                                   type="password"
                                   required
                                 ></v-text-field>
-
+                                
+                                <v-select
+                                  :items="account_type"
+                                  label="Account Type"
+                                  v-model="type_register"
+                                  :rules="selectAccountRules"
+                                ></v-select>
+                                
                                 <v-text-field
                                   v-model="email_register"
                                   :rules="emailRules"
@@ -198,7 +205,7 @@
                                 ></v-text-field>
 
                                 <v-row>
-                                    <div class="col-md-6 mt-0 py-0">
+                                    <div class="col-md-6 mt-0 py-0 mb-3">
                                       <v-text-field
                                   v-model="fname_register"
                                   :rules="nameRules"
@@ -225,28 +232,40 @@
                                   required
                                 ></v-text-field>
 
+                                <v-select
+                                  :items="gender"
+                                  label="Gender"
+                                  v-model="gender_register"
+                                  :rules="selectRules"
+                                ></v-select>
+
+                                <v-textarea
+                                  label="Address"
+                                  v-model="address_register"
+                                  rows="2"
+                                  row-height="20"
+                                  :rules="addressRules"
+                                ></v-textarea>
+
                                 <v-slide-y-transition>
                                   <div v-show="checkIsSpecialType()">
-                                    <v-select
-                                      :items="gender"
-                                      label="Gender"
-                                      v-model="gender_register"
-                                      :rules="selectRules"
-                                      v-if="checkIsSpecialType()"
-                                    ></v-select>
-
-                                    <v-textarea
-                                      label="Address"
-                                      v-model="address_register"
-                                      rows="2"
-                                      row-height="20"
+                                    <v-text-field
+                                      label="Secret Register Code"
+                                      v-model="code_register"
                                       :rules="addressRules"
                                       v-if="checkIsSpecialType()"
-                                    ></v-textarea>
+                                    ></v-text-field>
+
+                                    <v-text-field
+                                      label="ํYour manager's id"
+                                      v-model="manage_by_register"
+                                      :rules="addressRules"
+                                      v-if="checkIsSpecialType()"
+                                    ></v-text-field>
                                   </div>
                                 </v-slide-y-transition>
 
-                                <v-radio-group v-model="select_account_type">
+                                <!--<v-radio-group v-model="select_account_type">
 
                                   <v-row>
                                     <div class="col-md-5 mt-0 py-0">
@@ -326,7 +345,7 @@
                                     </v-slide-x-transition>
                                   </v-row>
 
-                                </v-radio-group>
+                                </v-radio-group>-->
 
                               <v-checkbox
                                   v-model="checkbox"
@@ -429,10 +448,15 @@ export default {
   name: "Loginregister",
   data: () => ({
     updateKey: 1,
+
     gender: ["Male", "Female"],
+    account_type: ['Customer', 'Driver', 'Operator', 'Shipping', 'Supervisor', 'Transport'],
+
     valid: "",
+
     username_login: "",
     password_login: "",
+
     username_register: "",
     password_register: "",
     confirm_password_register: "",
@@ -442,9 +466,14 @@ export default {
     tel_register: "",
     gender_register: "",
     address_register: "",
+    type_register: "",
+    code_register: "",
+    manage_by_register: "",
+
     supervisor_password: "",
     order_manager_password: "",
     messenger_password: "",
+
     e6: 1,
     checkbox: false,
     rotation: 0,
@@ -485,6 +514,15 @@ export default {
     ],
     addressRules: [
       (v) => !!v || "Address is required"
+    ],
+    selectAccountRules: [
+      (v) => !!v || "Please select your account type"
+    ],
+    secretCodeRules:[
+      (v) => !!v || "Secret code is required"
+    ],
+    manageByRules:[
+      (v) => !!v || "Your manager id is required"
     ]
   }),
   methods:{
@@ -548,30 +586,31 @@ export default {
       form.append('password', this.password_register);
       form.append('name', this.fname_register + " " + this.lname_register);
       form.append('email', this.email_register);
-      form.append('tel', this.tel_register);
-      form.append('register_type', this.select_account_type);
-      form.append('api_key', 'my_doggo_name_jeff');
+      form.append('gender', this.gender_register);
+      form.append('telephone', this.tel_register);
+      form.append('address', this.address_register);
+      form.append('type', this.type_register);
 
-      if (this.select_account_type == "supervisor" || this.select_account_type == 'order_manager' || this.select_account_type == 'messenger'){
+      if (this.type_register == "supervisor" || this.type_register == 'order_manager' || this.type_register == 'messenger'){
         form.append('gender', this.gender_register);
         form.append('address', this.address_register);
       }
 
-      if (this.select_account_type == "supervisor"){
+      if (this.type_register == "supervisor"){
         form.append('secret_key', this.supervisor_password);
       }
 
-      if (this.select_account_type == 'order_manager'){
+      if (this.type_register == 'order_manager'){
         form.append('supervisor_id', this.order_manager_password);
       }
 
-      if (this.select_account_type == 'messenger'){
+      if (this.type_register == 'messenger'){
         form.append('order_manager_id', this.messenger_password);
       }
       return form;
     },
     checkIsSpecialType(){
-      return (this.select_account_type == 'supervisor' || this.select_account_type == 'order_manager' || this.select_account_type == 'messenger')
+      return (this.type_register == 'Driver' || this.type_register == 'Operator' || this.type_register == 'Shipping' || this.type_register == 'Supervisor' || this.type_register == 'Transport')
     },
     async login(e){
       e.preventDefault();
@@ -592,7 +631,6 @@ export default {
       var form = new FormData();
       form.append('username', this.username_login);
       form.append('password', this.password_login);
-      form.append('api_key', 'my_doggo_name_jeff');
       return form;
     },
     clearRegisterData(){
