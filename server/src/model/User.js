@@ -90,6 +90,23 @@ class User{
             conn.release()
         }
     }
+    async deleteAccount(id){
+        let conn = await pool.getConnection()
+        await conn.beginTransaction()
+        try{
+            var stmt = 'DELETE from USER where id = ?'
+            let result = await conn.query(stmt, [id])
+            await conn.commit()
+            return Promise.resolve(result)
+        }
+        catch(err){
+            await conn.rollback()
+            return Promise.reject(err)
+        }
+        finally{
+            conn.release()
+        }
+    }
     async userLogin(username, password){
         let conn = await pool.getConnection()
         await conn.beginTransaction()

@@ -12,6 +12,8 @@ const corsConfig = require('./config/cors-config')
 const AuthRouter = require('./src/routes/AuthRouter')
 const ContactsRouter = require('./src/routes/ContactsRouter')
 const OrdersRouter = require('./src/routes/OrdersRouter')
+const CustomerRouter = require('./src/routes/CustomerRouter')
+
 redisClient.on('error', function (err) {
     console.log('Could not establish a connection with redis. ' + err);
 });
@@ -29,7 +31,7 @@ app.use(session({
     cookie:{
         secure:false,
         httpOnly:false,
-        maxAge: 1000 * 60 * 1
+        maxAge: 1000 * 60 * 60
     }
 }))
 
@@ -53,7 +55,7 @@ app.all('/api/*', (req, res, next) => {
 app.use('/api/auth', AuthRouter)
 app.use('/api/contacts', ContactsRouter)
 app.use('/api/orders', OrdersRouter)
-
+app.use('/api/customer', CustomerRouter)
 app.get('/', (req, res) => {
     res.send('Hello')
 })
