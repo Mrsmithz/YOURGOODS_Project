@@ -102,6 +102,19 @@
             >
           </v-card>
 
+          <v-card elevation="1" class="card_1 mb-4">
+            <v-row>
+              <v-col md="6">
+                <v-text-field
+                    v-model="search"
+                    label="ค้นหา"
+                  ></v-text-field>
+              </v-col>
+              <v-col md="6">
+              </v-col>
+            </v-row>
+          </v-card>
+
           <v-card elevation="1" class="card_1">
             <v-data-table
               :headers="table_header"
@@ -111,17 +124,19 @@
               hide-default-footer
               class="black-table"
               @page-count="pageCount = $event"
+              :search="search"
             >
               
             </v-data-table>
             <div class="text-center pt-2">
-              <v-pagination v-model="page" :length="pageCount"></v-pagination>
+              <v-pagination v-model="page" :length="pageCount" circle color="#b68973"></v-pagination>
               <v-text-field
                 :value="itemsPerPage"
                 label="Items per page"
                 type="number"
                 min="-1"
                 max="15"
+                class="input_per_page"
                 @input="itemsPerPage = parseInt($event, 10)"
               ></v-text-field>
             </div>
@@ -139,6 +154,7 @@ export default {
     page: 1,
     pageCount: 0,
     itemsPerPage: 10,
+    search: "",
     table_header: [
       { text: "Order id", value: "id", class: "text-center" },
       { text: "File name", value: "name" },
@@ -158,7 +174,7 @@ export default {
     ],
   }),
   methods:{
-    
+
   }
 };
 </script>
@@ -179,4 +195,12 @@ export default {
 .black-table .v-table tbody tr {
   background: red !important;
 }
+
+.input_per_page{
+  width: 5rem;
+  position: relative; 
+  top: -50px;
+  margin-left: auto;
+}
+
 </style>
