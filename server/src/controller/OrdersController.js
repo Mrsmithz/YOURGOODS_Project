@@ -26,7 +26,7 @@ exports.updateOrderById = async (req, res) => {
 }
 exports.getOrdersByCustomer = async (req, res) => {
     try{
-        var id = req.params.id
+        var id = req.session.user.id
         var order = new Order()
         let result = await order.getOrdersByCustomer(id)
         res.status(200).send(result)

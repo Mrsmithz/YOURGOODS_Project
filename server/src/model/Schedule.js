@@ -11,6 +11,25 @@ class Schedule{
         this.shipping_id = shipping_id
         this.vehicle_plate_number = vehicle_plate_number
     }
+    async createSchedule(){
+        let conn = await pool.getConnection()
+        await conn.beginTransaction()
+        try{
+            var stmt = 'insert into SCHEDULE (pickup_datetime, arrived_datetime, driver_id, transport_id, order_id, shipping_id, vehicle_plate_number) \
+            values(?,?,?,?,?,?,?)'
+            let result = await conn.query(stmt, [this.pickup_datetime, this.arrived_datetime, this.driver_id,
+            this.transport_id, this.order_id, this.shipping_id, this.vehicle_plate_number])
+            this.id = result[0].insertId
+            return Promise.resolve(this.id)
+        }
+        catch(err){
+            await conn.rollback()
+            return Promise.reject(err)
+        }
+        finally{
+            conn.release()
+        }
+    }
 }
 
 module.exports = Schedule

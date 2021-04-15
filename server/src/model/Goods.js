@@ -27,7 +27,7 @@ class Goods{
             conn.release()
         }
     }
-    async getGoods(id){
+    async getGoodsById(id){
         let conn = await pool.getConnection()
         await conn.beginTransaction()
         try{
@@ -44,7 +44,7 @@ class Goods{
             conn.release()
         }
     }
-    async getAllGoods(order_id){
+    async getAllGoodsByOrderId(order_id){
         let conn = await pool.getConnection()
         await conn.beginTransaction()
         try{
@@ -78,12 +78,29 @@ class Goods{
             conn.release()
         }
     }
-    async deleteGoods(id){
+    async deleteGoodsById(id){
         let conn = await pool.getConnection()
         await conn.beginTransaction()
         try{
             var stmt = 'delete from GOODS where id = ?'
             let result = await conn.query(stmt, [id])
+            await conn.commit()
+            return Promise.resolve(result)
+        }
+        catch(err){
+            await conn.rollback()
+            return Promise.reject(err)
+        }
+        finally{
+            conn.release()
+        }
+    }
+    async deleteGoodsByOrderId(order_id){
+        let conn = await pool.getConnection()
+        await conn.beginTransaction()
+        try{
+            var stmt = 'delete from GOODS where order_id = ?'
+            let result = await conn.query(stmt, [order_id])
             await conn.commit()
             return Promise.resolve(result)
         }

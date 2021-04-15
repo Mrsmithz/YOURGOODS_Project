@@ -13,7 +13,7 @@ const AuthRouter = require('./src/routes/AuthRouter')
 const ContactsRouter = require('./src/routes/ContactsRouter')
 const OrdersRouter = require('./src/routes/OrdersRouter')
 const CustomerRouter = require('./src/routes/CustomerRouter')
-
+const UserRouter = require('./src/routes/UserRouter')
 redisClient.on('error', function (err) {
     console.log('Could not establish a connection with redis. ' + err);
 });
@@ -42,7 +42,6 @@ app.use((req, res, next) => {
 
 
 app.all('/api/*', (req, res, next) => {
-    console.log(req.headers)
     if (req.headers.key == "my_doggo_name_jeff"){
         console.log("API KEY CHECK PASS")
         next()
@@ -53,6 +52,16 @@ app.all('/api/*', (req, res, next) => {
     }
 })
 app.use('/api/auth', AuthRouter)
+
+app.all('/api/*', (req, res, next) => {
+    if (req.session.user){
+        next()
+    }
+    else{
+        res.sendStatus(400)
+    }
+})
+app.use('/api/user', UserRouter)
 app.use('/api/contacts', ContactsRouter)
 app.use('/api/orders', OrdersRouter)
 app.use('/api/customer', CustomerRouter)

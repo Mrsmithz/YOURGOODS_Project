@@ -38,7 +38,7 @@ class User{
         await conn.beginTransaction()
         try{
             var stmt = 'update USER set name = ?, gender = ?, telephone = ?, address = ? where id = ?'
-            let result = await conn.query(stmt, [name, email, gender, telephone, address, id])
+            let result = await conn.query(stmt, [name, gender, telephone, address, id])
             await conn.commit()
             return Promise.resolve(result)
         }

@@ -52,7 +52,7 @@ exports.createAccount = async (req, res, next) => {
 }
 exports.updateUserPassword = async (req, res, next) => {
     try{
-        let id = req.params.id
+        let id = req.session.user.id
         let data = req.body
         let user = new User()
         await user.updateUserPassword(id, data.old_password, data.new_password)
@@ -65,7 +65,7 @@ exports.updateUserPassword = async (req, res, next) => {
 }
 exports.updateUserProfile = async (req, res, next) => {
     try{
-        let id = req.params.id
+        let id = req.session.user.id
         let data = req.body
         let user = new User()
         await user.updateUserProfile(id, data.name, data.gender, data.telephone, data.address)

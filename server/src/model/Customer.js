@@ -1,23 +1,18 @@
 const pool = require('../database/mysql_connector')
-
-class CustomerRequest{
-    constructor(id, document, status, customer_id, operator_id){
-        this.id = id
-        this.document = document
-        this.status = status
-        this.customer_id = customer_id
-        this.operator_id = operator_id
+const User = require('./User')
+class Customer extends User{
+    constructor(id, username, password, name, email, gender, telephone, address, type){
+        super(id, username, password, name, email, gender, telephone, address, type)
     }
-    async createRequest(){
+    async createRequest(document, status, customer_id, operator_id){
         let conn = await pool.getConnection()
         await conn.beginTransaction()
         try{
             var stmt = 'insert into CUSTOMER_OPERATOR (document, status, customer_id, operator_id) \
             values(?,?,?,?)'
-            let result = await conn.query(stmt, [this.document, this.status, this.customer_id, this.operator_id])
-            this.id = result[0].insertId
+            let result = await conn.query(stmt, [document, status, customer_id, operator_id])
             await conn.commit()
-            return Promise.resolve(this.id)
+            return Promise.resolve(result[0].insertId)
         }
         catch(err){
             await conn.rollback()
@@ -27,7 +22,7 @@ class CustomerRequest{
             conn.release()
         }
     }
-    async getRequest(id){
+    async getRequestById(id){
         let conn = await pool.getConnection()
         await conn.beginTransaction()
         try{
@@ -44,7 +39,7 @@ class CustomerRequest{
             conn.release()
         }
     }
-    async getAllRequest(customer_id){
+    async getAllRequestByCustomerId(customer_id){
         let conn = await pool.getConnection()
         await conn.beginTransaction()
         try{
@@ -61,7 +56,7 @@ class CustomerRequest{
             conn.release()
         }
     }
-    async deleteRequest(id){
+    async deleteRequestById(id){
         let conn = await pool.getConnection()
         await conn.beginTransaction()
         try{
@@ -78,6 +73,23 @@ class CustomerRequest{
             conn.release()
         }
     }
+    async editRequest(id){
+        let conn = await pool.getConnection()
+        await conn.beginTransaction()
+        try{
+            var stmt = 'update CUSTOMER_OPERATOR set document = ? where id = ?'
+            await conn.query(stmt, [id])
+            await conn.commit()
+            return Promise.resolve()
+        }
+        catch(err){
+            await conn.rollback()
+            return Promise.reject(err)
+        }
+        finally{
+            conn.release()
+        }
+    }
 }
 
-module.exports = CustomerRequest
+module.exports = Customer
