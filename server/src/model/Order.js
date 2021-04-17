@@ -22,7 +22,7 @@ class Order{
             this.invoice_id, this.container_id, this.customer_id, this.operator_id])
             this.id = result[0].insertId
             await conn.commit()
-            return Promise.resolve()
+            return Promise.resolve(result)
         }
         catch(err){
             await conn.rollback()
@@ -39,7 +39,7 @@ class Order{
             var stmt = 'select * from ORDERS where operator_id = ?'
             let [rows, fields] = await conn.query(stmt, [operator_id])
             await conn.commit()
-            return Promise.resolve(rows[0])
+            return Promise.resolve(rows)
         }
         catch(err){
             await conn.rollback()
@@ -56,7 +56,7 @@ class Order{
             var stmt = 'select * from ORDERS where customer_id = ?'
             let [rows, fields] = await conn.query(stmt, [customer_id])
             await conn.commit()
-            return Promise.resolve(rows[0])
+            return Promise.resolve(rows)
         }
         catch(err){
             await conn.rollback()
@@ -73,7 +73,7 @@ class Order{
             var stmt = 'select * from ORDERS where id = ?'
             let [rows, fields] = await conn.query(stmt, [id])
             await conn.commit()
-            return Promise.resolve(rows[0])
+            return Promise.resolve(rows)
         }
         catch(err){
             await conn.rollback()

@@ -34,7 +34,7 @@ class Goods{
             var stmt = 'select * from GOODS where id = ?'
             let [rows, fields] = await conn.query(stmt, [id])
             await conn.commit()
-            return Promise.resolve(rows[0])
+            return Promise.resolve(rows)
         }
         catch(err){
             await conn.rollback()
@@ -51,7 +51,7 @@ class Goods{
             var stmt = 'select * from GOODS where order_id = ?'
             let [rows, fields] = await conn.query(stmt, [order_id])
             await conn.commit()
-            return Promise.resolve(rows[0])
+            return Promise.resolve(rows)
         }
         catch(err){
             await conn.rollback()

@@ -115,17 +115,23 @@ class User{
             let [rows, field] = await conn.query(stmt, [username, password])
             await conn.commit()
             var data = rows[0]
-            this.id = data.id
-            this.username = data.username
-            // this.password = data.password
-            this.name = data.name
-            this.email = data.email
-            this.telephone = data.telephone
-            this.gender = data.gender
-            this.address = data.address
-            this.type = data.type
-            this.manage_by = data.manage_by
-            return Promise.resolve()
+            if (data){
+                this.id = data.id
+                this.username = data.username
+                // this.password = data.password
+                this.name = data.name
+                this.email = data.email
+                this.telephone = data.telephone
+                this.gender = data.gender
+                this.address = data.address
+                this.type = data.type
+                this.manage_by = data.manage_by
+                return Promise.resolve()
+            }
+            else{
+                return Promise.reject(`couldn't find user or password didn't match`)
+            }
+            
         }
         catch(err){
             await conn.rollback()
