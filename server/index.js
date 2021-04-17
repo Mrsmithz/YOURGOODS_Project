@@ -12,8 +12,10 @@ const corsConfig = require('./config/cors-config')
 const AuthRouter = require('./src/routes/AuthRouter')
 const ContactsRouter = require('./src/routes/ContactsRouter')
 const OrdersRouter = require('./src/routes/OrdersRouter')
-const CustomerRouter = require('./src/routes/CustomerRouter')
+const RequestRouter = require('./src/routes/RequestRouter')
 const UserRouter = require('./src/routes/UserRouter')
+const GoodsRouter = require('./src/routes/GoodsRouter')
+
 redisClient.on('error', function (err) {
     console.log('Could not establish a connection with redis. ' + err);
 });
@@ -64,7 +66,8 @@ app.all('/api/*', (req, res, next) => {
 app.use('/api/user', UserRouter)
 app.use('/api/contacts', ContactsRouter)
 app.use('/api/orders', OrdersRouter)
-app.use('/api/customer', CustomerRouter)
+app.use('/api/request', RequestRouter)
+app.use('/api/goods', GoodsRouter)
 app.get('/', (req, res) => {
     res.send('Hello')
 })
