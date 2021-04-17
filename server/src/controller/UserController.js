@@ -47,7 +47,7 @@ exports.createAccount = async (req, res, next) => {
     }
     catch(err){
         console.log(err)
-        res.status(400).send(err)
+        res.sendStatus(400)
     }
 }
 exports.updateUserPassword = async (req, res, next) => {
@@ -73,6 +73,20 @@ exports.updateUserProfile = async (req, res, next) => {
     }
     catch(err){
         console.log(err)
-        res.status(400).send(err)
+        res.sendStatus(400)
+    }
+}
+
+exports.updateUserEmail = async (req, res) => {
+    try{
+        let id = req.session.user.id
+        let user = new User()
+        await user.checkEmailDuplicate(req.body.new_email)
+        await user.updateUserEmail(id, req.body.old_email, req.body.new_email)
+        res.sendStatus(200)
+    }
+    catch(err){
+        console.log(err)
+        res.sendStatus(400)
     }
 }
