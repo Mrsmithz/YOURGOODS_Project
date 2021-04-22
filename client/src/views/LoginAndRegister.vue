@@ -1,8 +1,8 @@
 <template>
-    <div>
+    <v-app>
         <Navbar></Navbar>
         <LoginRegister></LoginRegister>
-    </div>
+    </v-app>
 </template>
 
 <script>

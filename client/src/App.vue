@@ -1,22 +1,13 @@
 <template>
-  <v-app>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
-    <link rel="preconnect" href="https://fonts.gstatic.com" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Short+Stack&display=swap"
-      rel="stylesheet"
-    />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-    <v-main>
-      <router-view></router-view>
-    </v-main>
-  </v-app>
+  <!-- <v-app> -->
+    <router-view></router-view>
+  <!-- </v-app> -->
 </template>
 
 <script>
 //import Loginregister from "./components/Loginregister";
 //import Navbar from "./components/Navbar";
-import AccountService from './services/AccoundService'
+//import AccountService from './services/AccountService'
 export default {
   name: "App",
   components: {
@@ -29,10 +20,6 @@ export default {
   }),
   methods:{
   },
-  async beforeCreate(){
-        var result = await AccountService.getSession()
-        console.log(result)
-    },
 };
 </script>
 <style lang="scss">

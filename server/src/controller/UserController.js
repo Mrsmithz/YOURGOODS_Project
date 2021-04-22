@@ -9,12 +9,13 @@ exports.userLogin = async(req, res, next) => {
     }
     catch(err){
         console.log(err)
-        res.sendStatus(400)
+        res.status(400).send(err)
     }
 }
 exports.getSession = async (req, res) => {
     if (req.session.user){
-        console.log(`${req.session.user.username} has session`)
+        // console.log(`${req.session.user.username} has session`)
+        console.log(req.session)
         res.status(200).send(req.session.user)
     }
     else{
@@ -35,6 +36,12 @@ exports.destroySession = async (req, res) => {
 exports.createAccount = async (req, res, next) => {
     try{
         let data = req.body
+        if(data.secret_key){
+            if (data.secret_key != "staff_secret"){
+                res.status(400).send("secret key invalid")
+                return
+            }
+        }
         let user = new User(null, data.username, data.password, data.name, data.email, data.gender,
         data.telephone, data.address, data.type, data.manage_by)
         await user.checkUsernameDuplicate(data.username)
@@ -47,7 +54,7 @@ exports.createAccount = async (req, res, next) => {
     }
     catch(err){
         console.log(err)
-        res.sendStatus(400)
+        res.status(400).send(err)
     }
 }
 exports.updateUserPassword = async (req, res, next) => {
@@ -56,6 +63,7 @@ exports.updateUserPassword = async (req, res, next) => {
         let data = req.body
         let user = new User()
         await user.updateUserPassword(id, data.old_password, data.new_password)
+        req.session.destroy()
         res.sendStatus(200)
     }
     catch(err){

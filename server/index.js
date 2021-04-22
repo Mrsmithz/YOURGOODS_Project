@@ -3,12 +3,13 @@ const cors = require('cors')
 const redis = require('redis')
 const connectRedis = require('connect-redis')
 const session = require('express-session')
+const multer = require('multer')
 const app = express()
 const PORT = 25800
 const RedisStore = connectRedis(session)
 const redisClient = redis.createClient({host:'redis'})
 const corsConfig = require('./config/cors-config')
-
+const upload = multer()
 const AuthRouter = require('./src/routes/AuthRouter')
 const ContactsRouter = require('./src/routes/ContactsRouter')
 const OrdersRouter = require('./src/routes/OrdersRouter')
@@ -25,6 +26,7 @@ redisClient.on('connect', function (err) {
 
 app.use(cors(corsConfig))
 app.use(express.json())
+app.use(upload.array())
 app.use(session({
     store: new RedisStore({client: redisClient}),
     secret:'doggo_doggo',

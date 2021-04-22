@@ -1,6 +1,6 @@
 <template>
-  <div v-show="show_login">
-    <v-app id="logregis">
+  <!-- <div v-show="show_login"> -->
+    <!-- <v-app id="logregis"> -->
       <v-main class="whole_screen">
         <v-container class="fill-height" fluid>
           <v-row align="center" justify="center">
@@ -23,14 +23,24 @@
                               Sign In
                             </h1>
                           </v-card-text>
+                          
                           <v-form
-                            ref="form"
+                            ref="login_form"
                             v-model="valid"
                             lazy-validation
                             class="text-center"
                             :value="0"
                             @submit="login"
                           >
+                          <v-slide-x-transition>
+                            <v-alert
+                              dense
+                              outlined
+                              type="error"
+                              v-if="login_error">
+                              {{login_error}}
+                            </v-alert>
+                          </v-slide-x-transition>
                             <v-text-field
                               class="pl-15 pr-15 field"
                               prepend-icon="fas fa-user"
@@ -39,6 +49,7 @@
                               color="#aa96da"
                               :rules="usernameRules"
                               required
+                              clearable
                             />
                             <v-text-field
                               class="pl-15 pr-15 field"
@@ -48,6 +59,7 @@
                               label="Password"
                               color="#aa96da"
                               required
+                              clearable
                             />
                             <v-btn
                               elevation="2"
@@ -99,36 +111,7 @@
                               Sign Up
                             </h1>
                           </v-card-text>
-                          <!-- <v-form
-                            ref="form"
-                            v-model="valid"
-                            lazy-validation
-                            class="text-center"
-                          >
-                            <v-text-field
-                              class="pl-15 pr-15 field"
-                              v-model="name"
-                              :counter="10"
-                              label="Username"
-                              color="#aa96da"
-                              required
-                            />
-                            <v-text-field
-                              class="pl-15 pr-15 field"
-                              v-model="email"
-                              type="password"
-                              label="Password"
-                              color="#aa96da"
-                              required
-                            />
-                            <v-btn
-                              elevation="2"
-                              x-large
-                              class="button mt-6 mb-8 pa-10 is-size-3 login_button has-text-weight-bold has-text-white"
-                              color="#aa96da"
-                              >Login</v-btn
-                            >
-                          </v-form> -->
+                          
                           <v-stepper v-model="e6" vertical>
                             <v-stepper-step
                               color="#eabf9f"
@@ -143,7 +126,7 @@
                               <v-btn class="text-white" color="#eabf9f" @click="e6 = 2">
                                 Continue
                               </v-btn>
-                              <v-btn text>
+                              <v-btn text @click="switchToSignin">
                                 Cancel
                               </v-btn>
                             </v-stepper-content>
@@ -158,7 +141,7 @@
 
                             <v-stepper-content step="2">
                               <v-form
-                                ref="form"
+                                ref="register_form"
                                 v-model="valid"
                                 lazy-validation
                                 @submit="createAccount"
@@ -169,14 +152,18 @@
                                   :rules="usernameRules"
                                   label="Username"
                                   required
+                                  clearable
                                 ></v-text-field>
 
                                 <v-text-field
                                   v-model="password_register"
                                   :rules="passwordRules"
                                   label="Password"
-                                  type="password"
                                   required
+                                  :append-icon="show_password ? 'mdi-eye' : 'mdi-eye-off'"
+                                  :type="show_password ? 'text' : 'password'"
+                                  @click:append="show_password =! show_password"
+                                  clearable
                                 ></v-text-field>
 
                                 <v-text-field
@@ -185,6 +172,7 @@
                                   label="E-mail"
                                   type="email"
                                   required
+                                  clearable
                                 ></v-text-field>
 
                                 <v-row>
@@ -194,6 +182,7 @@
                                   :rules="nameRules"
                                   label="Firstname"
                                   required
+                                  clearable
                                 ></v-text-field>
                                     </div>
                                    
@@ -203,6 +192,7 @@
                                   :rules="nameRules"
                                   label="Lastname"
                                   required
+                                  clearable
                                 ></v-text-field>
                                     </div>
 
@@ -213,111 +203,43 @@
                                   :rules="telRules"
                                   label="Mobile number"
                                   required
+                                  clearable
                                 ></v-text-field>
-
-                                <v-slide-y-transition>
-                                  <div v-show="checkIsSpecialType()">
                                     <v-select
                                       :items="gender"
                                       label="Gender"
                                       v-model="gender_register"
                                       :rules="selectRules"
-                                      v-if="checkIsSpecialType()"
                                     ></v-select>
-
                                     <v-textarea
                                       label="Address"
                                       v-model="address_register"
                                       rows="2"
                                       row-height="20"
                                       :rules="addressRules"
-                                      v-if="checkIsSpecialType()"
+                                      clearable
                                     ></v-textarea>
-                                  </div>
-                                </v-slide-y-transition>
-
-                                <v-radio-group v-model="select_account_type">
-
-                                  <v-row>
-                                    <div class="col-md-5 mt-0 py-0">
-                                      <v-radio
-                                    label="Are you customer?"
-                                    required
-                                    class="my-0"
-                                    style="padding-bottom: 34px"
-                                    :value="'customer'"
-                                  ></v-radio>
-                                    </div>
-                                  </v-row>
-
-                                  <v-row>
-                                    <div class="col-md-5 mt-0 py-0">
-                                      <v-radio
-                                    label="Are you supervisor?"
-                                    required
-                                    class="my-0"
-                                    style="padding-bottom: 34px"
-                                    :value="'supervisor'"
-                                  ></v-radio>
-                                    </div>
-                                    <v-slide-x-transition>
-                                    <div class="col-md-7 mt-0 py-0" v-show="select_account_type == 'supervisor'">
-                                      <v-text-field
-                                    v-model="supervisor_password"
-                                    label="Supervisor code"
+                              <v-select
+                              :items="roles"
+                              v-model="role_register"
+                              label="Role"
+                              :rules="selectRoleRules">
+                              </v-select>
+                              <v-slide-x-transition>
+                                <div class="" v-if="role_register != 'Customer' && role_register != null">
+                                  <v-text-field
+                                    v-model="secret_key"
+                                    label="Secret Key"
                                     required
                                     class="pt-0"
+                                    :rules="secretKeyRules"
+                                    :append-icon="show_secret_key ? 'mdi-eye' : 'mdi-eye-off'"
+                                    :type="show_secret_key ? 'text' : 'password'"
+                                    @click:append="show_secret_key = !show_secret_key"
+                                    clearable
                                   ></v-text-field>
-                                    </div>
-                                    </v-slide-x-transition>
-                                  </v-row>
-
-                                  <v-row>
-                                    <div class="col-md-5 mt-0 py-0">
-                                      <v-radio
-                                    label="Are you order manager?"
-                                    required
-                                    class="my-0"
-                                    style="padding-bottom: 34px"
-                                    :value="'order_manager'"
-                                  ></v-radio>
-                                    </div>
-                                    <v-slide-x-transition>
-                                    <div class="col-md-7 mt-0 py-0" v-show="select_account_type == 'order_manager'">
-                                      <v-text-field
-                                    v-model="order_manager_password"
-                                    label="Your supervisor's code"
-                                    required
-                                    class="pt-0"
-                                  ></v-text-field>
-                                    </div>
-                                    </v-slide-x-transition>
-                                  </v-row>
-
-                                  <v-row>
-                                    <div class="col-md-5 mt-0 py-0">
-                                      <v-radio
-                                    label="Are you messenger?"
-                                    required
-                                    class="my-0"
-                                    style="padding-bottom: 34px"
-                                    :value="'messenger'"
-                                  ></v-radio>
-                                    </div>
-                                    <v-slide-x-transition>
-                                    <div class="col-md-7 mt-0 py-0" v-show="select_account_type == 'messenger'">
-                                      <v-text-field
-                                    v-model="messenger_password"
-                                    label="Your Order Manager's code"
-                                    required
-                                    class="pt-0"
-                                  ></v-text-field>
-                                    </div>
-                                    </v-slide-x-transition>
-                                  </v-row>
-
-                                </v-radio-group>
-
+                                </div>
+                              </v-slide-x-transition>
                               <v-checkbox
                                   v-model="checkbox"
                                   :rules="[
@@ -335,7 +257,14 @@
                                 Cancel
                               </v-btn>
                               <v-slide-y-transition>
-                              <p v-show="is_register_alert" class="regis_alert">{{register_alert_message}}</p>
+                              <v-alert
+                              class="mt-6"
+                              dense
+                              outlined
+                              type="error"
+                              v-if="register_error">
+                              {{register_error}}
+                            </v-alert>
                               </v-slide-y-transition>
                             </v-stepper-content>
 
@@ -356,23 +285,8 @@
                                 <p class="checkAcc">Name : {{fname_register + " " + lname_register}}</p>
                                 <p class="checkAcc">Email : {{email_register}}</p>
                                 <p class="checkAcc">Mobile Number : {{tel_register}}</p>
-
-                                <div v-show="checkIsSpecialType()">
-                                  <p class="checkAcc">Gender : {{gender_register}}</p>
-                                  <p class="checkAcc">Address : {{address_register}}</p>
-                                </div>
-
-                                <div class="secretCode" v-show="select_account_type == 'supervisor'">
-                                  <p class="checkAcc">Supervisor code : {{supervisor_password}}</p>
-                                </div>
-
-                                <div class="secretCode" v-show="select_account_type == 'order_manager'">
-                                  <p class="checkAcc">Your supervisor's code : {{order_manager_password}}</p>
-                                </div>
-
-                                <div class="secretCode" v-show="select_account_type == 'messenger'">
-                                  <p class="checkAcc">Your order manager's code : {{order_manager_password}}</p>
-                                </div>
+                                <p class="checkAcc">Gender : {{gender_register}}</p>
+                                <p class="checkAcc">Address : {{address_register}}</p>
                               </v-card>
                               <v-btn color="#eabf9f" @click="createAccount">
                                 Continue
@@ -392,16 +306,17 @@
           </v-row>
         </v-container>
       </v-main>
-    </v-app>
-  </div>
+    <!-- </v-app> -->
+  <!-- </div> -->
 </template>
 <script>
-import AccountService from '../../services/AccoundService'
+import AccountService from '../../services/AccountService'
 
 export default {
   name: "Loginregister",
   data: () => ({
-    gender: ["Male", "Female"],
+    gender: ["Male", "Female", "Other"],
+    roles:['Customer', 'Supervisor', 'Operator', 'Driver', 'Transport', 'Shipping'],
     username_login: "",
     valid: "",
     password_login: "",
@@ -416,13 +331,18 @@ export default {
     supervisor_password: "",
     order_manager_password: "",
     messenger_password: "",
+    role_register:"Customer",
     e6: 1,
     checkbox: false,
     rotation: 0,
     is_supervisor: false,
     select_account_type: "customer",
     is_register_alert: false,
-    register_alert_message: "",
+    register_error: "",
+    secret_key:"",
+    login_error:"",
+    show_password:false,
+    show_secret_key:false,
     usernameRules:[
       (v) => !!v || "Username is required",
       (v) => /^(\w|\d)+$/.test(v) || "Username must contain only letter or number only",
@@ -453,35 +373,38 @@ export default {
     ],
     addressRules: [
       (v) => !!v || "Address is required"
+    ],
+    selectRoleRules: [
+      (v) => !!v || "Please select role"
+    ],
+    secretKeyRules: [
+      (v) => !!v || "Please enter secret key"
     ]
   }),
   methods:{
     checkForm(){
-      if (this.$refs.form.validate()){
+      if (this.$refs.register_form.validate()){
         this.e6 = 3;
       }
     },
     switchToSignup(){
+      this.clearLoginData()
       this.$store.commit('switch_to_signup')
-      //this.rotate().then((value) => {this.$
-      //store.commit('switch_to_signup'); console.log(value); this.rotateToNormal()})
-      //this.rotate()
     },
     switchToSignin(){
+      this.clearRegisterData()
       this.$store.commit('switch_to_login')
     },
     async createAccount(){
       try{
         var result = await AccountService.createAccount(this.createJSON());
         console.log(result)
+        alert("Register Successfully!!")
+        this.switchToSignin()
       }catch(err){
-        console.log(err)
-      }
-
-      if(result.status == 201){
-        this.$store.commit('switch_to_login')
-      } else if(result.status == 400){
-        //
+        console.log(err.response)
+        this.register_error = err.response.data
+        this.e6 = 2
       }
     },
     createJSON(){
@@ -490,64 +413,44 @@ export default {
       form.append('password', this.password_register);
       form.append('name', this.fname_register + " " + this.lname_register);
       form.append('email', this.email_register);
-      form.append('tel', this.tel_register);
-      form.append('register_type', this.select_account_type);
-      form.append('api_key', 'my_doggo_name_jeff');
-
-      if (this.select_account_type == "supervisor" || this.select_account_type == 'order_manager' || this.select_account_type == 'messenger'){
-        form.append('gender', this.gender_register);
-        form.append('address', this.address_register);
+      form.append('telephone', this.tel_register);
+      form.append('type', this.role_register);
+      form.append('gender', this.gender_register);
+      form.append('address', this.address_register);
+      if (this.role_register != 'Customer'){
+        form.append('secret_key', this.secret_key)
       }
-
-      if (this.select_account_type == "supervisor"){
-        form.append('secret_key', this.supervisor_password);
-      }
-
-      if (this.select_account_type == 'order_manager'){
-        form.append('supervisor_id', this.order_manager_password);
-      }
-
-      if (this.select_account_type == 'messenger'){
-        form.append('order_manager_id', this.messenger_password);
-      }
-      return form;
-    },
-    checkIsSpecialType(){
-      return (this.select_account_type == 'supervisor' || this.select_account_type == 'order_manager' || this.select_account_type == 'messenger')
+      return form
     },
     async login(e){
       e.preventDefault();
       try{
+        this.login_error = ''
         var result = await AccountService.Login(this.createLoginJSON());
         console.log(result)
+        this.$store.commit('setUser', result.data)
+        this.$router.push({name:'Index'})
       }catch(err){
-        console.log(err)
+        console.log(err.response)
+        this.login_error = err.response.data
       }
     },
     createLoginJSON(){
       var form = new FormData();
       form.append('username', this.username_login);
       form.append('password', this.password_login);
-      form.append('api_key', 'my_doggo_name_jeff');
       return form;
     },
     clearRegisterData(){
+      this.e6 = 1
+      this.register_error = ""
+      this.$refs.register_form.reset()
       
+    },
+    clearLoginData(){
+      this.$refs.login_form.reset()
+      this.login_error = ""
     }
-    // rotate(){
-    //   return new Promise(resolve => {
-    //     var self = this;
-    //     var ms = 100;
-    //     var inteval = setInterval(function(){ self.rotation += 1 * 100-ms; ms -= 5; if(ms < 1){clearInterval(inteval);resolve();}}, ms);
-    //   });
-    // },
-    // rotateToNormal(){
-    //   return new Promise(resolve => {
-    //     var self = this;
-    //     var ms = 1;
-    //     var inteval = setInterval(function(){ self.rotation += 1 * 100-ms; ms += 5; if(self.rotation%360 == 0){clearInterval(inteval);resolve();}}, ms);
-    //   });
-    // }
   },
   computed:{
     show_login(){
@@ -555,6 +458,20 @@ export default {
     },
     page(){
       return this.$store.state.login_regis_page
+    }
+  },
+  created(){
+    this.$root.$refs.Login = this
+  },
+  async beforeCreate(){
+    try{
+      let result = await AccountService.getSession()
+      console.log(result)
+      this.$store.commit('setUser', result.data)
+      this.$router.push({name:'Index'})
+    }
+      catch(err){
+        console.log(err.response)
     }
   }
 };

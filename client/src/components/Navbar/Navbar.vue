@@ -1,6 +1,6 @@
 <template>
   <div id="navb">
-    <v-app-bar color="transparent" fixed width="100%" >
+    <v-app-bar color="transparent" fixed width="100%" app>
       <v-toolbar-title>YOURGOODS</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn class="text-white" color="#b68973" @click="switchToSignin" v-show="navbar_show_signin_button">
@@ -45,10 +45,12 @@ export default {
         this.$store.commit('show_login')
     },
     switchToSignup(){
-      this.$store.commit('switch_to_signup')
+      //this.$store.commit('switch_to_signup')
+      this.$root.$refs.Login.switchToSignup()
     },
     switchToSignin(){
-      this.$store.commit('switch_to_login')
+      this.$root.$refs.Login.switchToSignin()
+      // this.$store.commit('switch_to_login')
     }
   },
   computed: {

@@ -58,7 +58,7 @@ class User{
             let result = await conn.query(stmt, [new_password, id, old_password])
             await conn.commit()
             if (result[0].affectedRows == 0){
-                return Promise.reject('password did not matched')
+                return Promise.reject('current password is invalid')
             }
             return Promise.resolve(result)
         }
