@@ -18,8 +18,31 @@ const store = new Vuex.Store({
         ProfileDrawer:false,
         sidebarMenu:true,
         ContactModal:false,
+        temp_request_id:'',
+        temp_goods_id:'',
+        temp_order_id:'',
+        Operator:{
+            Dashboard:true,
+            ManageRequest:false,
+            TrackingOrder:false,
+            OrdersHistory:false,
+        },
+        OperatorManage:{
+            ManageOrder:false,
+            ManageGoods:false,
+            ManageSchedule:false
+        }
     },
     mutations:{
+        setTempRequestId(state, request_id){
+            state.temp_request_id = request_id
+        },
+        setTempGoodsId(state, goods_id){
+            state.temp_goods_id = goods_id
+        },
+        setTempOrderId(state, order_id){
+            state.temp_order_id = order_id
+        },
         show_login(state){
             state.show_login = !state.show_login
         },
@@ -52,6 +75,20 @@ const store = new Vuex.Store({
         },
         showContactModal(state){
             state.ContactModal = !state.ContactModal
+        },
+        showOperatorPage(state, page){
+            if (state.Operator[page]){
+                return
+            }
+            else{
+                Object.keys(state.Operator).forEach(key => {
+                    state.Operator[key] = false
+                })
+                state.Operator[page] = true
+            }
+        },
+        showOperatorManagePage(state, page){
+            state.OperatorManage[page] = !state.OperatorManage[page]
         }
     },
     getters:{
@@ -75,7 +112,22 @@ const store = new Vuex.Store({
         },
         getContactModal: state => {
             return state.ContactModal
-        }
+        },
+        getOperator: state => {
+            return state.Operator
+        },
+        getOperatorManage: state => {
+            return state.OperatorManage
+        },
+        getTempRequestId: state => {
+            return state.temp_request_id
+        },
+        getTempOrderId: state => {
+            return state.temp_order_id
+        },
+        getTempGoodsId: state => {
+            return state.temp_goods_id
+        },
     }
 })
 

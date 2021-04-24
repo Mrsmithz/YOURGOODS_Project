@@ -4,7 +4,8 @@
     <ProfileDrawer></ProfileDrawer>
     <ProfileModal></ProfileModal>
     <ChangePasswordModal></ChangePasswordModal>
-    <CustomerIndex></CustomerIndex>
+    <CustomerIndex v-if="false"></CustomerIndex>
+    <OperatorIndex v-if="true"></OperatorIndex>
   </v-app>
 </template>
 
@@ -14,6 +15,7 @@ import ProfileModal from "../components/Modal/ProfileModal"
 import ProfileDrawer from "../components/Navbar/ProfileDrawer"
 import ChangePasswordModal from "../components/Modal/ChangePasswordModal"
 import CustomerIndex from "../components/Customer/CustomerIndex";
+import OperatorIndex from "../components/Operator/OperatorIndex"
 export default {
   name: "Index",
   components: {
@@ -21,7 +23,8 @@ export default {
     IndexNavbar,
     ProfileDrawer,
     ProfileModal,
-    ChangePasswordModal
+    ChangePasswordModal,
+    OperatorIndex
   },
 };
 </script>

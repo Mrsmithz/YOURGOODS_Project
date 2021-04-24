@@ -5,8 +5,10 @@
           <v-row class="fill-height">
             <v-col>
               <CustomerDashboard v-if="false"></CustomerDashboard>
-              <UploadDocument v-if="true"></UploadDocument>
+              <UploadDocument v-if="false"></UploadDocument>
               <OrdersHistory v-if="false"></OrdersHistory>
+              <Contact v-if="ContactModalState"></Contact>
+              <Feedback v-if="true"></Feedback>
             </v-col>
           </v-row>
       </v-container>
@@ -18,18 +20,30 @@ import CustomerDrawer from "./drawer/CustomerDrawer"
 import CustomerDashboard from "./dashboard/CustomerDashboard"
 import UploadDocument from "./request/UploadDocument"
 import OrdersHistory from "./history/OrdersHistory"
+import Contact from "./../Modal/Contact"
+import Feedback from "./feedback/Feedback"
 export default {
-  name: "Home",
+  name: "CustomerIndex",
   data: () => ({}),
   components: {
       CustomerDrawer,
       CustomerDashboard,
       UploadDocument,
-      OrdersHistory
+      OrdersHistory,
+      Contact,
+      Feedback
   },
   computed: {
     user() {
       return this.$store.state.user;
+    },
+    ContactModalState: {
+      get: function() {
+        return this.$store.getters.getContactModal;
+      },
+      set: function(newValue) {
+        return newValue;
+      },
     },
   },
   methods: {

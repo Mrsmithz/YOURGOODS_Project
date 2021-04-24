@@ -45,6 +45,7 @@
         class="filebtn"
         type="file"
         accept=".pdf, .jpg, .png, .bmp, .docx, .doc, .ppt, .txt, .xls, .xlsx"
+        multiple
         @input="drop"
       />
     </div>
@@ -94,16 +95,13 @@
         </v-data-table>
       </v-col>
     </v-row>
-    <Contact v-if="ContactModalState"></Contact>
   </div>
 </template>
 
 <script>
-import Contact from "../../Modal/Contact";
 export default {
   name: "UploadDocument",
   components: {
-    Contact,
   },
   data: () => ({
     dragover: false,
@@ -188,9 +186,8 @@ export default {
     },
     drop(e) {
       e.preventDefault();
-      this.files = [];
       var files = e.target.files || e.dataTransfer.files;
-      this.files.push(files[0]);
+      this.AddToFiles(files)
       this.dragover = false;
     },
     clickToAdd() {

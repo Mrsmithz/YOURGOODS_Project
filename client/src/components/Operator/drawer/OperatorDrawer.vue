@@ -14,7 +14,7 @@
         </v-list-item-action>
         <v-list-item-content>
           <v-list-item-title>
-            <h3>Customer Drawer</h3>
+            <h3>Operator Drawer</h3>
           </v-list-item-title>
         </v-list-item-content>
       </v-list-item>
@@ -28,7 +28,7 @@
       </v-list-item-content>
     </v-list-item>
     <v-list>
-      <v-list-item v-for="item in items" :key="item.title" link>
+      <v-list-item v-for="item in items" :key="item.title" link @click="showPage(item.key)">
         <v-list-item-icon>
           <v-icon color="primary">{{ item.icon }}</v-icon>
         </v-list-item-icon>
@@ -43,13 +43,13 @@
 </template>
 <script>
 export default {
-  name: "CustomerDrawer",
+  name: "OperatorDrawer",
   data: () => ({
     items: [
-      { title: "Dashboard", icon: "mdi-account-outline" },
-      { title: "Upload Document", icon: "mdi-account-outline" },
-      { title: "Orders History", icon: "mdi-account-outline" },
-      { title: "Feedback", icon: "mdi-account-outline" },
+      { title: "Dashboard", icon: "mdi-account-outline", key:'Dashboard'},
+      { title: "Manage Request", icon: "mdi-account-outline", key:'ManageRequest'},
+      { title: "Tracking Order", icon: "mdi-account-outline", key:'TrackingOrder'},
+      { title: "Orders History", icon: "mdi-account-outline", key:'OrdersHistory'},
     ],
     toggleMini: false,
   }),
@@ -57,6 +57,9 @@ export default {
     showCustomerDrawer() {
       this.$store.commit("showSideBarMenu");
     },
+    showPage(key){
+      this.$store.commit('showOperatorPage', key)
+    }
   },
   computed: {
     sidebarMenuState: {

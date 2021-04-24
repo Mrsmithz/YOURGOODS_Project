@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="ContactModalState" max-width="60rem" @click:outside="showContactModal">
+  <v-dialog v-model="ContactModalState" max-width="50%" @click:outside="showContactModal">
     <v-row class="no-gutters elevation-4">
       <v-col
         cols="12"

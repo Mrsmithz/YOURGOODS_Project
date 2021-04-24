@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="ChangePasswordModalState" max-width="60rem" @click:outside="[clearForm(), showChangePasswordModal()]">
+  <v-dialog v-model="ChangePasswordModalState" max-width="50rem" @click:outside="[clearForm(), showChangePasswordModal()]">
     <v-card>
       <v-card-title>
         <v-row align="center" justify="center">

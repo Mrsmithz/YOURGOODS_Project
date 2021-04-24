@@ -1,7 +1,7 @@
 <template>
   <v-dialog
     v-model="ProfileModalState"
-    max-width="60rem"
+    max-width="50%"
     @click:outside="showProfileModal"
   >
     <v-card>
