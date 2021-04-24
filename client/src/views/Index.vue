@@ -4,8 +4,8 @@
     <ProfileDrawer></ProfileDrawer>
     <ProfileModal></ProfileModal>
     <ChangePasswordModal></ChangePasswordModal>
-    <CustomerIndex v-if="false"></CustomerIndex>
-    <OperatorIndex v-if="true"></OperatorIndex>
+    <CustomerIndex v-if="true"></CustomerIndex>
+    <OperatorIndex v-if="false"></OperatorIndex>
   </v-app>
 </template>
 

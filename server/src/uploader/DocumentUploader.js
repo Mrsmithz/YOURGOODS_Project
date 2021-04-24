@@ -5,7 +5,7 @@ let storage = multer.diskStorage({
         callback(null, './statics/uploads')
     },
     filename: function(req, file, callback){
-        callback(null, `${req.session.user.id}-${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`)
+        callback(null, `${req.session.user.id}-${file.fieldname}-\`${file.originalname}\`-${Date.now()}${path.extname(file.originalname)}`)
     }
 })
 module.exports = multer({storage: storage})

@@ -21,6 +21,12 @@ const store = new Vuex.Store({
         temp_request_id:'',
         temp_goods_id:'',
         temp_order_id:'',
+        Customer:{
+            Dashboard:true,
+            UploadDocument:false,
+            OrdersHistory:false,
+            Feedback:false
+        },
         Operator:{
             Dashboard:true,
             ManageRequest:false,
@@ -87,6 +93,17 @@ const store = new Vuex.Store({
                 state.Operator[page] = true
             }
         },
+        showCustomerPage(state, page){
+            if (state.Customer[page]){
+                return
+            }
+            else{
+                Object.keys(state.Customer).forEach(key => {
+                    state.Customer[key] = false
+                })
+                state.Customer[page] = true
+            }
+        },
         showOperatorManagePage(state, page){
             state.OperatorManage[page] = !state.OperatorManage[page]
         }
@@ -115,6 +132,9 @@ const store = new Vuex.Store({
         },
         getOperator: state => {
             return state.Operator
+        },
+        getCustomer: state => {
+            return state.Customer
         },
         getOperatorManage: state => {
             return state.OperatorManage

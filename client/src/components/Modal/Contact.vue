@@ -141,41 +141,6 @@ export default {
         me: false,
         created_at: "11:11am",
       },
-      {
-        content: "dolor",
-        me: false,
-        created_at: "11:11am",
-      },
-      {
-        content: "dolor",
-        me: false,
-        created_at: "11:11am",
-      },
-      {
-        content: "dolor",
-        me: false,
-        created_at: "11:11am",
-      },
-      {
-        content: "dolor",
-        me: false,
-        created_at: "11:11am",
-      },
-      {
-        content: "dolor",
-        me: false,
-        created_at: "11:11am",
-      },
-      {
-        content: "dolor",
-        me: false,
-        created_at: "11:11am",
-      },
-      {
-        content: "dolor",
-        me: false,
-        created_at: "11:11am",
-      },
     ],
   }),
   methods:{

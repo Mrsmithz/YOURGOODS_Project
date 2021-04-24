@@ -3,7 +3,10 @@ const Request = require('../model/Request')
 exports.createRequest = async (req, res) => {
    try{
        var request = new Request()
-       let result = await request.createRequest(req.file.path, req.body.status, req.body.customer_id, req.body.operator_id)
+       let operator_id = (await request.getOperatorId()).reduce((previous, current) => {
+        return previous.request_count < current ? previous : current
+        }).operator_id
+       let result = await request.createRequest(req.file.path, req.body.status, req.body.customer_id, operator_id)
        res.status(201).send({
            request_id:result
        })

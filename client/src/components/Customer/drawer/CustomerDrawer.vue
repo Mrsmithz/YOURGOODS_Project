@@ -28,7 +28,7 @@
       </v-list-item-content>
     </v-list-item>
     <v-list>
-      <v-list-item v-for="item in items" :key="item.title" link>
+      <v-list-item v-for="item in items" :key="item.title" link @click="showPage(item.key)">
         <v-list-item-icon>
           <v-icon color="primary">{{ item.icon }}</v-icon>
         </v-list-item-icon>
@@ -46,10 +46,10 @@ export default {
   name: "CustomerDrawer",
   data: () => ({
     items: [
-      { title: "Dashboard", icon: "mdi-account-outline" },
-      { title: "Upload Document", icon: "mdi-account-outline" },
-      { title: "Orders History", icon: "mdi-account-outline" },
-      { title: "Feedback", icon: "mdi-account-outline" },
+      { title: "Dashboard", icon: "mdi-account-outline", key:'Dashboard'},
+      { title: "Upload Document", icon: "mdi-account-outline", key:'UploadDocument'},
+      { title: "Orders History", icon: "mdi-account-outline", key:'OrdersHistory'},
+      { title: "Feedback", icon: "mdi-account-outline", key:'Feedback'},
     ],
     toggleMini: false,
   }),
@@ -57,6 +57,9 @@ export default {
     showCustomerDrawer() {
       this.$store.commit("showSideBarMenu");
     },
+    showPage(key){
+      this.$store.commit('showCustomerPage', key)
+    }
   },
   computed: {
     sidebarMenuState: {

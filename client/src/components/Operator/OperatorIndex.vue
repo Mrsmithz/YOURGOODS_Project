@@ -7,6 +7,7 @@
                     <OperatorDashboard v-show="DashboardState"></OperatorDashboard>
                     <ManageRequest v-show="ManageRequestState"></ManageRequest>
                     <OrdersHistory v-show="OrdersHistoryState"></OrdersHistory>
+                    <TrackingOrder v-show="TrackingOrderState"></TrackingOrder>
                     <ManageOrder></ManageOrder>
                     <ManageGoods></ManageGoods>
                     <ManageSchedule></ManageSchedule>
@@ -25,6 +26,7 @@ import ManageSchedule from './schedule/ManageSchedule'
 import OperatorDashboard from './dashboard/OperatorDashboard'
 import OrdersHistory from './order/OrdersHistory'
 import ContactModal from '../Modal/Contact'
+import TrackingOrder from './tracking/TrackingOrder'
 export default {
     name:'OperatorIndex',
     components: {
@@ -35,7 +37,8 @@ export default {
         OperatorDashboard,
         OrdersHistory,
         ManageSchedule,
-        ContactModal
+        ContactModal,
+        TrackingOrder
     },
     computed:{
     DashboardState:{

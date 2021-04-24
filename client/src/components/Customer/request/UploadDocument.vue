@@ -77,18 +77,36 @@
               ></v-text-field>
             </v-toolbar>
           </template>
-          <template v-slot:[`item.actions`]="{ item }">
-            <v-btn
-              color="success"
-              class="mr-2"
-              @click="showContactModal"
+          <template v-slot:[`item.created_datetime`]="{ item }">
+            <v-tooltip right>
+              <template v-slot:activator="{ on }">
+                <span v-on="on">{{ item.created_datetime }}</span>
+              </template>
+              {{ item.full_created_datetime }}
+            </v-tooltip>
+          </template>
+          <template v-slot:[`item.modified_datetime`]="{ item }">
+            <v-tooltip right>
+              <template v-slot:activator="{ on }">
+                <span v-on="on">{{ item.modified_datetime }}</span>
+              </template>
+              {{ item.full_modified_datetime }}
+            </v-tooltip>
+          </template>
+          <template v-slot:[`item.file_name`]="{ item }">
+            {{ item.file_name }}
+            <v-icon class="ml-1" @click="openDocument(item.file_url)"
+              >mdi-file-document-outline</v-icon
             >
+          </template>
+          <template v-slot:[`item.actions`]="{ item }">
+            <v-btn small color="success" class="mr-2" @click="showContactModal">
               CONTACT
             </v-btn>
-            <v-icon class="ml-2 mr-2" @click="editItem(item)">
+            <v-icon class="ml-2 mr-2" @click="editUploaded(item)">
               mdi-pencil
             </v-icon>
-            <v-icon @click="deleteItem(item)">
+            <v-icon @click="deleteUploaded(item)">
               mdi-delete
             </v-icon>
           </template>
@@ -99,16 +117,19 @@
 </template>
 
 <script>
+import CustomerService from "../../../services/CustomerService";
 export default {
   name: "UploadDocument",
-  components: {
-  },
+  components: {},
   data: () => ({
     dragover: false,
     files: [],
     showContact: false,
     start_upload: false,
     search: "",
+    sortBy:'created_datetime',
+    sortDesc:false,
+    editTemp:'',
     headers_upload_history: [
       {
         text: "File Name",
@@ -122,15 +143,11 @@ export default {
       { text: "Actions", value: "actions", sortable: false },
     ],
     uploaded: [
-      {
-        file_name: "test.pdf",
-        status: "pending",
-        operator: "John Smith",
-        created_datetime: new Date().toDateString(),
-        modified_datetime: new Date().toDateString(),
-      },
     ],
   }),
+  mounted(){
+    this.getUploadHistory()
+  },
   computed: {
     ContactModalState: {
       get: function() {
@@ -142,22 +159,86 @@ export default {
     },
   },
   methods: {
-    showContactModal(){
-        this.$store.commit('showContactModal')
+    showContactModal() {
+      this.$store.commit("showContactModal");
+    },
+    openDocument(file_url){
+      window.open(file_url)
+    },
+    async editUploaded(item){
+      this.editTemp = item
+      this.$refs.filebtn.click()
+    },
+    async deleteUploaded(item){
+      try{
+        let result = await CustomerService.deleteRequest(item.id)
+        this.getUploadHistory()
+        console.log(result)
+      }
+      catch(err){
+        console.log(err)
+      }
     },
     async upload() {
       this.start_upload = true;
-      let delay = 100;
+      for (let file of this.files) {
+        try {
+          if (file.uploadProgress == 0 && file.editTemp){
+            let result = await CustomerService.editRequest(file.editTemp.id, this.createFormData(file), file, this.progressBar)
+            this.editTemp = ''
+            file.editTemp = ''
+            console.log(result)
+          }
+          else if (file.uploadProgress == 0){
+            let result = await CustomerService.createRequest(this.createFormData(file), file, this.progressBar);
+            console.log(result);
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      }
+      this.getUploadHistory()
+    },
+    getFullTime(time){
+      var date = new Date(time)
+      date.setTime(date.getTime() + 7 * 60 * 60 * 1000)
+      return `${date.toISOString().match(/\d+:\d+:\d+/)[0]} ${date.toDateString()}`
+    },
+    async getUploadHistory() {
       try {
-        await Promise.all(
-          this.files.map(async (file) => {
-            delay += 50;
-            return await this.test(file, delay);
-          })
-        );
+        let result = await CustomerService.getAllRequestByCustomerId();
+        let data = result.data
+        this.uploaded = []
+        for (let item of data){
+          var obj = {
+            id:item.id,
+            file_name:item.document.match(/`.+`/)[0].replaceAll('`', ''),
+            operator:item.operator_name,
+            status:item.status,
+            created_datetime:this.getFullTime(item.created_datetime), //new Date(item.created_datetime).toDateString(),
+            modified_datetime:this.getFullTime(item.modified_datetime), //new Date(item.modified_datetime).toDateString(),
+            full_created_datetime:this.getFullTime(item.created_datetime),
+            full_modified_datetime:this.getFullTime(item.modified_datetime),
+            operator_id:item.operator_id,
+            file_url:`http://localhost:25800/${item.document}`
+          }
+          this.uploaded.push(obj)
+        }
       } catch (err) {
         console.log(err);
       }
+    },
+    createFormData(file) {
+      var form = new FormData();
+      form.append("document", file);
+      form.append("status", "pending");
+      //form.append("operator_id", 13);
+      form.append("customer_id", this.$store.getters.getUser.id);
+      return form;
+    },
+    progressBar(percent, file) {
+      file.uploadProgress = percent;
+      this.$forceUpdate();
     },
     remove(file) {
       if (!this.start_upload) {
@@ -167,33 +248,25 @@ export default {
       }
     },
     reset() {
+      this.getUploadHistory();
       this.files = [];
-    },
-    sleep(ms) {
-      return new Promise((resolve) => setTimeout(resolve, ms));
-    },
-    async test(file, ms) {
-      let interval = setInterval(() => {
-        file.uploadProgress += 5;
-        console.log(file.uploadProgress);
-        this.$forceUpdate();
-      }, ms);
-      while (file.uploadProgress != 100) {
-        await this.sleep(100);
-      }
-      clearInterval(interval);
-      return Promise.resolve();
     },
     drop(e) {
       e.preventDefault();
       var files = e.target.files || e.dataTransfer.files;
-      this.AddToFiles(files)
       this.dragover = false;
+      if (this.editTemp){
+        this.AddToFiles(files, this.editTemp)
+        this.upload()
+      }
+      else{
+        this.AddToFiles(files);
+      }
     },
     clickToAdd() {
       this.$refs.filebtn.click();
     },
-    AddToFiles(files) {
+    AddToFiles(files, editTemp) {
       for (let file of files) {
         let found = false;
         for (let el of this.files) {
@@ -204,6 +277,9 @@ export default {
         }
         if (!found) {
           file.uploadProgress = 0;
+          if (editTemp){
+            file.editTemp = editTemp
+          }
           this.files.push(file);
         }
       }

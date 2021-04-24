@@ -22,11 +22,14 @@
               ></v-text-field>
             </v-toolbar>
           </template>
+          <template v-slot:[`item.goods`]="{ item }">
+            <v-btn small color="primary" @click="editItem(item)">view</v-btn>
+          </template>
           <template v-slot:[`item.actions`]="{ item }">
-            <v-btn class="mr-2" color="primary" @click="editItem(item)">
+            <v-btn small class="mr-2" color="primary" @click="editItem(item)">
               CONFIRM
             </v-btn>
-            <v-btn color="error" @click="deleteItem(item)">
+            <v-btn small color="error" @click="deleteItem(item)">
               REJECT
             </v-btn>
           </template>
@@ -54,13 +57,8 @@
               ></v-text-field>
             </v-toolbar>
           </template>
-          <template v-slot:[`item.actions`]="{ item }">
-            <v-icon class="mr-2" @click="editItem(item)">
-              mdi-pencil
-            </v-icon>
-            <v-icon @click="deleteItem(item)">
-              mdi-delete
-            </v-icon>
+          <template v-slot:[`item.goods`]="{ item }">
+            <v-btn small color="primary" @click="editItem(item)">view</v-btn>
           </template>
         </v-data-table>
       </v-col>
@@ -80,11 +78,12 @@ export default {
         },
         { text: 'Pickup Address', value: 'pickup_address' },
         { text: 'Receiver Address', value: 'receiver_address' },
+        { text: 'Goods', value: 'goods', align: 'center',},
         { text: 'Invoice ID', value: 'invoice_id' },
         { text: 'Container ID', value: 'container_id' },
         { text: 'Created Date Time', value: 'created_datetime' },
         { text: 'Modified Date Time', value: 'modified_datetime' },
-        { text: 'Actions', value: 'actions', sortable: false },
+        { text: 'Actions', value: 'actions', sortable: false, align: 'center',},
       ],
       headers_history: [
         {
@@ -94,6 +93,7 @@ export default {
         },
         { text: 'Pickup Address', value: 'pickup_address' },
         { text: 'Receiver Address', value: 'receiver_address' },
+        { text: 'Goods', value: 'goods', align: 'center'},
         { text: 'Invoice ID', value: 'invoice_id' },
         { text: 'Container ID', value: 'container_id' },
         { text: 'Status', value: 'status' },

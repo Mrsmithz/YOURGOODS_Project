@@ -22,6 +22,10 @@
               ></v-text-field>
             </v-toolbar>
           </template>
+          <template v-slot:[`item.document`]="{ item }">
+            {{item.document}}
+            <v-icon class="ml-1" @click="test(item)" >mdi-file-document-outline</v-icon>
+          </template>
           <template v-slot:[`item.actions`]="{ item }">
             <v-btn class="mr-2" color="primary" @click="showContactModal">
               CHAT
@@ -68,6 +72,9 @@ export default {
     showContactModal() {
       this.$store.commit("showContactModal");
     },
+    test(item){
+      console.log(item)
+    }
   },
   data: () => ({
     search: "",

@@ -4,11 +4,11 @@
       <v-container fluid class="fill-height" px-4 py-2>
           <v-row class="fill-height">
             <v-col>
-              <CustomerDashboard v-if="false"></CustomerDashboard>
-              <UploadDocument v-if="false"></UploadDocument>
-              <OrdersHistory v-if="false"></OrdersHistory>
+              <CustomerDashboard v-if="DashboardState"></CustomerDashboard>
+              <UploadDocument v-if="UploadDocumentState"></UploadDocument>
+              <OrdersHistory v-if="OrdersHistoryState"></OrdersHistory>
+              <Feedback v-if="FeedbackState"></Feedback>
               <Contact v-if="ContactModalState"></Contact>
-              <Feedback v-if="true"></Feedback>
             </v-col>
           </v-row>
       </v-container>
@@ -40,6 +40,38 @@ export default {
     ContactModalState: {
       get: function() {
         return this.$store.getters.getContactModal;
+      },
+      set: function(newValue) {
+        return newValue;
+      },
+    },
+    DashboardState: {
+      get: function() {
+        return this.$store.getters.getCustomer.Dashboard;
+      },
+      set: function(newValue) {
+        return newValue;
+      },
+    },
+    UploadDocumentState: {
+      get: function() {
+        return this.$store.getters.getCustomer.UploadDocument;
+      },
+      set: function(newValue) {
+        return newValue;
+      },
+    },
+    OrdersHistoryState: {
+      get: function() {
+        return this.$store.getters.getCustomer.OrdersHistory;
+      },
+      set: function(newValue) {
+        return newValue;
+      },
+    },
+    FeedbackState: {
+      get: function() {
+        return this.$store.getters.getCustomer.Feedback;
       },
       set: function(newValue) {
         return newValue;
