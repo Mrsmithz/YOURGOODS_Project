@@ -5,8 +5,8 @@ exports.createRequest = async (req, res) => {
        var request = new Request()
        let operator_id = (await request.getOperatorId()).reduce((previous, current) => {
         return previous.request_count < current ? previous : current
-        }).operator_id
-       let result = await request.createRequest(req.file.path, req.body.status, req.body.customer_id, operator_id)
+        }).id
+       let result = await request.createRequest(req.file.path, req.body.status, req.session.user.id, operator_id)
        res.status(201).send({
            request_id:result
        })

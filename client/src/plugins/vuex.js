@@ -18,9 +18,12 @@ const store = new Vuex.Store({
         ProfileDrawer:false,
         sidebarMenu:true,
         ContactModal:false,
-        temp_request_id:'',
-        temp_goods_id:'',
-        temp_order_id:'',
+        Temp:{
+            temp_request_id:'',
+            temp_goods_id:'',
+            temp_order_id:'',
+            temp_operator_contact_id:'',
+        },
         Customer:{
             Dashboard:true,
             UploadDocument:false,
@@ -40,14 +43,17 @@ const store = new Vuex.Store({
         }
     },
     mutations:{
+        setTempOperatorContactId(state, operator_id){
+            state.Temp.temp_operator_contact_id = operator_id
+        },
         setTempRequestId(state, request_id){
-            state.temp_request_id = request_id
+            state.Temp.temp_request_id = request_id
         },
         setTempGoodsId(state, goods_id){
-            state.temp_goods_id = goods_id
+            state.Temp.temp_goods_id = goods_id
         },
         setTempOrderId(state, order_id){
-            state.temp_order_id = order_id
+            state.Temp.temp_order_id = order_id
         },
         show_login(state){
             state.show_login = !state.show_login
@@ -140,14 +146,17 @@ const store = new Vuex.Store({
             return state.OperatorManage
         },
         getTempRequestId: state => {
-            return state.temp_request_id
+            return state.Temp.temp_request_id
         },
         getTempOrderId: state => {
-            return state.temp_order_id
+            return state.Temp.temp_order_id
         },
         getTempGoodsId: state => {
-            return state.temp_goods_id
+            return state.Temp.temp_goods_id
         },
+        getTempOperatorContactId: state => {
+            return state.Temp.temp_operator_contact_id
+        }
     }
 })
 

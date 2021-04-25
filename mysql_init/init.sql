@@ -38,6 +38,7 @@ create table CONTACTS(
     sender_id int not null,
     receiver_id int not null,
     `message` text not null,
+    `status` enum('unreaded', 'readed') not null default 'unreaded',
     created_datetime datetime not null default now(),
     foreign key (sender_id) references USER(id),
     foreign key (receiver_id) references USER(id)

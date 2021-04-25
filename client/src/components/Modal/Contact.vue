@@ -1,7 +1,12 @@
 <template>
-  <v-dialog v-model="ContactModalState" max-width="50%" @click:outside="showContactModal">
+  <v-dialog
+    v-model="ContactModalState"
+    max-width="50%"
+    @click:outside="showContactModal"
+    eager
+  >
     <v-row class="no-gutters elevation-4">
-      <v-col
+      <!-- <v-col
         cols="12"
         sm="3"
         class="flex-grow-1 flex-shrink-0"
@@ -35,20 +40,20 @@
             </v-list-item-group>
           </v-list>
         </v-responsive>
-      </v-col>
+      </v-col> -->
       <v-col cols="auto" class="flex-grow-1 flex-shrink-0">
-        <v-responsive
-          v-if="activeChat"
-          class="overflow-y-hidden fill-height"
-          height="500"
-        >
+        <v-responsive class="overflow-y-hidden fill-height" height="500">
           <v-card flat class="d-flex flex-column fill-height">
-            <v-card-title>John Smith</v-card-title>
-            <v-card-text class="flex-grow-1 overflow-y-auto">
+            <v-card-title>{{receiver_name}}</v-card-title>
+            <v-card-text
+              class="flex-grow-1 overflow-y-auto"
+              ref="chatBox"
+              id="chatBox"
+            >
               <template v-for="msg in messages">
                 <div
                   :class="{ 'd-flex flex-row-reverse': msg.me }"
-                  :key="msg.content"
+                  :key="msg.id"
                 >
                   <v-menu offset-y>
                     <template v-slot:activator="{ on }">
@@ -76,8 +81,9 @@
                 no-details
                 outlined
                 :append-outer-icon="'mdi-send'"
-                @keyup.enter="messages.push(messageForm)"
-                @click:append-outer="messages.push(messageForm)"
+                v-model="message"
+                @keyup.enter="sendMessage"
+                @click:append-outer="sendMessage"
                 hide-details
               />
             </v-card-text>
@@ -88,70 +94,149 @@
   </v-dialog>
 </template>
 <script>
+import ContactsService from "../../services/ContactsService";
 export default {
   name: "Contact",
   data: () => ({
     dialog: true,
     activeChat: true,
-    parents: [
-      {
-        id: 1,
-        title: "john doe",
-        active: true,
-      },
-      {
-        id: 2,
-        title: "scarlett",
-        active: false,
-      },
-      {
-        id: 3,
-        title: "scarlett",
-        active: false,
-      },
-      {
-        id: 4,
-        title: "scarlett",
-        active: false,
-      },
-      {
-        id: 5,
-        title: "scarlett",
-        active: false,
-      },
-      {
-        id: 6,
-        title: "scarlett",
-        active: false,
-      },
-      {
-        id: 7,
-        title: "scarlett",
-        active: false,
-      },
-    ],
-    messages: [
-      {
-        content: "lorem ipsum",
-        me: true,
-        created_at: "11:11am",
-      },
-      {
-        content: "dolor",
-        me: false,
-        created_at: "11:11am",
-      },
-    ],
+    message: "",
+    msgkey: 13244,
+    messages: [],
+    receiver_name:''
   }),
-  methods:{
-      showContactModal(){
-          this.$store.commit('showContactModal')
+  async mounted() {
+    //this.$root.$refs.Contact = this
+    try {
+      await this.getName()
+      await this.getMessageBySender();
+      await this.updateMessageStatus()
+      this.scrollToTop();
+    } catch (err) {
+      console.log(err);
+    }
+  },
+  methods: {
+    async updateMessageStatus(){
+      try{
+        let form = new FormData()
+        form.append('status', 'readed')
+        form.append('sender_id', this.TempOperatorContactIdState)
+        let result = await ContactsService.UpdateMessageStatusByReceiver(form)
+        console.log(result)
+        return Promise.resolve()
       }
+      catch(err){
+        console.log(err)
+        return Promise.reject()
+      }
+    },
+    showContactModal() {
+      this.$store.commit("showContactModal");
+    },
+    getFullTime(time) {
+      var date = new Date(time);
+      date.setTime(date.getTime() + 7 * 60 * 60 * 1000);
+      return `${date.toISOString().match(/\d+:\d+:\d+/)[0]}`;
+    },
+    createFormData(receiver_id, message) {
+      var form = new FormData();
+      form.append("receiver_id", receiver_id);
+      if (message) {
+        form.append("message", message);
+      }
+      return form;
+    },
+    createGetMessageFormData(sender_id) {
+      var form = new FormData();
+      form.append("sender_id", sender_id);
+      return form;
+    },
+    sortByCreatedDateTime(a, b) {
+      if (new Date(a.created_datetime) < new Date(b.created_datetime)) {
+        return -1;
+      }
+      if (new Date(a.created_datetime) > new Date(b.created_datetime)) {
+        return 1;
+      }
+      return 0;
+    },
+    scrollToTop() {
+      this.$refs.chatBox.scrollTop = this.$refs.chatBox.scrollHeight;
+    },
+    async getName(){
+      try{
+        let result = await ContactsService.getNameById(this.TempOperatorContactIdState)
+        this.receiver_name = result.data[0].name
+        return Promise.resolve()
+      }
+      catch(err){
+        console.log(err)
+        return Promise.reject()
+      }
+    },
+    async sendMessage() {
+      try {
+        if (this.message != "") {
+          await ContactsService.sendMessage(
+            this.createFormData(this.TempOperatorContactIdState, this.message)
+          );
+          this.message = "";
+          await this.getMessageBySender();
+          this.scrollToTop()
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    async getMessageBySender() {
+      try {
+        let send = await ContactsService.getMessageBySender(
+          this.createFormData(this.TempOperatorContactIdState)
+        );
+        let receive = await ContactsService.getMessageByReceiver(
+          this.createGetMessageFormData(this.TempOperatorContactIdState)
+        );
+        let result = [...send.data, ...receive.data];
+        result.sort(this.sortByCreatedDateTime);
+        this.messages = [];
+        for (let item of result) {
+          var obj = {
+            id: item.id,
+            content: item.message,
+            me: item.sender_id == this.UserState.id ? true : false,
+            created_at: this.getFullTime(item.created_datetime),
+            status:item.status
+          };
+          this.messages.push(obj);
+        }
+        return Promise.resolve();
+      } catch (err) {
+        console.log(err);
+        return Promise.reject();
+      }
+    },
   },
   computed: {
+    UserState: {
+      get: function() {
+        return this.$store.getters.getUser;
+      },
+      set: function(newValue) {
+        return newValue;
+      },
+    },
     ContactModalState: {
       get: function() {
         return this.$store.getters.getContactModal;
+      },
+      set: function(newValue) {
+        return newValue;
+      },
+    },
+    TempOperatorContactIdState: {
+      get: function() {
+        return this.$store.getters.getTempOperatorContactId;
       },
       set: function(newValue) {
         return newValue;

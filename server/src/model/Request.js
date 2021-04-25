@@ -100,11 +100,15 @@ class Request{
         let conn = await pool.getConnection()
         await conn.beginTransaction()
         try{
-            var stmt = 'select request_count, sub.operator_id from \
-            (select COUNT(u.id) as request_count, u.id as operator_id from CUSTOMER_OPERATOR as c \
-            join USER as u\
-            on u.id = c.operator_id and u.type = \'operator\' \
-            group by u.id) as sub'
+            // var stmt = 'select request_count, sub.id from \
+            // (select COUNT(c.operator_id) as request_count, u.id as id from CUSTOMER_OPERATOR as c \
+            // left join USER as u\
+            // on u.id = c.operator_id and u.type = \'operator\' \
+            // group by u.id) as sub'
+            var stmt = 'select count(c.operator_id) as request_count, u.id from USER as u \
+            left join CUSTOMER_OPERATOR as c \
+            on u.id = c.operator_id where u.type = \'operator\' \
+            group by u.id'
             let [rows, field] = await conn.query(stmt)
             await conn.commit()
             return Promise.resolve(rows)

@@ -207,6 +207,23 @@ class User{
             conn.release()
         }
     }
+    async getNameById(id){
+        let conn = await pool.getConnection()
+        await conn.beginTransaction()
+        try{
+            var stmt = 'select name from USER where id = ?'
+            let [rows, fields] = await conn.query(stmt, [id])
+            await conn.commit()
+            return Promise.resolve(rows)
+        }
+        catch(err){
+            await conn.rollback()
+            return Promise.reject(err)
+        }
+        finally{
+            conn.release()
+        }
+    }
 }
 
 module.exports = User

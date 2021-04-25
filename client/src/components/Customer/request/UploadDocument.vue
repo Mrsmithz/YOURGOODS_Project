@@ -100,9 +100,21 @@
             >
           </template>
           <template v-slot:[`item.actions`]="{ item }">
-            <v-btn small color="success" class="mr-2" @click="showContactModal">
-              CONTACT
-            </v-btn>
+            <v-badge
+              overlap
+              :value="item.message_count"
+              :content="item.message_count"
+            >
+              <v-btn
+                small
+                color="success"
+                class="mr-2"
+                @click="showContactModal(item)"
+              >
+                CONTACT
+              </v-btn>
+            </v-badge>
+
             <v-icon class="ml-2 mr-2" @click="editUploaded(item)">
               mdi-pencil
             </v-icon>
@@ -118,6 +130,7 @@
 
 <script>
 import CustomerService from "../../../services/CustomerService";
+import ContactsService from "../../../services/ContactsService";
 export default {
   name: "UploadDocument",
   components: {},
@@ -127,9 +140,11 @@ export default {
     showContact: false,
     start_upload: false,
     search: "",
-    sortBy:'created_datetime',
-    sortDesc:false,
-    editTemp:'',
+    sortBy: "created_datetime",
+    sortDesc: false,
+    editTemp: "",
+    unreadMessage: [],
+    interval:'',
     headers_upload_history: [
       {
         text: "File Name",
@@ -142,11 +157,19 @@ export default {
       { text: "Modified Date Time", value: "modified_datetime" },
       { text: "Actions", value: "actions", sortable: false },
     ],
-    uploaded: [
-    ],
+    uploaded: [],
   }),
-  mounted(){
+  mounted() {
+    this.getUnReadMessage()
     this.getUploadHistory()
+    this.interval = setInterval(() => {
+      this.getUnReadMessage()
+      this.getUploadHistory()
+    }, 1000)
+    console.log(this.interval)
+  },
+  beforeDestroy(){
+    clearInterval(this.interval)
   },
   computed: {
     ContactModalState: {
@@ -159,71 +182,99 @@ export default {
     },
   },
   methods: {
-    showContactModal() {
-      this.$store.commit("showContactModal");
+    countMessage(id) {
+      let result = this.unreadMessage.filter((el) => el.sender_id == id).length;
+      return result;
     },
-    openDocument(file_url){
-      window.open(file_url)
-    },
-    async editUploaded(item){
-      this.editTemp = item
-      this.$refs.filebtn.click()
-    },
-    async deleteUploaded(item){
-      try{
-        let result = await CustomerService.deleteRequest(item.id)
-        this.getUploadHistory()
-        console.log(result)
+    async getUnReadMessage() {
+      try {
+        let result = await ContactsService.getUnReadMessageByReceiver();
+        this.unreadMessage = result.data;
+      } catch (err) {
+        console.log(err);
       }
-      catch(err){
-        console.log(err)
+    },
+    showContactModal(item) {
+      this.$store.commit("setTempOperatorContactId", item.operator_id);
+      this.$store.commit("showContactModal");
+      setTimeout(() => {
+        this.getUnReadMessage()
+        this.getUploadHistory();
+      }, 1000)
+    },
+    openDocument(file_url) {
+      window.open(file_url);
+    },
+    async editUploaded(item) {
+      this.editTemp = item;
+      this.$refs.filebtn.click();
+    },
+    async deleteUploaded(item) {
+      try {
+        let result = await CustomerService.deleteRequest(item.id);
+        this.getUploadHistory();
+        console.log(result);
+      } catch (err) {
+        console.log(err);
       }
     },
     async upload() {
       this.start_upload = true;
       for (let file of this.files) {
         try {
-          if (file.uploadProgress == 0 && file.editTemp){
-            let result = await CustomerService.editRequest(file.editTemp.id, this.createFormData(file), file, this.progressBar)
-            this.editTemp = ''
-            file.editTemp = ''
-            console.log(result)
-          }
-          else if (file.uploadProgress == 0){
-            let result = await CustomerService.createRequest(this.createFormData(file), file, this.progressBar);
+          if (file.uploadProgress == 0 && file.editTemp) {
+            let result = await CustomerService.editRequest(
+              file.editTemp.id,
+              this.createFormData(file),
+              file,
+              this.progressBar
+            );
+            this.editTemp = "";
+            file.editTemp = "";
+            console.log(result);
+          } else if (file.uploadProgress == 0) {
+            let result = await CustomerService.createRequest(
+              this.createFormData(file),
+              file,
+              this.progressBar
+            );
             console.log(result);
           }
         } catch (err) {
           console.log(err);
         }
       }
-      this.getUploadHistory()
+      this.getUploadHistory();
     },
-    getFullTime(time){
-      var date = new Date(time)
-      date.setTime(date.getTime() + 7 * 60 * 60 * 1000)
-      return `${date.toISOString().match(/\d+:\d+:\d+/)[0]} ${date.toDateString()}`
+    getFullTime(time) {
+      var date = new Date(time);
+      date.setTime(date.getTime() + 7 * 60 * 60 * 1000);
+      return `${
+        date.toISOString().match(/\d+:\d+:\d+/)[0]
+      } ${date.toDateString()}`;
     },
     async getUploadHistory() {
       try {
         let result = await CustomerService.getAllRequestByCustomerId();
-        let data = result.data
-        this.uploaded = []
-        for (let item of data){
+        let data = result.data;
+        this.uploaded = [];
+        for (let item of data) {
           var obj = {
-            id:item.id,
-            file_name:item.document.match(/`.+`/)[0].replaceAll('`', ''),
-            operator:item.operator_name,
-            status:item.status,
-            created_datetime:this.getFullTime(item.created_datetime), //new Date(item.created_datetime).toDateString(),
-            modified_datetime:this.getFullTime(item.modified_datetime), //new Date(item.modified_datetime).toDateString(),
-            full_created_datetime:this.getFullTime(item.created_datetime),
-            full_modified_datetime:this.getFullTime(item.modified_datetime),
-            operator_id:item.operator_id,
-            file_url:`http://localhost:25800/${item.document}`
-          }
-          this.uploaded.push(obj)
+            id: item.id,
+            file_name: item.document.match(/`.+`/)[0].replaceAll("`", ""),
+            operator: item.operator_name,
+            status: item.status,
+            created_datetime: this.getFullTime(item.created_datetime), //new Date(item.created_datetime).toDateString(),
+            modified_datetime: this.getFullTime(item.modified_datetime), //new Date(item.modified_datetime).toDateString(),
+            full_created_datetime: this.getFullTime(item.created_datetime),
+            full_modified_datetime: this.getFullTime(item.modified_datetime),
+            operator_id: item.operator_id,
+            file_url: `http://localhost:25800/${item.document}`,
+            message_count: this.countMessage(item.operator_id),
+          };
+          this.uploaded.push(obj);
         }
+        console.log(this.uploaded);
       } catch (err) {
         console.log(err);
       }
@@ -233,7 +284,7 @@ export default {
       form.append("document", file);
       form.append("status", "pending");
       //form.append("operator_id", 13);
-      form.append("customer_id", this.$store.getters.getUser.id);
+      //form.append("customer_id", this.$store.getters.getUser.id);
       return form;
     },
     progressBar(percent, file) {
@@ -255,11 +306,10 @@ export default {
       e.preventDefault();
       var files = e.target.files || e.dataTransfer.files;
       this.dragover = false;
-      if (this.editTemp){
-        this.AddToFiles(files, this.editTemp)
-        this.upload()
-      }
-      else{
+      if (this.editTemp) {
+        this.AddToFiles(files, this.editTemp);
+        this.upload();
+      } else {
         this.AddToFiles(files);
       }
     },
@@ -277,8 +327,8 @@ export default {
         }
         if (!found) {
           file.uploadProgress = 0;
-          if (editTemp){
-            file.editTemp = editTemp
+          if (editTemp) {
+            file.editTemp = editTemp;
           }
           this.files.push(file);
         }
