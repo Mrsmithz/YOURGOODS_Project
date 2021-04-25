@@ -40,6 +40,9 @@ const store = new Vuex.Store({
             ManageOrder:false,
             ManageGoods:false,
             ManageSchedule:false
+        },
+        Goods:{
+            createGoods:false
         }
     },
     mutations:{
@@ -112,6 +115,9 @@ const store = new Vuex.Store({
         },
         showOperatorManagePage(state, page){
             state.OperatorManage[page] = !state.OperatorManage[page]
+        },
+        setGoodsState(state, key){
+            state.Goods[key] = !state.Goods[key]
         }
     },
     getters:{
@@ -156,7 +162,10 @@ const store = new Vuex.Store({
         },
         getTempOperatorContactId: state => {
             return state.Temp.temp_operator_contact_id
-        }
+        },
+        getGoods: state => {
+            return state.Goods
+        },
     }
 })
 

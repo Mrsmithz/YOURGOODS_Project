@@ -4,14 +4,14 @@
         <v-row>
             <v-col>
                 <v-container>
-                    <OperatorDashboard v-show="DashboardState"></OperatorDashboard>
-                    <ManageRequest v-show="ManageRequestState"></ManageRequest>
-                    <OrdersHistory v-show="OrdersHistoryState"></OrdersHistory>
-                    <TrackingOrder v-show="TrackingOrderState"></TrackingOrder>
+                    <OperatorDashboard v-if="DashboardState"></OperatorDashboard>
+                    <ManageRequest v-if="ManageRequestState"></ManageRequest>
+                    <OrdersHistory v-if="OrdersHistoryState"></OrdersHistory>
+                    <TrackingOrder v-if="TrackingOrderState"></TrackingOrder>
                     <ManageOrder></ManageOrder>
                     <ManageGoods></ManageGoods>
                     <ManageSchedule></ManageSchedule>
-                    <ContactModal></ContactModal>
+                    <ContactModal v-if="ContactModalState"></ContactModal>
                 </v-container>
             </v-col>
         </v-row>
@@ -72,6 +72,14 @@ export default {
       set:function(newValue){
         return newValue
       }
+    },
+    ContactModalState: {
+      get: function() {
+        return this.$store.getters.getContactModal;
+      },
+      set: function(newValue) {
+        return newValue;
+      },
     },
   }
 }

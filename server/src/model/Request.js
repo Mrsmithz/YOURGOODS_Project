@@ -62,6 +62,28 @@ class Request{
             conn.release()
         }
     }
+    async getAllRequestByOperatorId(operator_id){
+        let conn = await pool.getConnection()
+        await conn.beginTransaction()
+        try{
+            var stmt = 'select r.*, u.name as customer_name, u.id as operator_id, o.id as order_id from CUSTOMER_OPERATOR as r\
+            join USER as u \
+            on u.id = r.customer_id \
+            left join ORDERS as o \
+            on o.request_id = r.id \
+            where r.operator_id = ?'
+            let [rows, fields] = await conn.query(stmt, [operator_id])
+            await conn.commit()
+            return Promise.resolve(rows)
+        }
+        catch(err){
+            await conn.rollback()
+            return Promise.reject(err)
+        }
+        finally{
+            conn.release()
+        }
+    }
     async deleteRequestById(id){
         let conn = await pool.getConnection()
         await conn.beginTransaction()

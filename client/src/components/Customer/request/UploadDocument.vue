@@ -94,10 +94,12 @@
             </v-tooltip>
           </template>
           <template v-slot:[`item.file_name`]="{ item }">
-            {{ item.file_name }}
-            <v-icon class="ml-1" @click="openDocument(item.file_url)"
-              >mdi-file-document-outline</v-icon
-            >
+            <div class="text-truncate" style="max-width:20em">
+              <v-icon class="ml-1" @click="openDocument(item.file_url)"
+                >mdi-file-document-outline</v-icon
+              >
+              {{ item.file_name }}
+            </div>
           </template>
           <template v-slot:[`item.actions`]="{ item }">
             <v-badge
@@ -144,7 +146,7 @@ export default {
     sortDesc: false,
     editTemp: "",
     unreadMessage: [],
-    interval:'',
+    interval: "",
     headers_upload_history: [
       {
         text: "File Name",
@@ -160,16 +162,19 @@ export default {
     uploaded: [],
   }),
   mounted() {
-    this.getUnReadMessage()
-    this.getUploadHistory()
+    this.getUnReadMessage();
+    this.getUploadHistory();
     this.interval = setInterval(() => {
-      this.getUnReadMessage()
-      this.getUploadHistory()
-    }, 1000)
-    console.log(this.interval)
+      this.getUnReadMessage();
+      this.getUploadHistory();
+    }, 1000);
+    console.log(this.interval);
   },
-  beforeDestroy(){
-    clearInterval(this.interval)
+  beforeDestroy() {
+    clearInterval(this.interval);
+  },
+  beforeUpdate() {
+    clearInterval(this.interval);
   },
   computed: {
     ContactModalState: {
@@ -198,9 +203,9 @@ export default {
       this.$store.commit("setTempOperatorContactId", item.operator_id);
       this.$store.commit("showContactModal");
       setTimeout(() => {
-        this.getUnReadMessage()
+        this.getUnReadMessage();
         this.getUploadHistory();
-      }, 1000)
+      }, 1000);
     },
     openDocument(file_url) {
       window.open(file_url);

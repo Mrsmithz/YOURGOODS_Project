@@ -240,6 +240,19 @@
                                   ></v-text-field>
                                 </div>
                               </v-slide-x-transition>
+                              <v-slide-x-transition>
+                                <div class="" v-if="role_register != 'Customer' && role_register != null && role_register != 'Supervisor'">
+                                  <v-text-field
+                                    v-model="manage_by"
+                                    label="Manage By"
+                                    required
+                                    class="pt-0"
+                                    type="text"
+                                    clearable
+                                    :rules="manageByRules"
+                                  ></v-text-field>
+                                </div>
+                              </v-slide-x-transition>
                               <v-checkbox
                                   v-model="checkbox"
                                   :rules="[
@@ -341,6 +354,7 @@ export default {
     register_error: "",
     secret_key:"",
     login_error:"",
+    manage_by:'',
     show_password:false,
     show_secret_key:false,
     usernameRules:[
@@ -379,6 +393,9 @@ export default {
     ],
     secretKeyRules: [
       (v) => !!v || "Please enter secret key"
+    ],
+    manageByRules: [
+      (v) => !!v || "Please enter Manager ID"
     ]
   }),
   methods:{
@@ -419,6 +436,9 @@ export default {
       form.append('address', this.address_register);
       if (this.role_register != 'Customer'){
         form.append('secret_key', this.secret_key)
+        if (this.role_register != 'Supervisor'){
+          form.append('manage_by', this.manage_by)
+        }
       }
       return form
     },

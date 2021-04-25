@@ -190,14 +190,14 @@ class User{
             await conn.commit()
             if (rows.length > 0){
                 if (rows[0].id == id && rows[0].type == 'supervisor'){
-                    return Promise.resolve('ID valid')
+                    return Promise.resolve('Supervisor ID valid')
                 }
                 else{
-                    return Promise.reject('ID invalid')
+                    return Promise.reject('Supervisor ID invalid')
                 }
             }
             else{
-                return Promise.reject('ID not found')
+                return Promise.reject('Supervisor ID not found')
             }
         }
         catch(err){

@@ -90,17 +90,6 @@ export default {
       }
     },
   },
-  async beforeCreate() {
-    try {
-      let result = await AccountService.getSession();
-      console.log(result);
-      this.$store.commit("setUser", result.data);
-    } catch (err) {
-      console.log(err.response);
-      window.sessionStorage.clear();
-      this.$router.go();
-    }
-  },
 };
 </script>
 <style scoped>

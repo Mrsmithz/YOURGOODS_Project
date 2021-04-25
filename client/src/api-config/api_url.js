@@ -16,6 +16,22 @@ const url = {
         updateMessageStatus:'http://localhost:25800/api/contacts/updateMessageStatus',
         getNameById:'http://localhost:25800/api/contacts/getName/',
         getUnReadMessageByReceiver:'http://localhost:25800/api/contacts/getUnReadMessageByReceiver'
+    },
+    Goods:{
+        createGoods:'http://localhost:25800/api/goods/create',
+        editGoodsById:'http://localhost:25800/api/goods/edit/',
+        getGoodsById:'http://localhost:25800/api/goods/by/id/',
+        getGoodsByOrderId:'http://localhost:25800/api/goods/by/order/',
+        deleteGoodsById:'http://localhost:25800/api/goods/by/id/',
+        deleteGoodsByOrderId:'http://localhost:25800/api/goods/by/order/'
+    },
+    Operator:{
+        getRequestByOperatorId:'http://localhost:25800/api/request/getAllRequestByOperatorId'
+    },
+    Order:{
+        getOrderByRequestId:'http://localhost:25800/api/orders/get/request/',
+        createOrder:'http://localhost:25800/api/orders/create',
+        getOrderById:'http://localhost:25800/api/orders/get/'
     }
 }
 

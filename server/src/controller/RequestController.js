@@ -28,7 +28,17 @@ exports.getRequestById = async (req, res) => {
         res.sendStatus(400)
     }
 }
-
+exports.getAllRequestByOperatorId = async (req, res) => {
+    try{
+        let request = new Request()
+        let result = await request.getAllRequestByOperatorId(req.session.user.id)
+        res.status(200).send(result)
+    }
+    catch(err){
+        console.log(err)
+        res.sendStatus(400)
+    }
+}
 exports.getAllRequestByCustomerId = async(req, res) => {
     try{
         var request = new Request()

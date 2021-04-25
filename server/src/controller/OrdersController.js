@@ -8,7 +8,7 @@ exports.createOrder = async (req, res) => {
         }
         var data = req.body
         var order = new Order(null, data.company_name, data.receiver_address, data.pickup_address,
-            data.invoice_id, data.container_id, data.customer_id, data.operator_id)
+            data.invoice_id, data.container_id, data.request_id, req.session.user.id)
         await order.createOrder()
         res.status(201).send(order)
     }
@@ -51,11 +51,10 @@ exports.deleteOrderById = async (req, res) => {
         res.sendStatus(400)
     }
 }
-exports.getOrdersByCustomer = async (req, res) => {
+exports.getOrdersByRequsetId = async (req, res) => {
     try{
-        var id = req.session.user.id
         var order = new Order()
-        let result = await order.getOrdersByCustomer(id)
+        let result = await order.getOrdersByRequestId(req.params.id)
         res.status(200).send(result)
     }
     catch(err){
