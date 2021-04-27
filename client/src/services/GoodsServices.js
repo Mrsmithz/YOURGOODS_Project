@@ -7,8 +7,8 @@ class GoodsService{
     static async createGoods(data){
         return await axios.post(url.Goods.createGoods, data)
     }
-    static async editGoodsById(data){
-        return await axios.put(url.Goods.editGoodsById, data)
+    static async editGoodsById(id, data){
+        return await axios.put(url.Goods.editGoodsById+id, data)
     }
     static async deleteGoodsByOrderId(id){
         return await axios.delete(url.Goods.deleteGoodsByOrderId+id)

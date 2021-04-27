@@ -13,5 +13,11 @@ class OrderService{
     static async getOrderById(id){
         return await axios.get(url.Order.getOrderById+id)
     }
+    static async editOrderById(id, data){
+        return await axios.put(url.Order.editOrderById+id, data)
+    }
+    static async deleteOrderById(id){
+        return await axios.delete(url.Order.deleteOrderById+id)
+    }
 }
 export default OrderService

@@ -78,4 +78,16 @@ exports.editRequest = async (req, res) => {
     }
 }
 
+exports.updateRequestStatus = async (req, res) => {
+    try{
+        var request = new Request()
+        await request.updateRequestStatus(req.params.id, req.body.status)
+        res.sendStatus(200)
+    }
+    catch(err){
+        console.log(err)
+        res.sendStatus(400)
+    }
+}
+
 

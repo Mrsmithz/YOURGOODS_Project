@@ -90,3 +90,19 @@ exports.getOrderById = async (req, res) => {
         res.sendStatus(404)
     }
 }
+exports.getOrdersHistoryByCustomer = async (req, res) => {
+    try{
+        try{
+            var order = new Order()
+            let result = await order.getOrdersHistoryByCustomer(req.session.user.id)
+            res.status(200).send(result)
+        }
+        catch(err){
+            console.log(err)
+            res.sendStatus(404)
+        }
+    }
+    catch(err){
+
+    }
+}

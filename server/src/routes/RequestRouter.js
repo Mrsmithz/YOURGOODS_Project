@@ -9,4 +9,5 @@ router.get('/getAllRequestByCustomerId', RequestController.getAllRequestByCustom
 router.get('/getAllRequestByOperatorId', RequestController.getAllRequestByOperatorId)
 router.delete('/deleteRequestById/:id', RequestController.deleteRequestById)
 router.put('/editRequest/:id', DocumentUploader.single('document'), RequestController.editRequest)
+router.put('/updateStatus/:id', DocumentUploader.none(), RequestController.updateRequestStatus)
 module.exports = router

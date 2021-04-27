@@ -44,7 +44,7 @@
       <v-col cols="auto" class="flex-grow-1 flex-shrink-0">
         <v-responsive class="overflow-y-hidden fill-height" height="500">
           <v-card flat class="d-flex flex-column fill-height">
-            <v-card-title>{{receiver_name}}</v-card-title>
+            <v-card-title>{{ receiver_name }}</v-card-title>
             <v-card-text
               class="flex-grow-1 overflow-y-auto"
               ref="chatBox"
@@ -95,6 +95,8 @@
 </template>
 <script>
 import ContactsService from "../../services/ContactsService";
+import Socket from "../../services/SocketIO";
+
 export default {
   name: "Contact",
   data: () => ({
@@ -103,12 +105,16 @@ export default {
     message: "",
     msgkey: 13244,
     messages: [],
-    receiver_name:''
+    receiver_name: "",
+    interval: "",
+    socket: "",
+    newMsg: "",
+    sentMsg:''
   }),
   async mounted() {
     //this.$root.$refs.Contact = this
     try {
-      await this.getName()
+      await this.getName();
       await this.getMessageBySender();
       await this.updateMessageStatus()
       this.scrollToTop();
@@ -117,22 +123,34 @@ export default {
     }
   },
   methods: {
-    async updateMessageStatus(){
-      try{
-        let form = new FormData()
-        form.append('status', 'readed')
-        form.append('sender_id', this.TempOperatorContactIdState)
-        let result = await ContactsService.UpdateMessageStatusByReceiver(form)
-        console.log(result)
-        return Promise.resolve()
+    async updateMessageStatus() {
+      try {
+        let form = new FormData();
+        form.append("status", "readed");
+        form.append("sender_id", this.TempOperatorContactIdState);
+        await ContactsService.UpdateMessageStatusByReceiver(form);
+        return Promise.resolve();
+      } catch (err) {
+        console.log(err);
+        return Promise.reject();
       }
-      catch(err){
-        console.log(err)
-        return Promise.reject()
+    },
+    sendMessage() {
+      try {
+        let message = {
+          sender_id: this.UserState.id,
+          receiver_id: this.TempOperatorContactIdState,
+          message: this.message,
+        };
+        Socket.emit("sent-message", message);
+        this.message = "";
+      } catch (err) {
+        console.log(err);
       }
     },
     showContactModal() {
       this.$store.commit("showContactModal");
+      
     },
     getFullTime(time) {
       var date = new Date(time);
@@ -164,31 +182,32 @@ export default {
     scrollToTop() {
       this.$refs.chatBox.scrollTop = this.$refs.chatBox.scrollHeight;
     },
-    async getName(){
-      try{
-        let result = await ContactsService.getNameById(this.TempOperatorContactIdState)
-        this.receiver_name = result.data[0].name
-        return Promise.resolve()
-      }
-      catch(err){
-        console.log(err)
-        return Promise.reject()
-      }
-    },
-    async sendMessage() {
+    async getName() {
       try {
-        if (this.message != "") {
-          await ContactsService.sendMessage(
-            this.createFormData(this.TempOperatorContactIdState, this.message)
-          );
-          this.message = "";
-          await this.getMessageBySender();
-          this.scrollToTop()
-        }
+        let result = await ContactsService.getNameById(
+          this.TempOperatorContactIdState
+        );
+        this.receiver_name = result.data[0].name;
+        return Promise.resolve();
       } catch (err) {
         console.log(err);
+        return Promise.reject();
       }
     },
+    // async sendMessage() {
+    //   try {
+    //     if (this.message != "") {
+    //       await ContactsService.sendMessage(
+    //         this.createFormData(this.TempOperatorContactIdState, this.message)
+    //       );
+    //       this.message = "";
+    //       await this.getMessageBySender();
+    //       this.scrollToTop()
+    //     }
+    //   } catch (err) {
+    //     console.log(err);
+    //   }
+    // },
     async getMessageBySender() {
       try {
         let send = await ContactsService.getMessageBySender(
@@ -206,18 +225,51 @@ export default {
             content: item.message,
             me: item.sender_id == this.UserState.id ? true : false,
             created_at: this.getFullTime(item.created_datetime),
-            status:item.status
+            status: item.status,
           };
           this.messages.push(obj);
         }
+        this.$forceUpdate();
         return Promise.resolve();
       } catch (err) {
         console.log(err);
         return Promise.reject();
       }
     },
+    getMessage(data) {
+      var obj = {
+        id: data.id,
+        content: data.message,
+        me: data.sender_id == this.UserState.id ? true : false,
+        created_at: this.getFullTime(data.created_datetime),
+      };
+      this.messages.push(obj);
+      setTimeout(() => {
+        this.scrollToTop();
+      }, 10)
+    },
+  },
+  watch: {
+    newMessage(message) {
+      this.getMessage(message);
+    },
+    sentMessage(message){
+      this.getMessage(message)
+    }
   },
   computed: {
+    newMessage() {
+      Socket.on(`new-message-${this.UserState.id}`, (data) => {
+        this.newMsg = data;
+      });
+      return this.newMsg;
+    },
+    sentMessage(){
+      Socket.on(`sent-message-${this.UserState.id}`, (data) => {
+        this.sentMsg = data;
+      });
+      return this.sentMsg;
+    },
     UserState: {
       get: function() {
         return this.$store.getters.getUser;

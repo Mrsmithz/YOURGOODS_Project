@@ -104,8 +104,8 @@
           <template v-slot:[`item.actions`]="{ item }">
             <v-badge
               overlap
-              :value="item.message_count"
-              :content="item.message_count"
+              :value="countMessage(item.operator_id)"
+              :content="countMessage(item.operator_id)"
             >
               <v-btn
                 small
@@ -113,7 +113,7 @@
                 class="mr-2"
                 @click="showContactModal(item)"
               >
-                CONTACT
+                CHAT
               </v-btn>
             </v-badge>
 
@@ -133,6 +133,7 @@
 <script>
 import CustomerService from "../../../services/CustomerService";
 import ContactsService from "../../../services/ContactsService";
+import Socket from '../../../services/SocketIO'
 export default {
   name: "UploadDocument",
   components: {},
@@ -147,6 +148,7 @@ export default {
     editTemp: "",
     unreadMessage: [],
     interval: "",
+    newMsg:'',
     headers_upload_history: [
       {
         text: "File Name",
@@ -157,29 +159,42 @@ export default {
       { text: "Operator", value: "operator" },
       { text: "Created Date Time", value: "created_datetime" },
       { text: "Modified Date Time", value: "modified_datetime" },
-      { text: "Actions", value: "actions", sortable: false },
+      { text: "Actions", value: "actions", sortable: true },
     ],
     uploaded: [],
   }),
   mounted() {
     this.getUnReadMessage();
     this.getUploadHistory();
-    this.interval = setInterval(() => {
-      this.getUnReadMessage();
-      this.getUploadHistory();
-    }, 1000);
-    console.log(this.interval);
+    
   },
   beforeDestroy() {
-    clearInterval(this.interval);
+    //clearInterval(this.interval);
   },
-  beforeUpdate() {
-    clearInterval(this.interval);
+  watch:{
+    newMessage(message) {
+      this.unreadMessage.push(message)
+      console.log(this.unreadMessage.length)
+    },
   },
   computed: {
     ContactModalState: {
       get: function() {
         return this.$store.getters.getContactModal;
+      },
+      set: function(newValue) {
+        return newValue;
+      },
+    },
+    newMessage() {
+      Socket.on(`new-message-${this.UserState.id}`, (data) => {
+        this.newMsg = data;
+      });
+      return this.newMsg;
+    },
+    UserState: {
+      get: function() {
+        return this.$store.getters.getUser;
       },
       set: function(newValue) {
         return newValue;
@@ -203,9 +218,10 @@ export default {
       this.$store.commit("setTempOperatorContactId", item.operator_id);
       this.$store.commit("showContactModal");
       setTimeout(() => {
-        this.getUnReadMessage();
-        this.getUploadHistory();
+      this.getUnReadMessage();
+      //   this.getUploadHistory();
       }, 1000);
+      
     },
     openDocument(file_url) {
       window.open(file_url);
@@ -264,7 +280,8 @@ export default {
         let data = result.data;
         this.uploaded = [];
         for (let item of data) {
-          var obj = {
+          if (item.status == 'pending'){
+            var obj = {
             id: item.id,
             file_name: item.document.match(/`.+`/)[0].replaceAll("`", ""),
             operator: item.operator_name,
@@ -275,11 +292,12 @@ export default {
             full_modified_datetime: this.getFullTime(item.modified_datetime),
             operator_id: item.operator_id,
             file_url: `http://localhost:25800/${item.document}`,
-            message_count: this.countMessage(item.operator_id),
           };
           this.uploaded.push(obj);
+
+          }
         }
-        console.log(this.uploaded);
+        //console.log(this.uploaded);
       } catch (err) {
         console.log(err);
       }

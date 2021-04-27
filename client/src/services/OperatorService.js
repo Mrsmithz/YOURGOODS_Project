@@ -7,5 +7,8 @@ class OperatorService{
     static async getRequestByOperatorId(){
         return await axios.get(url.Operator.getRequestByOperatorId)
     }
+    static async updateRequestStatus(id, data){
+        return await axios.put(url.Operator.updateRequestStatus+id, data)
+    }
 }
 export default OperatorService

@@ -14,11 +14,10 @@ class Contacts{
             var stmt = 'insert into CONTACTS(sender_id, receiver_id, message) values(?,?,?)'
             let result = await conn.query(stmt, [sender_id, receiver_id, message])
             this.id = result[0].insertId
-            this.sender_id = sender_id
-            this.receiver_id = receiver_id
-            this.message = message
+            var stmt2 = 'select * from CONTACTS where id = ?'
+            let [rows, fields] = await conn.query(stmt2, [this.id])
             await conn.commit()
-            return Promise.resolve(result)
+            return Promise.resolve(rows[0])
         }
         catch(err){
             await conn.rollback()

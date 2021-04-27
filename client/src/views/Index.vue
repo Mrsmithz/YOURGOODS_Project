@@ -10,6 +10,9 @@
 </template>
 
 <script>
+window.onunload = function(){
+  window.sessionStorage.clear()
+}
 import IndexNavbar from "../components/Navbar/IndexNavbar";
 import ProfileModal from "../components/Modal/ProfileModal"
 import ProfileDrawer from "../components/Navbar/ProfileDrawer"
@@ -34,12 +37,15 @@ export default {
     try {
       let result = await AccountService.getSession();
       console.log(result);
-      this.$store.commit("setUser", result.data);
+      //this.$store.commit("setUser", result.data);
     } catch (err) {
       console.log(err.response);
-      window.sessionStorage.clear();
-      this.$router.go();
+      //window.sessionStorage.clear();
+      //this.$router.go();
     }
+  },
+  beforeDestroy(){
+    
   },
   computed:{
     UserState: {

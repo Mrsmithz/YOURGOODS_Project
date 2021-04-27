@@ -9,4 +9,5 @@ router.get('/get/request/:id', OrdersController.getOrdersByRequsetId)
 router.get('/get/operator', OrdersController.getOrdersByOperator)
 router.get('/get/:id', OrdersController.getOrderById)
 router.delete('/delete/:id', OrdersController.deleteOrderById)
+router.get('/get/history/customer', OrdersController.getOrdersHistoryByCustomer)
 module.exports = router

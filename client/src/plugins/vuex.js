@@ -18,17 +18,21 @@ const store = new Vuex.Store({
         ProfileDrawer:false,
         sidebarMenu:true,
         ContactModal:false,
+        CustomerGoodsModal:false,
         Temp:{
             temp_request_id:'',
+            temp_request:'',
             temp_goods_id:'',
             temp_order_id:'',
             temp_operator_contact_id:'',
+            temp_company_name:'',
+            temp_schedule_id:''
         },
         Customer:{
             Dashboard:true,
             UploadDocument:false,
             OrdersHistory:false,
-            Feedback:false
+            Feedback:false,
         },
         Operator:{
             Dashboard:true,
@@ -52,11 +56,20 @@ const store = new Vuex.Store({
         setTempRequestId(state, request_id){
             state.Temp.temp_request_id = request_id
         },
+        setTempRequest(state, request){
+            state.Temp.temp_request = request
+        },
         setTempGoodsId(state, goods_id){
             state.Temp.temp_goods_id = goods_id
         },
+        setTempCompanyName(state, company_name){
+            state.Temp.temp_company_name = company_name
+        },
         setTempOrderId(state, order_id){
             state.Temp.temp_order_id = order_id
+        },
+        setTempScheduleId(state, schedule_id){
+            state.Temp.temp_schedule_id = schedule_id
         },
         show_login(state){
             state.show_login = !state.show_login
@@ -118,11 +131,17 @@ const store = new Vuex.Store({
         },
         setGoodsState(state, key){
             state.Goods[key] = !state.Goods[key]
+        },
+        setCustomerGoodsModal(state){
+            state.CustomerGoodsModal = !state.CustomerGoodsModal
         }
     },
     getters:{
         isAuthenticated: (state) => {
             return state.user.username ? true : false
+        },
+        getCustomerGoodsModal: state => {
+            return state.CustomerGoodsModal
         },
         getUser: state => {
             return state.user
@@ -154,6 +173,9 @@ const store = new Vuex.Store({
         getTempRequestId: state => {
             return state.Temp.temp_request_id
         },
+        getTempRequest: state => {
+            return state.Temp.temp_request
+        },
         getTempOrderId: state => {
             return state.Temp.temp_order_id
         },
@@ -162,6 +184,12 @@ const store = new Vuex.Store({
         },
         getTempOperatorContactId: state => {
             return state.Temp.temp_operator_contact_id
+        },
+        getTempCompanyName: state => {
+            return state.Temp.temp_company_name
+        },
+        getTempScheduleId: state => {
+            return state.Temp.temp_schedule_id
         },
         getGoods: state => {
             return state.Goods

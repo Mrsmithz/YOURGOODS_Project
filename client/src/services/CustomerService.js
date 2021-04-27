@@ -41,5 +41,8 @@ class CustomerService {
   static async deleteRequest(id) {
     return await axios.delete(url.customer.deleteRequestById + id);
   }
+  static async getOrdersHistory(){
+      return await axios.get(url.customer.getOrdersHistory)
+  }
 }
 export default CustomerService;

@@ -106,10 +106,34 @@ class Order{
         let conn = await pool.getConnection()
         await conn.beginTransaction()
         try{
-            var stmt = 'delete from ORDERS where id = ?'
-            let result = await conn.query(stmt, [id])
+            var stmt = 'delete from GOODS where order_id = ?'
+            var stmt2 = 'delete from SCHEDULE where order_id = ?'
+            var stmt3 = 'delete from ORDERS where id = ?'
+            await conn.query(stmt, [id])
+            await conn.query(stmt2, [id])
+            let result = await conn.query(stmt3, [id])
             await conn.commit()
             return Promise.resolve(result)
+        }
+        catch(err){
+            await conn.rollback()
+            return Promise.reject(err)
+        }
+        finally{
+            conn.release()
+        }
+    }
+    async getOrdersHistoryByCustomer(customer_id){
+        let conn = await pool.getConnection()
+        await conn.beginTransaction()
+        try{
+            var stmt = 'select o.*, c.status from ORDERS as o\
+            join CUSTOMER_OPERATOR as c \
+            on o.request_id = c.id \
+            where c.customer_id = ?'
+            let [rows, fields] = await conn.query(stmt, [customer_id])
+            await conn.commit()
+            return Promise.resolve(rows)
         }
         catch(err){
             await conn.rollback()
