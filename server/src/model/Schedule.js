@@ -20,8 +20,10 @@ class Schedule{
             let result = await conn.query(stmt, [this.pickup_datetime, this.arrived_datetime, this.driver_id,
             this.transport_id, this.order_id, this.shipping_id, this.vehicle_plate_number])
             this.id = result[0].insertId
+            var stmt2 = 'select * from SCHEDULE where id = ?'
+            let [rows, fields] = await conn.query(stmt2, [this.id])
             await conn.commit()
-            return Promise.resolve(this.id)
+            return Promise.resolve(rows)
         }
         catch(err){
             await conn.rollback()
@@ -99,6 +101,34 @@ class Schedule{
             conn.release()
         }
     }
+    async getScheduleById(id){
+        let conn = await pool.getConnection()
+        await conn.beginTransaction()
+        try{
+            var stmt = 'select s.*, u1.name as shipping_name, u2.name as transport_name, u3.name as driver_name, v.plate_number as plate_number\
+            from SCHEDULE as s \
+            join USER as u1 \
+            on u1.id = s.shipping_id \
+            join USER as u2 \
+            on u2.id = s.transport_id \
+            left join USER as u3 \
+            on u3.id = s.driver_id \
+            left join VEHICLE as v \
+            on v.plate_number = s.vehicle_plate_number \
+            where s.id = ?'
+            //var stmt2 = 'select name from USER where id in (select * from SCHEDULE where id = ?)'
+            let [rows, fields] = await conn.query(stmt, [id])
+            await conn.commit()
+            return Promise.resolve(rows)
+        }
+        catch(err){
+            await conn.rollback()
+            return Promise.reject(err)
+        }
+        finally{
+            conn.release()
+        }
+    }
     async editSchedule(id, pickup_datetime, arrived_datetime, driver_id){
         let conn = await pool.getConnection()
         await conn.beginTransaction()
@@ -124,6 +154,56 @@ class Schedule{
             let result = await conn.query(stmt, [id])
             await conn.commit()
             return Promise.resolve(result)
+        }
+        catch(err){
+            await conn.rollback()
+            return Promise.reject(err)
+        }
+        finally{
+            conn.release()
+        }
+    }
+    static async getTransportId(){
+        let conn = await pool.getConnection()
+        await conn.beginTransaction()
+        try{
+            // var stmt = 'select request_count, sub.id from \
+            // (select COUNT(c.operator_id) as request_count, u.id as id from CUSTOMER_OPERATOR as c \
+            // left join USER as u\
+            // on u.id = c.operator_id and u.type = \'operator\' \
+            // group by u.id) as sub'
+            var stmt = 'select count(s.transport_id) as request_count, u.id from USER as u \
+            left join SCHEDULE as s \
+            on u.id = s.transport_id where u.type = \'transport\' \
+            group by u.id'
+            let [rows, field] = await conn.query(stmt)
+            await conn.commit()
+            return Promise.resolve(rows)
+        }
+        catch(err){
+            await conn.rollback()
+            return Promise.reject(err)
+        }
+        finally{
+            conn.release()
+        }
+    }
+    static async getShippingId(){
+        let conn = await pool.getConnection()
+        await conn.beginTransaction()
+        try{
+            // var stmt = 'select request_count, sub.id from \
+            // (select COUNT(c.operator_id) as request_count, u.id as id from CUSTOMER_OPERATOR as c \
+            // left join USER as u\
+            // on u.id = c.operator_id and u.type = \'operator\' \
+            // group by u.id) as sub'
+            var stmt = 'select count(s.transport_id) as request_count, u.id from USER as u \
+            left join SCHEDULE as s \
+            on u.id = s.shipping_id where u.type = \'shipping\' \
+            group by u.id'
+            let [rows, field] = await conn.query(stmt)
+            await conn.commit()
+            return Promise.resolve(rows)
         }
         catch(err){
             await conn.rollback()

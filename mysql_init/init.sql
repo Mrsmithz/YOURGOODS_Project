@@ -52,9 +52,9 @@ create table ORDERS(
     container_id varchar(255) not null,
     created_datetime datetime not null default now(),
     modified_datetime datetime not null default now(),
-    customer_id int not null,
+    request_id int not null,
     operator_id int not null,
-    foreign key (customer_id) references USER(id),
+    foreign key (request_id) references CUSTOMER_OPERATOR(id),
     foreign key (operator_id) references USER(id)
 );
 create table GOODS(
@@ -97,7 +97,7 @@ create table SCHEDULE(
     vehicle_plate_number varchar(20),
     foreign key (driver_id) references USER(id),
     foreign key (transport_id) references USER(id),
-    foreign key (order_id) references USER(id),
+    foreign key (order_id) references ORDERS(id),
     foreign key (shipping_id) references USER(id),
     foreign key (vehicle_plate_number) references VEHICLE(plate_number)
 );

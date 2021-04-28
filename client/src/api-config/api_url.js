@@ -7,7 +7,8 @@ const url = {
         createRequest:'http://localhost:25800/api/request/createRequest',
         getAllRequestByCustomerId:'http://localhost:25800/api/request/getAllRequestByCustomerId',
         deleteRequestById:'http://localhost:25800/api/request/deleteRequestById/',
-        editRequestById:'http://localhost:25800/api/request/editRequest/'
+        editRequestById:'http://localhost:25800/api/request/editRequest/',
+        getOrdersHistory:'http://localhost:25800/api/orders/get/history/customer'
     },
     contacts:{
         sendMessage:'http://localhost:25800/api/contacts/sendMessage',
@@ -16,6 +17,30 @@ const url = {
         updateMessageStatus:'http://localhost:25800/api/contacts/updateMessageStatus',
         getNameById:'http://localhost:25800/api/contacts/getName/',
         getUnReadMessageByReceiver:'http://localhost:25800/api/contacts/getUnReadMessageByReceiver'
+    },
+    Goods:{
+        createGoods:'http://localhost:25800/api/goods/create',
+        editGoodsById:'http://localhost:25800/api/goods/edit/',
+        getGoodsById:'http://localhost:25800/api/goods/by/id/',
+        getGoodsByOrderId:'http://localhost:25800/api/goods/by/order/',
+        deleteGoodsById:'http://localhost:25800/api/goods/by/id/',
+        deleteGoodsByOrderId:'http://localhost:25800/api/goods/by/order/'
+    },
+    Operator:{
+        getRequestByOperatorId:'http://localhost:25800/api/request/getAllRequestByOperatorId',
+        updateRequestStatus:'http://localhost:25800/api/request/updateStatus/'
+    },
+    Order:{
+        getOrderByRequestId:'http://localhost:25800/api/orders/get/request/',
+        createOrder:'http://localhost:25800/api/orders/create',
+        getOrderById:'http://localhost:25800/api/orders/get/',
+        editOrderById:'http://localhost:25800/api/orders/edit/',
+        deleteOrderById:'http://localhost:25800/api/orders/delete/'
+    },
+    Schedule:{
+        createSchedule:'http://localhost:25800/api/schedule/createSchedule',
+        getScheduleByOrder:'http://localhost:25800/api/schedule/getByOrder/',
+        getScheduleById:'http://localhost:25800/api/schedule/getById/'
     }
 }
 

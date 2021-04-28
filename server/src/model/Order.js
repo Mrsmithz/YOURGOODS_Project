@@ -2,14 +2,14 @@ const pool = require('../database/mysql_connector')
 
 class Order{
     constructor(id, company_name, receiver_address, pickup_address, invoice_id,
-        container_id, customer_id, operator_id){
+        container_id, request_id, operator_id){
         this.id = id
         this.company_name = company_name
         this.receiver_address = receiver_address
         this.pickup_address = pickup_address
         this.invoice_id = invoice_id
         this.container_id = container_id
-        this.customer_id = customer_id
+        this.request_id = request_id
         this.operator_id = operator_id
     }
     async createOrder(){
@@ -17,9 +17,9 @@ class Order{
         await conn.beginTransaction()
         try{
             var stmt = 'insert into ORDERS(company_name, receiver_address, pickup_address, \
-                invoice_id, container_id, customer_id, operator_id) values(?,?,?,?,?,?,?)'
+                invoice_id, container_id, request_id, operator_id) values(?,?,?,?,?,?,?)'
             let result = await conn.query(stmt, [this.company_name, this.receiver_address, this.pickup_address,
-            this.invoice_id, this.container_id, this.customer_id, this.operator_id])
+            this.invoice_id, this.container_id, this.request_id, this.operator_id])
             this.id = result[0].insertId
             await conn.commit()
             return Promise.resolve(result)
@@ -49,12 +49,12 @@ class Order{
             conn.release()
         }
     }
-    async getOrdersByCustomer(customer_id){
+    async getOrdersByRequestId(request_id){
         let conn = await pool.getConnection()
         await conn.beginTransaction()
         try{
-            var stmt = 'select * from ORDERS where customer_id = ?'
-            let [rows, fields] = await conn.query(stmt, [customer_id])
+            var stmt = 'select * from ORDERS where request_id = ?'
+            let [rows, fields] = await conn.query(stmt, [request_id])
             await conn.commit()
             return Promise.resolve(rows)
         }
@@ -106,10 +106,34 @@ class Order{
         let conn = await pool.getConnection()
         await conn.beginTransaction()
         try{
-            var stmt = 'delete from ORDERS where id = ?'
-            let result = await conn.query(stmt, [id])
+            var stmt = 'delete from GOODS where order_id = ?'
+            var stmt2 = 'delete from SCHEDULE where order_id = ?'
+            var stmt3 = 'delete from ORDERS where id = ?'
+            await conn.query(stmt, [id])
+            await conn.query(stmt2, [id])
+            let result = await conn.query(stmt3, [id])
             await conn.commit()
             return Promise.resolve(result)
+        }
+        catch(err){
+            await conn.rollback()
+            return Promise.reject(err)
+        }
+        finally{
+            conn.release()
+        }
+    }
+    async getOrdersHistoryByCustomer(customer_id){
+        let conn = await pool.getConnection()
+        await conn.beginTransaction()
+        try{
+            var stmt = 'select o.*, c.status from ORDERS as o\
+            join CUSTOMER_OPERATOR as c \
+            on o.request_id = c.id \
+            where c.customer_id = ?'
+            let [rows, fields] = await conn.query(stmt, [customer_id])
+            await conn.commit()
+            return Promise.resolve(rows)
         }
         catch(err){
             await conn.rollback()

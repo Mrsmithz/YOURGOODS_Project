@@ -9,6 +9,7 @@
               <OrdersHistory v-if="OrdersHistoryState"></OrdersHistory>
               <Feedback v-if="FeedbackState"></Feedback>
               <Contact v-if="ContactModalState"></Contact>
+              <GoodsModal></GoodsModal>
             </v-col>
           </v-row>
       </v-container>
@@ -22,6 +23,7 @@ import UploadDocument from "./request/UploadDocument"
 import OrdersHistory from "./history/OrdersHistory"
 import Contact from "./../Modal/Contact"
 import Feedback from "./feedback/Feedback"
+import GoodsModal from './history/GoodsModal'
 export default {
   name: "CustomerIndex",
   data: () => ({}),
@@ -31,7 +33,8 @@ export default {
       UploadDocument,
       OrdersHistory,
       Contact,
-      Feedback
+      Feedback,
+      GoodsModal
   },
   computed: {
     user() {
@@ -89,17 +92,6 @@ export default {
         console.log(err.response);
       }
     },
-  },
-  async beforeCreate() {
-    try {
-      let result = await AccountService.getSession();
-      console.log(result);
-      this.$store.commit("setUser", result.data);
-    } catch (err) {
-      console.log(err.response);
-      window.sessionStorage.clear();
-      this.$router.go();
-    }
   },
 };
 </script>
