@@ -12,3 +12,13 @@ exports.addVehicle = async (req, res) => {
         res.sendStatus(400)
     }
 }
+exports.getAllVehicleByManagerId = async (req, res) => {
+    try{
+        let result = await Vehicle.getAllVehicleByManagerId(req.session.user.id)
+        res.status(200).send(result)
+    }
+    catch(err){
+        console.log(err)
+        res.sendStatus(400)
+    }
+}

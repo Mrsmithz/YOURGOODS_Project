@@ -50,13 +50,53 @@ exports.getScheduleById = async (req, res) => {
     }
   };
 
-exports.getScheduleDetail = async (req, res) => {
+exports.getScheduleInProgressDetail = async (req, res) => {
     try{
-        let result = await Schedule.getScheduleDetail(req.session.user.id)
+        let result = await Schedule.getScheduleInProgressDetail(req.session.user.id)
         res.status(200).send(result)
     }
     catch(err){
         console.log(err)
         res.sendStatus(400)
     }
+}
+exports.getScheduleCompletedDetail = async (req, res) => {
+  try{
+      let result = await Schedule.getScheduleCompletedDetail(req.session.user.id)
+      res.status(200).send(result)
+  }
+  catch(err){
+      console.log(err)
+      res.sendStatus(400)
+  }
+}
+exports.getAllDriver = async (req, res) => {
+  try{
+      let result = await Schedule.getAllDriver()
+      res.status(200).send(result)
+  }
+  catch(err){
+      console.log(err)
+      res.sendStatus(400)
+  }
+}
+exports.updateScheduleDriver = async (req, res) => {
+  try{
+    let result = await Schedule.updateScheduleDriver(req.params.id, req.body.driver_id)
+    res.status(200).send(result)
+  }
+  catch(err){
+    console.log(err)
+    res.sendStatus(400)
+  }
+}
+exports.updateScheduleVehicle = async (req, res) => {
+  try{
+    let result = await Schedule.updateScheduleVehicle(req.params.id, req.body.plate_number)
+    res.status(200).send(result)
+  }
+  catch(err){
+    console.log(err)
+    res.sendStatus(400)
+  }
 }

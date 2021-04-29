@@ -203,21 +203,110 @@ class Schedule{
             conn.release()
         }
     }
-    static async getScheduleDetail(transport_id){
+    static async getScheduleInProgressDetail(transport_id){
         let conn = await pool.getConnection()
         await conn.beginTransaction()
         try{
-            var stmt = 'select s.*, o.id as order_id, u.name as operator_name, u1.name as driver_name from SCHEDULE as s\
+            var stmt = 'select s.*, o.id as order_id, u.name as operator_name, u1.name as driver_name, cus.name as customer_name \
+            from SCHEDULE as s \
             join ORDERS as o \
             on o.id = s.order_id \
+            join CUSTOMER_OPERATOR as co \
+            on o.request_id = co.id \
+            join USER as cus \
+            on co.customer_id = cus.id \
             join USER as u \
-            on u.id = o.operator_id and type = \'operator\' \
+            on u.id = o.operator_id and u.type = \'operator\' \
             left join USER as u1 \
             on u1.id = s.driver_id \
-            where s.transport_id = ?'
+            left join VEHICLE as v \
+            on v.plate_number = s.vehicle_plate_number \
+            where s.transport_id = ? and co.status = \'in progress\''
             let [rows, field] = await conn.query(stmt, [transport_id])
             await conn.commit()
             return Promise.resolve(rows)
+        }
+        catch(err){
+            await conn.rollback()
+            return Promise.reject(err)
+        }
+        finally{
+            conn.release()
+        }
+    }
+    static async getScheduleCompletedDetail(transport_id){
+        let conn = await pool.getConnection()
+        await conn.beginTransaction()
+        try{
+            var stmt = 'select s.*, o.id as order_id, u.name as operator_name, u1.name as driver_name, cus.name as customer_name \
+            from SCHEDULE as s \
+            join ORDERS as o \
+            on o.id = s.order_id \
+            join CUSTOMER_OPERATOR as co \
+            on o.request_id = co.id \
+            join USER as cus \
+            on co.customer_id = cus.id \
+            join USER as u \
+            on u.id = o.operator_id and u.type = \'operator\' \
+            left join USER as u1 \
+            on u1.id = s.driver_id \
+            left join VEHICLE as v \
+            on v.plate_number = s.vehicle_plate_number \
+            where s.transport_id = ? and co.status = \'completed\''
+            let [rows, field] = await conn.query(stmt, [transport_id])
+            await conn.commit()
+            return Promise.resolve(rows)
+        }
+        catch(err){
+            await conn.rollback()
+            return Promise.reject(err)
+        }
+        finally{
+            conn.release()
+        }
+    }
+    static async getAllDriver(){
+        let conn = await pool.getConnection()
+        await conn.beginTransaction()
+        try{
+            var stmt = 'select * from USER where type = \'driver\''
+            let [rows, fields] = await conn.query(stmt)
+            await conn.commit()
+            return Promise.resolve(rows)
+        }
+        catch(err){
+            await conn.rollback()
+            return Promise.reject(err)
+        }
+        finally{
+            conn.release()
+        }
+    }
+    static async updateScheduleDriver(id, driver_id){
+        let conn = await pool.getConnection()
+        await conn.beginTransaction()
+        try{
+            var stmt = 'update SCHEDULE set driver_id = ? where id = ?'
+            let result = await conn.query(stmt, [driver_id, id])
+            await conn.commit()
+            return Promise.resolve(result)
+        }
+        catch(err){
+            await conn.rollback()
+            return Promise.reject(err)
+        }
+        finally{
+            conn.release()
+        }
+    }
+    static async updateScheduleVehicle(id, plate_number){
+        let conn = await pool.getConnection()
+        await conn.beginTransaction()
+        try{
+            var stmt = 'update SCHEDULE set vehicle_plate_number = ? where id = ?'
+            let result = await conn.query(stmt, [plate_number, id])
+            await conn.commit()
+            return Promise.resolve(result)
         }
         catch(err){
             await conn.rollback()

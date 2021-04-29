@@ -41,7 +41,15 @@ const url = {
         createSchedule:'http://localhost:25800/api/schedule/createSchedule',
         getScheduleByOrder:'http://localhost:25800/api/schedule/getByOrder/',
         getScheduleById:'http://localhost:25800/api/schedule/getById/',
-        getScheduleDetail:'http://localhost:25800/api/schedule/getScheduleDetail'
+        getScheduleInProgressDetail:'http://localhost:25800/api/schedule/getScheduleInProgressDetail',
+        getAllDriver:'http://localhost:25800/api/schedule/getAllDriver',
+        updateScheduleDriver:'http://localhost:25800/api/schedule/updateScheduleDriver/',
+        updateScheduleVehicle:'http://localhost:25800/api/schedule/updateScheduleVehicle/',
+        getScheduleCompletedDetail:'http://localhost:25800/api/schedule/getScheduleCompletedDetail'
+    },
+    Vehicle:{
+        getAllVehicleByManagerId:'http://localhost:25800/api/vehicle/getAllVehicleByManagerId',
+        addVehicle:'http://localhost:25800/api/vehicle/addVehicle',
     }
 }
 

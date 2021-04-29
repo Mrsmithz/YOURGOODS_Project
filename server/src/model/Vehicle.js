@@ -29,14 +29,14 @@ class Vehicle{
             conn.release()
         }
     }
-    static async getAllVehicleByManagerId(manager_id, status){
+    static async getAllVehicleByManagerId(manager_id){
         let conn = await pool.getConnection()
         await conn.beginTransaction()
         try{
-            var stmt = 'select * from VEHICLE where manage_by = ? and status = ?'
-            let [rows, fields] = await conn.query(stmt, [manager_id, status])
+            var stmt = 'select * from VEHICLE where manage_by = ?'
+            let [rows, fields] = await conn.query(stmt, [manager_id])
             await conn.commit()
-            return Promise.resolve(rows[0])
+            return Promise.resolve(rows)
         }
         catch(err){
             await conn.rollback()
