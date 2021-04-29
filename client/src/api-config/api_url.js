@@ -40,7 +40,8 @@ const url = {
     Schedule:{
         createSchedule:'http://localhost:25800/api/schedule/createSchedule',
         getScheduleByOrder:'http://localhost:25800/api/schedule/getByOrder/',
-        getScheduleById:'http://localhost:25800/api/schedule/getById/'
+        getScheduleById:'http://localhost:25800/api/schedule/getById/',
+        getScheduleDetail:'http://localhost:25800/api/schedule/getScheduleDetail'
     }
 }
 

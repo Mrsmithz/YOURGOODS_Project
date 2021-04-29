@@ -1,23 +1,25 @@
 const pool = require('../database/mysql_connector')
 
 class Vehicle{
-    constructor(plate_number, name, type, brand, manage_by){
+    constructor(plate_number, name, type, brand, manage_by, status){
         this.plate_number = plate_number
         this.name = name
         this.type = type
         this.brand = brand
         this.manage_by = manage_by
+        this.status = status
     }
     async addVehicle(){
         let conn = await pool.getConnection()
         await conn.beginTransaction()
         try{
-            var stmt = 'insert into VEHICLE (plate_number, name, type, brand, manage_by) \
-            values(?,?,?,?,?)'
-            let result = await conn.query(stmt, [this.plate_number, this.name, this.type, this.manage_by])
-            this.id = result[9].insertId
+            var stmt = 'insert into VEHICLE (plate_number, name, type, brand, manage_by, status) \
+            values(?,?,?,?,?,?)'
+            let result = await conn.query(stmt, [this.plate_number, this.name, this.type, this.brand, this.manage_by, this.status])
+            let stmt2 = 'select * from VEHICLE where plate_number = ?'
+            let [rows, fields] = await conn.query(stmt2, [this.plate_number])
             await conn.commit()
-            return Promise.resolve(this.id)
+            return Promise.resolve(rows)
         }
         catch(err){
             await conn.rollback()
@@ -27,12 +29,12 @@ class Vehicle{
             conn.release()
         }
     }
-    async getAllVehicleByManagerId(manager_id){
+    static async getAllVehicleByManagerId(manager_id, status){
         let conn = await pool.getConnection()
         await conn.beginTransaction()
         try{
-            var stmt = 'select * from VEHICLE where manage_by = ?'
-            let [rows, fields] = await conn.query(stmt, [manager_id])
+            var stmt = 'select * from VEHICLE where manage_by = ? and status = ?'
+            let [rows, fields] = await conn.query(stmt, [manager_id, status])
             await conn.commit()
             return Promise.resolve(rows[0])
         }
@@ -44,7 +46,7 @@ class Vehicle{
             conn.release()
         }
     }
-    async getVehicleById(id){
+    static async getVehicleById(id){
         let conn = await pool.getConnection()
         await conn.beginTransaction()
         try{
@@ -61,7 +63,7 @@ class Vehicle{
             conn.release()
         }
     }
-    async editVehicle(id, plate_number, name, type, brand, manage_by){
+    static async editVehicle(id, plate_number, name, type, brand, manage_by){
         let conn = await pool.getConnection()
         await conn.beginTransaction()
         try{
@@ -78,7 +80,7 @@ class Vehicle{
             conn.release()
         }
     }
-    async deleteVehicle(id){
+    static async deleteVehicle(id){
         let conn = await pool.getConnection()
         await conn.beginTransaction()
         try{

@@ -18,7 +18,7 @@
                 required
                 :rules="requiredRules"
                 v-model="name"
-                :readonly="TempGoodsIdState != null && !editMode"
+                :readonly="!!TempGoodsIdState && !editMode"
               ></v-text-field>
             </v-col>
           </v-row>
@@ -29,7 +29,7 @@
                 required
                 :rules="weightRules"
                 v-model="weight"
-                :readonly="TempGoodsIdState != null && !editMode"
+                :readonly="!!TempGoodsIdState && !editMode"
               ></v-text-field>
             </v-col>
             <v-col>
@@ -38,23 +38,23 @@
                 required
                 :rules="quantityRules"
                 v-model="quantity"
-                :readonly="TempGoodsIdState != null && !editMode"
+                :readonly="!!TempGoodsIdState && !editMode"
               ></v-text-field>
             </v-col>
           </v-row>
           <v-row>
             <v-col>
-              <v-btn v-if="!TempGoodsIdState" @click="createGoods"
+              <v-btn v-if="!TempGoodsIdState && !OrdersHistoryModeState" @click="createGoods"
                 >Create</v-btn
               >
               <v-btn
-                v-if="TempGoodsIdState && !editMode"
+                v-if="TempGoodsIdState && !editMode && !OrdersHistoryModeState"
                 @click="editMode = true"
                 >Edit</v-btn
               >
               <v-btn
                 class="ml-3"
-                v-if="TempGoodsIdState && !editMode"
+                v-if="TempGoodsIdState && !editMode && !OrdersHistoryModeState"
                 @click="deleteGoods"
                 >Delete</v-btn
               >
@@ -64,6 +64,7 @@
               <v-btn class="ml-3" v-if="TempGoodsIdState && editMode"
                 @click="getGoods">Reset</v-btn
               >
+              <v-btn v-if="OrdersHistoryModeState" @click="showManageGoods">CLOSE</v-btn>
             </v-col>
           </v-row>
         </v-form>
@@ -150,6 +151,7 @@ export default {
           let result = await GoodsService.createGoods(this.createFormData());
           this.$root.$refs.ManageOrder.getAllGoods();
           alert("Create Success");
+          this.showManageGoods()
           console.log(result);
         } catch (err) {
           console.log(err);
@@ -208,6 +210,14 @@ export default {
     CreateGoodsState: {
       get: function() {
         return this.$store.getters.getGoods.createGoods;
+      },
+      set: function(newValue) {
+        return newValue;
+      },
+    },
+    OrdersHistoryModeState: {
+      get: function() {
+        return this.$store.getters.getOrdersHistoryMode;
       },
       set: function(newValue) {
         return newValue;

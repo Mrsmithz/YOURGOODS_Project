@@ -49,3 +49,14 @@ exports.getScheduleById = async (req, res) => {
         res.sendStatus(400)
     }
   };
+
+exports.getScheduleDetail = async (req, res) => {
+    try{
+        let result = await Schedule.getScheduleDetail(req.session.user.id)
+        res.status(200).send(result)
+    }
+    catch(err){
+        console.log(err)
+        res.sendStatus(400)
+    }
+}

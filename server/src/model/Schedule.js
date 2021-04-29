@@ -167,11 +167,6 @@ class Schedule{
         let conn = await pool.getConnection()
         await conn.beginTransaction()
         try{
-            // var stmt = 'select request_count, sub.id from \
-            // (select COUNT(c.operator_id) as request_count, u.id as id from CUSTOMER_OPERATOR as c \
-            // left join USER as u\
-            // on u.id = c.operator_id and u.type = \'operator\' \
-            // group by u.id) as sub'
             var stmt = 'select count(s.transport_id) as request_count, u.id from USER as u \
             left join SCHEDULE as s \
             on u.id = s.transport_id where u.type = \'transport\' \
@@ -192,16 +187,35 @@ class Schedule{
         let conn = await pool.getConnection()
         await conn.beginTransaction()
         try{
-            // var stmt = 'select request_count, sub.id from \
-            // (select COUNT(c.operator_id) as request_count, u.id as id from CUSTOMER_OPERATOR as c \
-            // left join USER as u\
-            // on u.id = c.operator_id and u.type = \'operator\' \
-            // group by u.id) as sub'
-            var stmt = 'select count(s.transport_id) as request_count, u.id from USER as u \
+            var stmt = 'select count(s.shipping_id) as request_count, u.id from USER as u \
             left join SCHEDULE as s \
             on u.id = s.shipping_id where u.type = \'shipping\' \
             group by u.id'
             let [rows, field] = await conn.query(stmt)
+            await conn.commit()
+            return Promise.resolve(rows)
+        }
+        catch(err){
+            await conn.rollback()
+            return Promise.reject(err)
+        }
+        finally{
+            conn.release()
+        }
+    }
+    static async getScheduleDetail(transport_id){
+        let conn = await pool.getConnection()
+        await conn.beginTransaction()
+        try{
+            var stmt = 'select s.*, o.id as order_id, u.name as operator_name, u1.name as driver_name from SCHEDULE as s\
+            join ORDERS as o \
+            on o.id = s.order_id \
+            join USER as u \
+            on u.id = o.operator_id and type = \'operator\' \
+            left join USER as u1 \
+            on u1.id = s.driver_id \
+            where s.transport_id = ?'
+            let [rows, field] = await conn.query(stmt, [transport_id])
             await conn.commit()
             return Promise.resolve(rows)
         }

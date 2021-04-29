@@ -13,5 +13,8 @@ class ScheduleService{
     static async getScheduleById(id){
         return await axios.get(url.Schedule.getScheduleById+id)
     }
+    static async getScheduleDetail(){
+        return await axios.get(url.Schedule.getScheduleDetail)
+    }
 }
 export default ScheduleService

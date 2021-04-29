@@ -6,6 +6,7 @@
     <ChangePasswordModal></ChangePasswordModal>
     <CustomerIndex v-if="UserState.type == 'customer'"></CustomerIndex>
     <OperatorIndex v-if="UserState.type == 'operator'"></OperatorIndex>
+    <TransportIndex v-if="UserState.type == 'transport'"></TransportIndex>
   </v-app>
 </template>
 
@@ -20,6 +21,7 @@ import ChangePasswordModal from "../components/Modal/ChangePasswordModal"
 import CustomerIndex from "../components/Customer/CustomerIndex";
 import OperatorIndex from "../components/Operator/OperatorIndex"
 import AccountService from "../services/AccountService"
+import TransportIndex from '../components/Transport/TransportIndex'
 export default {
   name: "Index",
   components: {
@@ -28,7 +30,8 @@ export default {
     ProfileDrawer,
     ProfileModal,
     ChangePasswordModal,
-    OperatorIndex
+    OperatorIndex,
+    TransportIndex
   },
   data:() => ({
     user:''
