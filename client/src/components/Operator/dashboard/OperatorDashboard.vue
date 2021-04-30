@@ -34,8 +34,8 @@
               <div class="success fill-height">{{ "\xa0" }}</div>
             </v-col>
             <div class="col pa-3 py-4 success--text">
-              <h5 class="text-truncate text-uppercase">Completed</h5>
-              <h1>213</h1>
+              <h5 class="text-truncate text-uppercase">Completed Request</h5>
+              <h1>{{this.completedRequest}}</h1>
             </div>
           </v-row>
         </v-card>
@@ -151,6 +151,7 @@
   </div>
 </template>
 <script>
+import OperatorService from '../../../services/OperatorService'
 export default {
   name: "OperatorDashboard",
   data: () => ({
@@ -163,6 +164,21 @@ export default {
         610,
         423,
       ],
+      completedRequest:'',
   }),
+  methods:{
+    async getCompletedRequestCount(){
+      try{
+        let result = await OperatorService.getCompletedRequestCount()
+        this.completedRequest = result.data[0].completed_reqeust
+      }
+      catch(err){
+        console.log(err)
+      }
+    }
+  },
+  mounted(){
+    this.getCompletedRequestCount()
+  }
 };
 </script>

@@ -28,7 +28,8 @@ const url = {
     },
     Operator:{
         getRequestByOperatorId:'http://localhost:25800/api/request/getAllRequestByOperatorId',
-        updateRequestStatus:'http://localhost:25800/api/request/updateStatus/'
+        updateRequestStatus:'http://localhost:25800/api/request/updateStatus/',
+        getCompletedRequestCount:'http://localhost:25800/api/request/getCompletedRequestCount'
     },
     Order:{
         getOrderByRequestId:'http://localhost:25800/api/orders/get/request/',

@@ -162,6 +162,27 @@ class Request{
             conn.release()
         }
     }
+    static async getCompletedRequestCount(operator_id){
+        let conn = await pool.getConnection()
+        await conn.beginTransaction()
+        try{
+            var stmt = 'select count(temp.id) as `completed_reqeust`, temp.operator_id \
+            from ( \
+            select id, operator_id from CUSTOMER_OPERATOR where `status` = \'completed\' and operator_id = ? \
+            ) as temp \
+            group by temp.operator_id'
+            let [rows, field] = await conn.query(stmt, [operator_id])
+            await conn.commit()
+            return Promise.resolve(rows)
+        }
+        catch(err){
+            await conn.rollback()
+            return Promise.reject(err)
+        }
+        finally{
+            conn.release()
+        }
+    }
 }
 
 module.exports = Request
