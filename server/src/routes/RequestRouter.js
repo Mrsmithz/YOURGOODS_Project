@@ -10,4 +10,5 @@ router.get('/getAllRequestByOperatorId', RequestController.getAllRequestByOperat
 router.delete('/deleteRequestById/:id', RequestController.deleteRequestById)
 router.put('/editRequest/:id', DocumentUploader.single('document'), RequestController.editRequest)
 router.put('/updateStatus/:id', DocumentUploader.none(), RequestController.updateRequestStatus)
+router.get('/getCompletedRequestCount', RequestController.getCompletedRequestCount)
 module.exports = router

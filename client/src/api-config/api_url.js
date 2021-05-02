@@ -28,7 +28,8 @@ const url = {
     },
     Operator:{
         getRequestByOperatorId:'http://localhost:25800/api/request/getAllRequestByOperatorId',
-        updateRequestStatus:'http://localhost:25800/api/request/updateStatus/'
+        updateRequestStatus:'http://localhost:25800/api/request/updateStatus/',
+        getCompletedRequestCount:'http://localhost:25800/api/request/getCompletedRequestCount'
     },
     Order:{
         getOrderByRequestId:'http://localhost:25800/api/orders/get/request/',
@@ -40,8 +41,23 @@ const url = {
     Schedule:{
         createSchedule:'http://localhost:25800/api/schedule/createSchedule',
         getScheduleByOrder:'http://localhost:25800/api/schedule/getByOrder/',
-        getScheduleById:'http://localhost:25800/api/schedule/getById/'
-    }
+        getScheduleById:'http://localhost:25800/api/schedule/getById/',
+        getScheduleInProgressDetail:'http://localhost:25800/api/schedule/getScheduleInProgressDetail',
+        getAllDriver:'http://localhost:25800/api/schedule/getAllDriver',
+        updateScheduleDriver:'http://localhost:25800/api/schedule/updateScheduleDriver/',
+        updateScheduleVehicle:'http://localhost:25800/api/schedule/updateScheduleVehicle/',
+        getScheduleCompletedDetail:'http://localhost:25800/api/schedule/getScheduleCompletedDetail',
+        getScheduleInProgressDetailByDriver:'http://localhost:25800/api/schedule/getScheduleInProgressDetailByDriver',
+        updateScheduleStatus:'http://localhost:25800/api/schedule/updateScheduleStatus/',
+        getScheduleCompletedDetailByDriver:'http://localhost:25800/api/schedule/getScheduleCompletedDetailByDriver'
+    },
+    Vehicle:{
+        getAllVehicleByManagerId:'http://localhost:25800/api/vehicle/getAllVehicleByManagerId',
+        addVehicle:'http://localhost:25800/api/vehicle/addVehicle',
+        deleteVehicle:'http://localhost:25800/api/vehicle/deleteVehicle/',
+        updateVehicleStatus:'http://localhost:25800/api/vehicle/updateVehicleStatus',
+        editVehicle:'http://localhost:25800/api/vehicle/editVehicle'
+    },
 }
 
 export default url

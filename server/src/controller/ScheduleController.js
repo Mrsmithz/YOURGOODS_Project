@@ -49,3 +49,85 @@ exports.getScheduleById = async (req, res) => {
         res.sendStatus(400)
     }
   };
+
+exports.getScheduleInProgressDetail = async (req, res) => {
+    try{
+        let result = await Schedule.getScheduleInProgressDetail(req.session.user.id)
+        res.status(200).send(result)
+    }
+    catch(err){
+        console.log(err)
+        res.sendStatus(400)
+    }
+}
+exports.getScheduleCompletedDetail = async (req, res) => {
+  try{
+      let result = await Schedule.getScheduleCompletedDetail(req.session.user.id)
+      res.status(200).send(result)
+  }
+  catch(err){
+      console.log(err)
+      res.sendStatus(400)
+  }
+}
+exports.getAllDriver = async (req, res) => {
+  try{
+      let result = await Schedule.getAllDriver()
+      res.status(200).send(result)
+  }
+  catch(err){
+      console.log(err)
+      res.sendStatus(400)
+  }
+}
+exports.updateScheduleDriver = async (req, res) => {
+  try{
+    let result = await Schedule.updateScheduleDriver(req.params.id, req.body.driver_id)
+    res.status(200).send(result)
+  }
+  catch(err){
+    console.log(err)
+    res.sendStatus(400)
+  }
+}
+exports.updateScheduleVehicle = async (req, res) => {
+  try{
+    let result = await Schedule.updateScheduleVehicle(req.params.id, req.body.plate_number)
+    res.status(200).send(result)
+  }
+  catch(err){
+    console.log(err)
+    res.sendStatus(400)
+  }
+}
+exports.getScheduleInProgressDetailByDriver = async (req, res) => {
+  try{
+    let result = await Schedule.getScheduleInProgressDetailByDriver(req.session.user.id)
+    res.status(200).send(result)
+  }
+  catch(err){
+    console.log(err)
+    res.sendStatus(400)
+  }
+}
+exports.getScheduleCompletedDetailByDriver = async (req, res) => {
+  try{
+    let result = await Schedule.getScheduleCompletedDetailByDriver(req.session.user.id)
+    res.status(200).send(result)
+  }
+  catch(err){
+    console.log(err)
+    res.sendStatus(400)
+  }
+}
+exports.updateScheduleStatus = async (req, res) => {
+  try{
+    let data = req.body
+    let result = await Schedule.updateScheduleStatus(req.params.id, data.request_id, data.arrived_datetime, data.status)
+    res.status(200).send(result)
+  }
+  catch(err){
+    console.log(err)
+    res.sendStatus(400)
+  }
+}

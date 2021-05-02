@@ -172,21 +172,33 @@ export default {
       } ${date.toDateString()}`;
     },
     async confirmOrder(item) {
-      try {
-        let form = new FormData();
-        form.append("status", "confirmed");
-        await OperatorService.updateRequestStatus(item.request_id, form);
-      } catch (err) {
-        console.log(err);
+      let conf = confirm("Confirm Order ?");
+      if (conf) {
+        try {
+          let form = new FormData();
+          form.append("status", "confirmed");
+          await OperatorService.updateRequestStatus(item.request_id, form);
+          alert("Order confirmed");
+          this.getOrderUnConfirmedHistory();
+          this.getOrdersHistory();
+        } catch (err) {
+          console.log(err);
+        }
       }
     },
     async rejectOrder(item) {
-      try {
-        let form = new FormData();
-        form.append("status", "reject");
-        await OperatorService.updateRequestStatus(item.request_id, form);
-      } catch (err) {
-        console.log(err);
+      let conf = confirm("Reject Order ?");
+      if (conf) {
+        try {
+          let form = new FormData();
+          form.append("status", "reject");
+          await OperatorService.updateRequestStatus(item.request_id, form);
+          alert("Order rejected");
+          this.getOrderUnConfirmedHistory();
+          this.getOrdersHistory();
+        } catch (err) {
+          console.log(err);
+        }
       }
     },
     async getOrderUnConfirmedHistory() {
@@ -194,7 +206,7 @@ export default {
         let result = await CustomerService.getOrdersHistory();
         this.unconfirmed_orders = [];
         for (let item of result.data) {
-          if (item.status == "unconfirmed" || item.status == "reject") {
+          if (item.status == "unconfirmed") {
             var obj = {
               id: item.id,
               company_name: item.company_name,

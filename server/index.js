@@ -18,6 +18,7 @@ const RequestRouter = require("./src/routes/RequestRouter");
 const UserRouter = require("./src/routes/UserRouter");
 const GoodsRouter = require("./src/routes/GoodsRouter");
 const Contacts = require('./src/model/Contact')
+const VehicleRouter = require('./src/routes/VehicleRouter')
 const ScheduleRouter = require('./src/routes/ScheduleRouter')
 redisClient.on("error", function (err) {
   console.log("Could not establish a connection with redis. " + err);
@@ -72,6 +73,7 @@ app.use("/api/contacts", ContactsRouter);
 app.use("/api/orders", OrdersRouter);
 app.use("/api/request", RequestRouter);
 app.use("/api/goods", GoodsRouter);
+app.use('/api/vehicle', VehicleRouter)
 app.get("/", (req, res) => {
   res.send("Hello");
 });

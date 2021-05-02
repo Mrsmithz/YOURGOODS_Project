@@ -105,14 +105,15 @@
         </v-row>
         <v-row>
           <v-col>
-            <v-btn v-if="TempOrderIdState" @click="createSchedule">Create</v-btn>
+            <v-btn v-if="TempOrderIdState && !OrdersHistoryModeState" @click="createSchedule">Create</v-btn>
             <!-- <v-btn v-if="TempOrderIdState" class="ml-3">Reset</v-btn> -->
             <v-btn
-              v-if="TempScheduleIdState && !editMode"
+              v-if="TempScheduleIdState && !editMode && !OrdersHistoryModeState"
               @click="editMode = true"
               >Edit</v-btn
             >
             <v-btn v-if="TempScheduleIdState && editMode">Save</v-btn>
+            <v-btn v-if="OrdersHistoryModeState" @click="showManageSchedule">CLOSE</v-btn>
             <!-- <v-btn v-if="TempScheduleIdState && editMode" class="ml-3"
               >Reset</v-btn
             > -->
@@ -172,6 +173,7 @@ export default {
       this.$store.commit("showOperatorManagePage", "ManageSchedule");
       this.$store.commit("setTempScheduleId", null);
       this.$store.commit("setTempOrderId", null);
+      this.$store.commit('setOrdersHistoryMode', false)
       this.editMode = false
       this.$refs.schedule_form.reset()
     },
@@ -198,6 +200,9 @@ export default {
       try {
         let result = await ScheduleService.getScheduleById(this.TempScheduleIdState)
         let data = result.data[0]
+        if (data.arrived_datetime){
+          this.arrived_datetime = `${this.getTime(data.arrived_datetime)} ${this.getDate(data.arrived_datetime)}`
+        }
         this.shipping = data.shipping_name
         this.transport = data.transport_name
         this.driver = data.driver_name
@@ -236,6 +241,14 @@ export default {
     TempScheduleIdState: {
       get: function() {
         return this.$store.getters.getTempScheduleId;
+      },
+      set: function(newValue) {
+        return newValue;
+      },
+    },
+    OrdersHistoryModeState: {
+      get: function() {
+        return this.$store.getters.getOrdersHistoryMode;
       },
       set: function(newValue) {
         return newValue;

@@ -19,6 +19,7 @@ const store = new Vuex.Store({
         sidebarMenu:true,
         ContactModal:false,
         CustomerGoodsModal:false,
+        OrderHistoryMode:false,
         Temp:{
             temp_request_id:'',
             temp_request:'',
@@ -47,9 +48,22 @@ const store = new Vuex.Store({
         },
         Goods:{
             createGoods:false
+        },
+        Transport:{
+            Dashboard:true,
+            ManageSchedule:false,
+            ManageVehicle:false
+        },
+        Driver:{
+            Dashboard:true,
+            ViewOrders:false,
+            SentLocation:false
         }
     },
     mutations:{
+        setOrdersHistoryMode(state, mode){
+            state.OrderHistoryMode = mode
+        },
         setTempOperatorContactId(state, operator_id){
             state.Temp.temp_operator_contact_id = operator_id
         },
@@ -104,6 +118,17 @@ const store = new Vuex.Store({
         showContactModal(state){
             state.ContactModal = !state.ContactModal
         },
+        showDriverPage(state, page){
+            if (state.Driver[page]){
+                return
+            }
+            else{
+                Object.keys(state.Driver).forEach(key => {
+                    state.Driver[key] = false
+                })
+                state.Driver[page] = true
+            }
+        },
         showOperatorPage(state, page){
             if (state.Operator[page]){
                 return
@@ -113,6 +138,17 @@ const store = new Vuex.Store({
                     state.Operator[key] = false
                 })
                 state.Operator[page] = true
+            }
+        },
+        showTransportPage(state, page){
+            if (state.Transport[page]){
+                return
+            }
+            else{
+                Object.keys(state.Transport).forEach(key => {
+                    state.Transport[key] = false
+                })
+                state.Transport[page] = true
             }
         },
         showCustomerPage(state, page){
@@ -140,6 +176,9 @@ const store = new Vuex.Store({
         isAuthenticated: (state) => {
             return state.user.username ? true : false
         },
+        getOrdersHistoryMode: state => {
+            return state.OrderHistoryMode
+        },
         getCustomerGoodsModal: state => {
             return state.CustomerGoodsModal
         },
@@ -166,6 +205,12 @@ const store = new Vuex.Store({
         },
         getCustomer: state => {
             return state.Customer
+        },
+        getTransport: state => {
+            return state.Transport
+        },
+        getDriver: state => {
+            return state.Driver
         },
         getOperatorManage: state => {
             return state.OperatorManage

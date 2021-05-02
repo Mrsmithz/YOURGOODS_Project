@@ -10,5 +10,8 @@ class OperatorService{
     static async updateRequestStatus(id, data){
         return await axios.put(url.Operator.updateRequestStatus+id, data)
     }
+    static async getCompletedRequestCount(){
+        return await axios.get(url.Operator.getCompletedRequestCount)
+    }
 }
 export default OperatorService

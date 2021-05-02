@@ -105,6 +105,9 @@
         </v-data-table>
       </v-col>
     </v-row>
+    <v-row>
+      
+    </v-row>
   </div>
 </template>
 <script>
@@ -124,7 +127,6 @@ export default {
     ],
     select2: [
       { text: "In Progress", value: "in progress" },
-      { text: "Completed", value: "completed" },
       { text: "Confirmed", value: "confirmed" },
     ],
     statusList: [],
@@ -216,6 +218,7 @@ export default {
         let form = new FormData()
         form.append('status', input)
         let result = await OperatorService.updateRequestStatus(id, form)
+        this.getAllRequest()
         console.log(result)
       }
       catch(err){
@@ -250,7 +253,8 @@ export default {
         let data = result.data;
         this.request = [];
         for (let item of data) {
-          var obj = {
+          if (item.status != 'completed'){
+            var obj = {
             id: item.id,
             document: item.document.match(/`.+`/)[0].replaceAll("`", ""),
             customer_name: item.customer_name,
@@ -266,6 +270,7 @@ export default {
           };
           this.statusList.push(status);
           this.request.push(obj);
+          }
         }
       } catch (err) {
         console.log(err);

@@ -104,7 +104,7 @@
                     color="primary"
                     dark
                     class="mb-2"
-                    :disabled="!!TempRequestIdState"
+                    v-if="TempOrderIdState && !OrdersHistoryModeState"
                     @click="showCreateGoods()"
                   >
                     New Item
@@ -125,24 +125,25 @@
         </v-row>
         <v-row>
           <v-col>
-            <v-btn @click="createOrder" v-if="TempRequestIdState">Create</v-btn>
-            <v-btn @click="editOrder" v-if="TempOrderIdState && editMode"
+            <v-btn v-if="OrdersHistoryModeState" @click="showManageOrder">CLOSE</v-btn>
+            <v-btn @click="createOrder" v-if="TempRequestIdState && !OrdersHistoryModeState">Create</v-btn>
+            <v-btn @click="editOrder" v-if="TempOrderIdState && editMode && !OrdersHistoryModeState"
               >Save</v-btn
             >
             <v-btn
               @click="editMode = true"
-              v-if="!editMode && !TempRequestIdState"
+              v-if="!editMode && !TempRequestIdState && !OrdersHistoryModeState"
               >Edit</v-btn
             >
             <v-btn
               class="ml-3"
               @click="deleteOrder"
-              v-if="!editMode && !TempRequestIdState"
+              v-if="!editMode && !TempRequestIdState && !OrdersHistoryModeState"
               >Delete</v-btn
             >
             <v-btn
               class="ml-3"
-              v-if="(TempOrderIdState && editMode) || TempRequestIdState"
+              v-if="TempOrderIdState && editMode && !OrdersHistoryModeState"
               @click="[getOrder, getAllGoods, editMode = false]">BACK</v-btn
             >
           </v-col>
@@ -238,6 +239,7 @@ export default {
     showManageOrder() {
       this.$store.commit("setTempOrderId", null);
       this.$store.commit('setTempRequest', null)
+      this.$store.commit('setOrdersHistoryMode', false)
       this.$store.commit("showOperatorManagePage", "ManageOrder");
     },
     showManageGoods(goods_id) {
@@ -245,7 +247,7 @@ export default {
       this.$store.commit("showOperatorManagePage", "ManageGoods");
     },
     showCreateGoods() {
-      //this.$store.commit('setGoodsState', 'createGoods')
+      this.$store.commit('setTempGoodsId', null)
       this.$store.commit("showOperatorManagePage", "ManageGoods");
     },
     createOrderFormData() {
@@ -319,6 +321,7 @@ export default {
       if (visible && this.TempOrderIdState) {
         this.getOrder();
         this.getAllGoods();
+        this.$forceUpdate()
       } else if (visible && this.TempRequestIdState) {
         console.log(this.TempRequestIdState);
       } else if (!visible) {
@@ -366,6 +369,14 @@ export default {
     TempRequestState: {
       get: function() {
         return this.$store.getters.getTempRequest;
+      },
+      set: function(newValue) {
+        return newValue;
+      },
+    },
+    OrdersHistoryModeState: {
+      get: function() {
+        return this.$store.getters.getOrdersHistoryMode;
       },
       set: function(newValue) {
         return newValue;
