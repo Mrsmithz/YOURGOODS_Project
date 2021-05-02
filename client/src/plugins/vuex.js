@@ -53,6 +53,11 @@ const store = new Vuex.Store({
             Dashboard:true,
             ManageSchedule:false,
             ManageVehicle:false
+        },
+        Driver:{
+            Dashboard:true,
+            ViewOrders:false,
+            SentLocation:false
         }
     },
     mutations:{
@@ -112,6 +117,17 @@ const store = new Vuex.Store({
         },
         showContactModal(state){
             state.ContactModal = !state.ContactModal
+        },
+        showDriverPage(state, page){
+            if (state.Driver[page]){
+                return
+            }
+            else{
+                Object.keys(state.Driver).forEach(key => {
+                    state.Driver[key] = false
+                })
+                state.Driver[page] = true
+            }
         },
         showOperatorPage(state, page){
             if (state.Operator[page]){
@@ -192,6 +208,9 @@ const store = new Vuex.Store({
         },
         getTransport: state => {
             return state.Transport
+        },
+        getDriver: state => {
+            return state.Driver
         },
         getOperatorManage: state => {
             return state.OperatorManage

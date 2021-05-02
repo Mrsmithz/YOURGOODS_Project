@@ -46,12 +46,18 @@ const url = {
         getAllDriver:'http://localhost:25800/api/schedule/getAllDriver',
         updateScheduleDriver:'http://localhost:25800/api/schedule/updateScheduleDriver/',
         updateScheduleVehicle:'http://localhost:25800/api/schedule/updateScheduleVehicle/',
-        getScheduleCompletedDetail:'http://localhost:25800/api/schedule/getScheduleCompletedDetail'
+        getScheduleCompletedDetail:'http://localhost:25800/api/schedule/getScheduleCompletedDetail',
+        getScheduleInProgressDetailByDriver:'http://localhost:25800/api/schedule/getScheduleInProgressDetailByDriver',
+        updateScheduleStatus:'http://localhost:25800/api/schedule/updateScheduleStatus/',
+        getScheduleCompletedDetailByDriver:'http://localhost:25800/api/schedule/getScheduleCompletedDetailByDriver'
     },
     Vehicle:{
         getAllVehicleByManagerId:'http://localhost:25800/api/vehicle/getAllVehicleByManagerId',
         addVehicle:'http://localhost:25800/api/vehicle/addVehicle',
-    }
+        deleteVehicle:'http://localhost:25800/api/vehicle/deleteVehicle/',
+        updateVehicleStatus:'http://localhost:25800/api/vehicle/updateVehicleStatus',
+        editVehicle:'http://localhost:25800/api/vehicle/editVehicle'
+    },
 }
 
 export default url

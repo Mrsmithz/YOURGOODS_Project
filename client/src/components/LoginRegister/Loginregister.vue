@@ -49,7 +49,7 @@
                               color="#aa96da"
                               :rules="usernameRules"
                               required
-                              clearable
+                              
                             />
                             <v-text-field
                               class="pl-15 pr-15 field"
@@ -59,7 +59,7 @@
                               label="Password"
                               color="#aa96da"
                               required
-                              clearable
+                              
                             />
                             <v-btn
                               elevation="2"
@@ -152,7 +152,7 @@
                                   :rules="usernameRules"
                                   label="Username"
                                   required
-                                  clearable
+                                  
                                 ></v-text-field>
 
                                 <v-text-field
@@ -163,7 +163,7 @@
                                   :append-icon="show_password ? 'mdi-eye' : 'mdi-eye-off'"
                                   :type="show_password ? 'text' : 'password'"
                                   @click:append="show_password =! show_password"
-                                  clearable
+                                  
                                 ></v-text-field>
 
                                 <v-text-field
@@ -172,7 +172,7 @@
                                   label="E-mail"
                                   type="email"
                                   required
-                                  clearable
+                                  
                                 ></v-text-field>
 
                                 <v-row>
@@ -182,7 +182,7 @@
                                   :rules="nameRules"
                                   label="Firstname"
                                   required
-                                  clearable
+                                  
                                 ></v-text-field>
                                     </div>
                                    
@@ -192,7 +192,7 @@
                                   :rules="nameRules"
                                   label="Lastname"
                                   required
-                                  clearable
+                                  
                                 ></v-text-field>
                                     </div>
 
@@ -203,7 +203,7 @@
                                   :rules="telRules"
                                   label="Mobile number"
                                   required
-                                  clearable
+                                  
                                 ></v-text-field>
                                     <v-select
                                       :items="gender"
@@ -218,6 +218,7 @@
                                       row-height="20"
                                       :rules="addressRules"
                                       clearable
+                                      no-resize
                                     ></v-textarea>
                               <v-select
                               :items="roles"
@@ -236,7 +237,7 @@
                                     :append-icon="show_secret_key ? 'mdi-eye' : 'mdi-eye-off'"
                                     :type="show_secret_key ? 'text' : 'password'"
                                     @click:append="show_secret_key = !show_secret_key"
-                                    clearable
+                                    
                                   ></v-text-field>
                                 </div>
                               </v-slide-x-transition>
@@ -248,7 +249,7 @@
                                     required
                                     class="pt-0"
                                     type="text"
-                                    clearable
+                                    
                                     :rules="manageByRules"
                                   ></v-text-field>
                                 </div>

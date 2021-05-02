@@ -265,6 +265,68 @@ class Schedule{
             conn.release()
         }
     }
+    static async getScheduleInProgressDetailByDriver(driver_id){
+        let conn = await pool.getConnection()
+        await conn.beginTransaction()
+        try{
+            var stmt = 'select s.*, o.id as order_id, u.name as operator_name, u1.name as driver_name, cus.name as customer_name, co.status as status, co.id as request_id \
+            from SCHEDULE as s \
+            join ORDERS as o \
+            on o.id = s.order_id \
+            join CUSTOMER_OPERATOR as co \
+            on o.request_id = co.id \
+            join USER as cus \
+            on co.customer_id = cus.id \
+            join USER as u \
+            on u.id = o.operator_id and u.type = \'operator\' \
+            left join USER as u1 \
+            on u1.id = s.driver_id \
+            left join VEHICLE as v \
+            on v.plate_number = s.vehicle_plate_number \
+            where s.driver_id = ? and co.status = \'in progress\''
+            let [rows, field] = await conn.query(stmt, [driver_id])
+            await conn.commit()
+            return Promise.resolve(rows)
+        }
+        catch(err){
+            await conn.rollback()
+            return Promise.reject(err)
+        }
+        finally{
+            conn.release()
+        }
+    }
+    static async getScheduleCompletedDetailByDriver(driver_id){
+        let conn = await pool.getConnection()
+        await conn.beginTransaction()
+        try{
+            var stmt = 'select s.*, o.id as order_id, u.name as operator_name, u1.name as driver_name, cus.name as customer_name, co.status as status, co.id as request_id \
+            from SCHEDULE as s \
+            join ORDERS as o \
+            on o.id = s.order_id \
+            join CUSTOMER_OPERATOR as co \
+            on o.request_id = co.id \
+            join USER as cus \
+            on co.customer_id = cus.id \
+            join USER as u \
+            on u.id = o.operator_id and u.type = \'operator\' \
+            left join USER as u1 \
+            on u1.id = s.driver_id \
+            left join VEHICLE as v \
+            on v.plate_number = s.vehicle_plate_number \
+            where s.driver_id = ? and co.status = \'completed\''
+            let [rows, field] = await conn.query(stmt, [driver_id])
+            await conn.commit()
+            return Promise.resolve(rows)
+        }
+        catch(err){
+            await conn.rollback()
+            return Promise.reject(err)
+        }
+        finally{
+            conn.release()
+        }
+    }
     static async getAllDriver(){
         let conn = await pool.getConnection()
         await conn.beginTransaction()
@@ -305,6 +367,25 @@ class Schedule{
         try{
             var stmt = 'update SCHEDULE set vehicle_plate_number = ? where id = ?'
             let result = await conn.query(stmt, [plate_number, id])
+            await conn.commit()
+            return Promise.resolve(result)
+        }
+        catch(err){
+            await conn.rollback()
+            return Promise.reject(err)
+        }
+        finally{
+            conn.release()
+        }
+    }
+    static async updateScheduleStatus(schedule_id, request_id, arrived_datetime, status){
+        let conn = await pool.getConnection()
+        await conn.beginTransaction()
+        try{
+            var stmt = 'update CUSTOMER_OPERATOR set status = ? where id = ?'
+            var stmt2 = 'update SCHEDULE set arrived_datetime = ? where id = ?'
+            await conn.query(stmt, [status, request_id])
+            let result = await conn.query(stmt2, [arrived_datetime, schedule_id])
             await conn.commit()
             return Promise.resolve(result)
         }

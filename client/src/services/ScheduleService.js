@@ -28,5 +28,14 @@ class ScheduleService{
     static async updateScheduleVehicle(id, data){
         return await axios.put(url.Schedule.updateScheduleVehicle+id, data)
     }
+    static async getScheduleInProgressDetailByDriver(){
+        return await axios.get(url.Schedule.getScheduleInProgressDetailByDriver)
+    }
+    static async updateScheduleStatus(id, data){
+        return await axios.put(url.Schedule.updateScheduleStatus+id, data)
+    }
+    static async getScheduleCompletedDetailByDriver(){
+        return await axios.get(url.Schedule.getScheduleCompletedDetailByDriver)
+    }
 }
 export default ScheduleService

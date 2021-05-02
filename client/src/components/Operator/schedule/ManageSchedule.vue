@@ -200,6 +200,9 @@ export default {
       try {
         let result = await ScheduleService.getScheduleById(this.TempScheduleIdState)
         let data = result.data[0]
+        if (data.arrived_datetime){
+          this.arrived_datetime = `${this.getTime(data.arrived_datetime)} ${this.getDate(data.arrived_datetime)}`
+        }
         this.shipping = data.shipping_name
         this.transport = data.transport_name
         this.driver = data.driver_name

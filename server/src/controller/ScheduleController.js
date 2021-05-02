@@ -100,3 +100,34 @@ exports.updateScheduleVehicle = async (req, res) => {
     res.sendStatus(400)
   }
 }
+exports.getScheduleInProgressDetailByDriver = async (req, res) => {
+  try{
+    let result = await Schedule.getScheduleInProgressDetailByDriver(req.session.user.id)
+    res.status(200).send(result)
+  }
+  catch(err){
+    console.log(err)
+    res.sendStatus(400)
+  }
+}
+exports.getScheduleCompletedDetailByDriver = async (req, res) => {
+  try{
+    let result = await Schedule.getScheduleCompletedDetailByDriver(req.session.user.id)
+    res.status(200).send(result)
+  }
+  catch(err){
+    console.log(err)
+    res.sendStatus(400)
+  }
+}
+exports.updateScheduleStatus = async (req, res) => {
+  try{
+    let data = req.body
+    let result = await Schedule.updateScheduleStatus(req.params.id, data.request_id, data.arrived_datetime, data.status)
+    res.status(200).send(result)
+  }
+  catch(err){
+    console.log(err)
+    res.sendStatus(400)
+  }
+}

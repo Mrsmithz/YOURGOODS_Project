@@ -71,7 +71,7 @@ create table VEHICLE(
     plate_number varchar(20) primary key,
     `name` varchar(255) not null,
     `type` varchar(255) not null,
-    `status` enum('available', 'not_available') not null,
+    `status` enum('available', 'not_available') not null default 'available',
     brand varchar(255) not null,
     manage_by int not null,
     foreign key (manage_by) references USER(id)

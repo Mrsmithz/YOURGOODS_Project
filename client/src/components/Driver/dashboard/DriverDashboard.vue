@@ -152,7 +152,7 @@
 </template>
 <script>
 export default {
-  name: "TransportDashboard",
+  name: "DriverDashboard",
   data: () => ({
       sparklineData: [
         423,

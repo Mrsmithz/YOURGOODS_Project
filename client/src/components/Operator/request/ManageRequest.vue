@@ -105,6 +105,9 @@
         </v-data-table>
       </v-col>
     </v-row>
+    <v-row>
+      
+    </v-row>
   </div>
 </template>
 <script>
@@ -124,7 +127,6 @@ export default {
     ],
     select2: [
       { text: "In Progress", value: "in progress" },
-      { text: "Completed", value: "completed" },
       { text: "Confirmed", value: "confirmed" },
     ],
     statusList: [],

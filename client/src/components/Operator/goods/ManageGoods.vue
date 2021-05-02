@@ -90,7 +90,7 @@ export default {
     ],
     weightRules: [
       (v) => !!v || "This Field is required",
-      (v) => /(^[0-9]+[.]{1}[0-9]+$)|^[1-9]+$/.test(v) || "Weight Invalid",
+      (v) => /(^[0-9]+[.]{1}[0-9]+$|^[1-9]+[0-9]*$)/.test(v) || "Weight Invalid",
     ],
   }),
   beforeUpdate() {},

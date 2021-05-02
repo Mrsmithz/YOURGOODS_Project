@@ -148,7 +148,7 @@ export default {
         let form = new FormData()
         form.append('plate_number', input)
         await ScheduleService.updateScheduleVehicle(item.id, form)
-        this.getScheduleDetail()
+        this.getScheduleInProgressDetail()
       }
       catch(err){
         console.log(err)
@@ -210,7 +210,6 @@ export default {
             customer_name:item.customer_name,
             arrived_at:`${this.getTime(item.arrived_datetime)} ${this.getDate(item.arrived_datetime)}`
           };
-          console.log(obj)
           this.completed_schedule.push(obj);
         }
       } catch (err) {
@@ -221,10 +220,12 @@ export default {
       try{
         let result = await VehicleService.getAllVehicleByManagerId()
         for(let item of result.data){
-          this.vehicleList.push({
+          if (item.status == 'available'){
+            this.vehicleList.push({
             text:item.plate_number,
             value:item.plate_number
           })
+          }
         }
       }
       catch(err){
