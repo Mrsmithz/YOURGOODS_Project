@@ -224,6 +224,23 @@ class User{
             conn.release()
         }
     }
+    static async getStaffManageBy(id){
+        let conn = await pool.getConnection()
+        await conn.beginTransaction()
+        try{
+            var stmt = 'select id, name, type, username, gender, telephone, email from USER where manage_by = ?'
+            let [rows, fields] = await conn.query(stmt, [id])
+            await conn.commit()
+            return Promise.resolve(rows)
+        }
+        catch(err){
+            await conn.rollback()
+            return Promise.reject(err)
+        }
+        finally{
+            conn.release()
+        }
+    }
 }
 
 module.exports = User

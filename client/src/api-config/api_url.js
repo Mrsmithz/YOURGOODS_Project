@@ -58,6 +58,14 @@ const url = {
         updateVehicleStatus:'http://localhost:25800/api/vehicle/updateVehicleStatus',
         editVehicle:'http://localhost:25800/api/vehicle/editVehicle'
     },
+    Location:{
+        addLocation:'http://localhost:25800/api/location/addLocation',
+        getLocationByOrderId:'http://localhost:25800/api/location/getLocationByOrderId/'
+    },
+    Supervisor:{
+        getStaffDetail:'http://localhost:25800/api/user/getStaffDetail',
+        getLatestFeedback:'http://localhost:25800/api/feedback/getLatestFeedback'
+    }
 }
 
 export default url

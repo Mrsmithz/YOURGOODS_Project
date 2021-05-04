@@ -7,6 +7,7 @@
           <DriverDashboard v-if="DashboardState"></DriverDashboard>
           <ViewOrders v-if="ViewOrdersState"></ViewOrders>
           <SentLocation v-if="SentLocationState"></SentLocation>
+          <ManageOrderLocation></ManageOrderLocation>
           <ManageGoods></ManageGoods>
           <ManageOrder></ManageOrder>
           <ManageSchedule></ManageSchedule>
@@ -23,6 +24,7 @@ import DriverDrawer from "./drawer/DriverDrawer";
 import ManageGoods from '../Operator/goods/ManageGoods'
 import ManageOrder from '../Operator/order/ManageOrder'
 import ManageSchedule from '../Operator/schedule/ManageSchedule'
+import ManageOrderLocation from './location/ManageOrderLocation'
 export default {
   name: "DriverIndex",
   components: {
@@ -32,7 +34,8 @@ export default {
     ViewOrders,
     ManageGoods,
     ManageOrder,
-    ManageSchedule
+    ManageSchedule,
+    ManageOrderLocation
   },
   data: () => ({}),
   computed: {

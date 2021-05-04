@@ -58,6 +58,23 @@ class Feedback{
             conn.release()
         }
     }
+    static async getLatestFeedback(){
+        let conn = await pool.getConnection()
+        await conn.beginTransaction()
+        try{
+            var stmt = 'select * from FEEDBACK order by created_datetime desc limit 10'
+            let [rows, fields] = await conn.query(stmt)
+            await conn.commit()
+            return Promise.resolve(rows)
+        }
+        catch(err){
+            await conn.rollback()
+            return Promise.reject(err)
+        }
+        finally{
+            conn.release()
+        }
+    }
 }
 
 module.exports = Feedback

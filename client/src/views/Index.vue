@@ -8,6 +8,7 @@
     <OperatorIndex v-if="UserState.type == 'operator'"></OperatorIndex>
     <TransportIndex v-if="UserState.type == 'transport'"></TransportIndex>
     <DriverIndex v-if="UserState.type == 'driver'"></DriverIndex>
+    <SupervisorIndex v-if="UserState.type == 'supervisor'"></SupervisorIndex>
   </v-app>
 </template>
 
@@ -24,6 +25,7 @@ import OperatorIndex from "../components/Operator/OperatorIndex"
 import AccountService from "../services/AccountService"
 import TransportIndex from '../components/Transport/TransportIndex'
 import DriverIndex from '../components/Driver/DriverIndex'
+import SupervisorIndex from '../components/Supervisor/SupervisorIndex'
 export default {
   name: "Index",
   components: {
@@ -34,7 +36,8 @@ export default {
     ChangePasswordModal,
     OperatorIndex,
     TransportIndex,
-    DriverIndex
+    DriverIndex,
+    SupervisorIndex
   },
   data:() => ({
     user:''

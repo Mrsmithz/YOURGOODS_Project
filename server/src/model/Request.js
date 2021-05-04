@@ -149,7 +149,9 @@ class Request{
             var stmt = 'select count(c.operator_id) as request_count, u.id from USER as u \
             left join CUSTOMER_OPERATOR as c \
             on u.id = c.operator_id where u.type = \'operator\' \
-            group by u.id'
+            group by u.id \
+            order by request_count asc \
+            limit 1'
             let [rows, field] = await conn.query(stmt)
             await conn.commit()
             return Promise.resolve(rows)

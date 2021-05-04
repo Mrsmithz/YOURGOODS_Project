@@ -24,12 +24,16 @@
           </template>
           <template v-slot:[`item.schedule`]="{ item }">
             <v-col cols="auto">
-              <v-btn small color="primary" @click="showManageSchedule(item)">View</v-btn>
+              <v-btn small color="primary" @click="showManageSchedule(item)"
+                >View</v-btn
+              >
             </v-col>
           </template>
           <template v-slot:[`item.order`]="{ item }">
             <v-col cols="auto">
-              <v-btn small color="primary" @click="showManageOrder(item)">View</v-btn>
+              <v-btn small color="primary" @click="showManageOrder(item)"
+                >View</v-btn
+              >
             </v-col>
           </template>
           <template v-slot:[`item.status`]="{ item }">
@@ -107,6 +111,13 @@
               </v-col>
             </v-row>
           </template>
+          <template v-slot:[`item.location`]="{ item }">
+            <v-col cols="auto">
+              <v-btn small color="primary" @click="showLocationModal(item)"
+                >View</v-btn
+              >
+            </v-col>
+          </template>
         </v-data-table>
       </v-col>
     </v-row>
@@ -123,7 +134,7 @@
             <v-toolbar-title>Completed Orders Detail</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-text-field
-              v-model="search"
+              v-model="completed_search"
               append-icon="mdi-magnify"
               label="Search"
               single-line
@@ -133,14 +144,25 @@
         </template>
         <template v-slot:[`item.schedule`]="{ item }">
           <v-col cols="auto">
-            <v-btn small color="primary" @click="showManageSchedule(item)">View</v-btn>
+            <v-btn small color="primary" @click="showManageSchedule(item)"
+              >View</v-btn
+            >
           </v-col>
         </template>
         <template v-slot:[`item.order`]="{ item }">
           <v-col cols="auto">
-            <v-btn small color="primary" @click="showManageOrder(item)">View</v-btn>
+            <v-btn small color="primary" @click="showManageOrder(item)"
+              >View</v-btn
+            >
           </v-col>
         </template>
+        <template v-slot:[`item.location`]="{ item }">
+            <v-col cols="auto">
+              <v-btn small color="primary" @click="showLocationModal(item)"
+                >View</v-btn
+              >
+            </v-col>
+          </template>
       </v-data-table>
     </v-row>
   </div>
@@ -161,9 +183,10 @@ export default {
       },
       { text: "Arrived At", value: "arrived_at", align: "start" },
       { text: "Status", value: "status", align: "center" },
-      { text: "Driver", value: "driver", align: "center" },
+      { text: "Location", value: "location", align: "center" },
       { text: "Schedule", value: "schedule", align: "center" },
       { text: "Order", value: "order", align: "center" },
+      { text: "Driver", value: "driver", align: "center" },
     ],
     orders: [],
     completed_orders: [],
@@ -176,13 +199,18 @@ export default {
   methods: {
     showManageOrder(item) {
       this.$store.commit("setTempOrderId", item.order_id);
-      this.$store.commit('setOrdersHistoryMode', true)
+      this.$store.commit("setOrdersHistoryMode", true);
       this.$store.commit("showOperatorManagePage", "ManageOrder");
     },
     showManageSchedule(item) {
-      this.$store.commit('setTempScheduleId', item.schedule_id)
-      this.$store.commit('setOrdersHistoryMode', true)
+      this.$store.commit("setTempScheduleId", item.schedule_id);
+      this.$store.commit("setOrdersHistoryMode", true);
       this.$store.commit("showOperatorManagePage", "ManageSchedule");
+    },
+    showLocationModal(item) {
+      item.driver_id = this.$store.getters.getUser.id;
+      this.$store.commit("setTempDriverData", item);
+      this.$store.commit("setLocationModal", true);
     },
     async updateOrderStatus(item, event) {
       if (event == "completed") {
@@ -203,8 +231,8 @@ export default {
               form
             );
             console.log(result);
-            this.getSchedule()
-            this.getCompletedSchedule()
+            this.getSchedule();
+            this.getCompletedSchedule();
           } catch (err) {
             console.log(err);
           }

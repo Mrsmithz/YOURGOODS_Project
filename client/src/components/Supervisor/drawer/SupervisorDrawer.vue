@@ -14,7 +14,7 @@
         </v-list-item-action>
         <v-list-item-content>
           <v-list-item-title>
-            <h3>Driver Drawer</h3>
+            <h3>Supervisor Drawer</h3>
           </v-list-item-title>
         </v-list-item-content>
       </v-list-item>
@@ -43,11 +43,15 @@
 </template>
 <script>
 export default {
-  name: "DriverDrawer",
+  name: "OperatorDrawer",
   data: () => ({
     items: [
       { title: "Dashboard", icon: "mdi-account-outline", key:'Dashboard'},
-      { title: "View Orders", icon: "mdi-account-outline", key:'ViewOrders'},
+      { title: "Operator", icon: "mdi-account-outline", key:'ManageOperator'},
+      { title: "Transport", icon: "mdi-account-outline", key:'ManageTransport'},
+      { title: "Driver", icon: "mdi-account-outline", key:'ManageDriver'},
+      { title: "Shipping", icon: "mdi-account-outline", key:'ManageShipping'},
+      { title: "Feedback", icon: "mdi-account-outline", key:'Feedback'},
     ],
     toggleMini: false,
   }),
@@ -56,7 +60,7 @@ export default {
       this.$store.commit("showSideBarMenu");
     },
     showPage(key){
-      this.$store.commit('showDriverPage', key)
+      this.$store.commit('showSupervisorPage', key)
     }
   },
   computed: {

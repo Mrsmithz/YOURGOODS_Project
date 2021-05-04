@@ -86,7 +86,7 @@ export default {
     requiredRules: [(v) => !!v || "This Field is required"],
     quantityRules: [
       (v) => !!v || "This Field is required",
-      (v) => /^[1-9]+$/.test(v) || "Quantity Invalid",
+      (v) => /^[1-9]+[0-9]*$/.test(v) || "Quantity Invalid",
     ],
     weightRules: [
       (v) => !!v || "This Field is required",

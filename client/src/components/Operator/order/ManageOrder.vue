@@ -176,6 +176,12 @@ export default {
         return false;
       }
     },
+    getDate(date) {
+      return date.match(/.+(?=T)/)[0];
+    },
+    getTime(time) {
+      return time.match(/\d+:\d+/)[0];
+    },
     async checkGoods() {
       try {
         let result = await GoodsService.getGoodsByOrderId(
@@ -201,8 +207,8 @@ export default {
         this.receiver_address = data.receiver_address;
         this.invoice_id = data.invoice_id;
         this.container_id = data.container_id;
-        this.created_at = data.created_datetime;
-        this.modified_at = data.modified_datetime;
+        this.created_at = `${this.getTime(data.created_datetime)} ${this.getDate(data.created_datetime)}`;
+        this.modified_at = `${this.getTime(data.modified_datetime)} ${this.getDate(data.modified_datetime)}`;
       } catch (err) {
         console.log(err);
       }

@@ -52,7 +52,7 @@
     <v-row class="mt-2">
       <v-col align="center" justify="center">
         <v-btn @click="upload">SUBMIT</v-btn>
-        <v-btn class="ml-3 button is-danger" @click="reset">RESET</v-btn>
+        <!-- <v-btn class="ml-3 button is-danger" @click="reset">RESET</v-btn> -->
       </v-col>
     </v-row>
     <v-row class="pt-6">
@@ -227,6 +227,7 @@ export default {
       window.open(file_url);
     },
     async editUploaded(item) {
+      this.editTemp = {}
       this.editTemp = item;
       this.$refs.filebtn.click();
     },
@@ -315,15 +316,16 @@ export default {
       this.$forceUpdate();
     },
     remove(file) {
-      if (!this.start_upload) {
+      //if (!this.start_upload) {
         this.files = this.files.filter((el) => {
           return el.name != file.name;
         });
-      }
+      //}
     },
     reset() {
       this.getUploadHistory();
       this.files = [];
+      this.$forceUpdate()
     },
     drop(e) {
       e.preventDefault();
@@ -332,6 +334,7 @@ export default {
       if (this.editTemp) {
         this.AddToFiles(files, this.editTemp);
         this.upload();
+        this.$forceUpdate()
       } else {
         this.AddToFiles(files);
       }
