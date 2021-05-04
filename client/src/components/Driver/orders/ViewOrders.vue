@@ -122,48 +122,50 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-data-table
-        :headers="headers"
-        :items="completed_orders"
-        :items-per-page="5"
-        :search="completed_search"
-        class="elevation-1"
-      >
-        <template v-slot:top>
-          <v-toolbar flat>
-            <v-toolbar-title>Completed Orders Detail</v-toolbar-title>
-            <v-spacer></v-spacer>
-            <v-text-field
-              v-model="completed_search"
-              append-icon="mdi-magnify"
-              label="Search"
-              single-line
-              hide-details
-            ></v-text-field>
-          </v-toolbar>
-        </template>
-        <template v-slot:[`item.schedule`]="{ item }">
-          <v-col cols="auto">
-            <v-btn small color="primary" @click="showManageSchedule(item)"
-              >View</v-btn
-            >
-          </v-col>
-        </template>
-        <template v-slot:[`item.order`]="{ item }">
-          <v-col cols="auto">
-            <v-btn small color="primary" @click="showManageOrder(item)"
-              >View</v-btn
-            >
-          </v-col>
-        </template>
-        <template v-slot:[`item.location`]="{ item }">
+      <v-col>
+        <v-data-table
+          :headers="headers"
+          :items="completed_orders"
+          :items-per-page="5"
+          :search="completed_search"
+          class="elevation-1"
+        >
+          <template v-slot:top>
+            <v-toolbar flat>
+              <v-toolbar-title>Completed Orders Detail</v-toolbar-title>
+              <v-spacer></v-spacer>
+              <v-text-field
+                v-model="completed_search"
+                append-icon="mdi-magnify"
+                label="Search"
+                single-line
+                hide-details
+              ></v-text-field>
+            </v-toolbar>
+          </template>
+          <template v-slot:[`item.schedule`]="{ item }">
+            <v-col cols="auto">
+              <v-btn small color="primary" @click="showManageSchedule(item)"
+                >View</v-btn
+              >
+            </v-col>
+          </template>
+          <template v-slot:[`item.order`]="{ item }">
+            <v-col cols="auto">
+              <v-btn small color="primary" @click="showManageOrder(item)"
+                >View</v-btn
+              >
+            </v-col>
+          </template>
+          <template v-slot:[`item.location`]="{ item }">
             <v-col cols="auto">
               <v-btn small color="primary" @click="showLocationModal(item)"
                 >View</v-btn
               >
             </v-col>
           </template>
-      </v-data-table>
+        </v-data-table>
+      </v-col>
     </v-row>
   </div>
 </template>

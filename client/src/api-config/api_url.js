@@ -49,7 +49,8 @@ const url = {
         getScheduleCompletedDetail:'http://localhost:25800/api/schedule/getScheduleCompletedDetail',
         getScheduleInProgressDetailByDriver:'http://localhost:25800/api/schedule/getScheduleInProgressDetailByDriver',
         updateScheduleStatus:'http://localhost:25800/api/schedule/updateScheduleStatus/',
-        getScheduleCompletedDetailByDriver:'http://localhost:25800/api/schedule/getScheduleCompletedDetailByDriver'
+        getScheduleCompletedDetailByDriver:'http://localhost:25800/api/schedule/getScheduleCompletedDetailByDriver',
+        getScheduleDetailByShipping:'http://localhost:25800/api/schedule/getScheduleDetailByShipping'
     },
     Vehicle:{
         getAllVehicleByManagerId:'http://localhost:25800/api/vehicle/getAllVehicleByManagerId',
@@ -65,6 +66,12 @@ const url = {
     Supervisor:{
         getStaffDetail:'http://localhost:25800/api/user/getStaffDetail',
         getLatestFeedback:'http://localhost:25800/api/feedback/getLatestFeedback'
+    },
+    Feedback:{
+        createFeedback:'http://localhost:25800/api/feedback/createFeedback'
+    },
+    Dashboard:{
+        CustomerAndOperator:'http://localhost:25800/api/user/dashboard/customerAndOperator'
     }
 }
 

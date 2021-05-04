@@ -21,14 +21,19 @@
     </v-list>
     <v-list-item @click="toggleMini = !toggleMini">
       <v-list-item-icon>
-        <v-icon>{{expandCollapseIcon}}</v-icon>
+        <v-icon>{{ expandCollapseIcon }}</v-icon>
       </v-list-item-icon>
       <v-list-item-content class="text-truncate">
-          USERNAME
+        USERNAME
       </v-list-item-content>
     </v-list-item>
     <v-list>
-      <v-list-item v-for="item in items" :key="item.title" link @click="showPage(item.key)">
+      <v-list-item
+        v-for="item in items"
+        :key="item.title"
+        link
+        @click="showPage(item.key)"
+      >
         <v-list-item-icon>
           <v-icon color="primary">{{ item.icon }}</v-icon>
         </v-list-item-icon>
@@ -46,10 +51,17 @@ export default {
   name: "ShippingDrawer",
   data: () => ({
     items: [
-      { title: "Dashboard", icon: "mdi-account-outline", key:'Dashboard'},
-        { title: "Orders History", icon: "mdi-account-outline", key:'OrdersHistory'},
-      { title: "Tracking Order", icon: "mdi-account-outline", key:'TrackingOrder'},
-      
+      { title: "Dashboard", icon: "mdi-account-outline", key: "Dashboard" },
+      {
+        title: "View Orders",
+        icon: "mdi-account-outline",
+        key: "ViewOrders",
+      },
+      {
+        title: "Tracking Order",
+        icon: "mdi-account-outline",
+        key: "TrackingOrder",
+      },
     ],
     toggleMini: false,
   }),
@@ -57,9 +69,9 @@ export default {
     showCustomerDrawer() {
       this.$store.commit("showSideBarMenu");
     },
-    showPage(key){
-      this.$store.commit('showOperatorPage', key)
-    }
+    showPage(key) {
+      this.$store.commit("showShippingPage", key);
+    },
   },
   computed: {
     sidebarMenuState: {
@@ -71,12 +83,12 @@ export default {
       },
     },
     mini: {
-        get:function(){
-            return this.$vuetify.breakpoint.smAndDown || this.toggleMini;
-        },
-        set:function(newValue) {
-            return newValue;
-        }
+      get: function() {
+        return this.$vuetify.breakpoint.smAndDown || this.toggleMini;
+      },
+      set: function(newValue) {
+        return newValue;
+      },
     },
     expandCollapseIcon() {
       return this.mini ? "mdi-chevron-right" : "mdi-chevron-left";

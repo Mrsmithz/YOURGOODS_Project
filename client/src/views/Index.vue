@@ -9,6 +9,7 @@
     <TransportIndex v-if="UserState.type == 'transport'"></TransportIndex>
     <DriverIndex v-if="UserState.type == 'driver'"></DriverIndex>
     <SupervisorIndex v-if="UserState.type == 'supervisor'"></SupervisorIndex>
+    <ShippingIndex v-if="UserState.type == 'shipping'"></ShippingIndex>
   </v-app>
 </template>
 
@@ -26,6 +27,7 @@ import AccountService from "../services/AccountService"
 import TransportIndex from '../components/Transport/TransportIndex'
 import DriverIndex from '../components/Driver/DriverIndex'
 import SupervisorIndex from '../components/Supervisor/SupervisorIndex'
+import ShippingIndex from '../components/Shipping/ShippingIndex'
 export default {
   name: "Index",
   components: {
@@ -37,7 +39,8 @@ export default {
     OperatorIndex,
     TransportIndex,
     DriverIndex,
-    SupervisorIndex
+    SupervisorIndex,
+    ShippingIndex
   },
   data:() => ({
     user:''

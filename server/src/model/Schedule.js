@@ -500,6 +500,31 @@ class Schedule{
             conn.release()
         }
     }
+    
+    static async getScheduleDetailByShipping(shipping_id){
+        let conn = await pool.getConnection()
+        await conn.beginTransaction()
+        try{
+            var stmt = 'select c.status, u.name as customer_name, s.id as schedule_id, o.id as order_id from SCHEDULE as s \
+            join ORDERS as o \
+            on o.id = s.order_id \
+            join CUSTOMER_OPERATOR as c \
+            on c.id = o.request_id \
+            join USER as u \
+            on u.id = c.customer_id \
+            where s.shipping_id = ?'
+            let [rows, fields] = await conn.query(stmt, [shipping_id])
+            await conn.commit()
+            return Promise.resolve(rows)
+        }
+        catch(err){
+            await conn.rollback()
+            return Promise.reject(err)
+        }
+        finally{
+            conn.release()
+        }
+    }
 }
 
 module.exports = Schedule

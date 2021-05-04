@@ -44,5 +44,8 @@ class CustomerService {
   static async getOrdersHistory(){
       return await axios.get(url.customer.getOrdersHistory)
   }
+  static async createFeedback(form){
+    return await axios.post(url.Feedback.createFeedback, form)
+  }
 }
 export default CustomerService;

@@ -140,3 +140,13 @@ exports.getStaffDetail = async (req, res) => {
     res.sendStatus(400);
   }
 };
+exports.getCustomerOrOperatorDashboard = async (req, res) => {
+    try{
+        let result = await User.getCustomerOrOperatorDashboard(req.session.user.id)
+        res.status(200).send(result)
+    }
+    catch(err){
+        console.log(err)
+        res.sendStatus(400)
+    }
+}

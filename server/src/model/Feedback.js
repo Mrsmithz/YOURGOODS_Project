@@ -10,7 +10,7 @@ class Feedback{
         let conn = await pool.getConnection()
         await conn.beginTransaction()
         try{
-            var stmt = 'insert into FEEDBACK (commment, customer_id) values(?,?)'
+            var stmt = 'insert into FEEDBACK (comment, customer_id) values(?,?)'
             let result = await conn.query(stmt, [this.comment, this.customer_id])
             this.id = result[0].insertId
             await conn.commit()

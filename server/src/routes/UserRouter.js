@@ -6,4 +6,5 @@ router.put('/update/profile', UserController.updateUserProfile)
 router.post('/update/password', UserController.updateUserPassword)
 router.put('/update/email', UserController.updateUserEmail)
 router.get('/getStaffDetail', UserController.getStaffDetail)
+router.get('/dashboard/customerAndOperator', UserController.getCustomerOrOperatorDashboard)
 module.exports = router

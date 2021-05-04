@@ -68,6 +68,11 @@ const store = new Vuex.Store({
             ManageDriver:false,
             ManageShipping:false,
             Feedback:false
+        },
+        Shipping:{
+            Dashboard:true,
+            ViewOrders:false,
+            TrackingOrder:false
         }
     },
     mutations:{
@@ -189,6 +194,17 @@ const store = new Vuex.Store({
                 state.Supervisor[page] = true
             }
         },
+        showShippingPage(state, page){
+            if (state.Shipping[page]){
+                return
+            }
+            else{
+                Object.keys(state.Shipping).forEach(key => {
+                    state.Shipping[key] = false
+                })
+                state.Shipping[page] = true
+            }
+        },
         showOperatorManagePage(state, page){
             state.OperatorManage[page] = !state.OperatorManage[page]
         },
@@ -244,6 +260,9 @@ const store = new Vuex.Store({
         },
         getSupervisor: state => {
             return state.Supervisor
+        },
+        getShipping: state => {
+            return state.Shipping
         },
         getOperatorManage: state => {
             return state.OperatorManage

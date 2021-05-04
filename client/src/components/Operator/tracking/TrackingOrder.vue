@@ -16,6 +16,7 @@
                 ></v-text-field>
               </v-col>
             </v-row>
+            <v-slide-x-reverse-transition>
             <v-row v-if="locations.length > 0">
               <v-col>
                 <v-card-text class="mt-3">
@@ -54,6 +55,7 @@
                 <h2 class="title">Not Found</h2>
               </v-col>
             </v-row>
+            </v-slide-x-reverse-transition>
           </v-card-text>
         </v-card>
       </v-col>
