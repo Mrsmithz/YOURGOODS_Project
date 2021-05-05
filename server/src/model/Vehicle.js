@@ -120,8 +120,15 @@ class Vehicle{
         try{
             var stmt = 'update SCHEDULE set vehicle_plate_number = null where vehicle_plate_number = ?'
             var stmt2 = 'DELETE from VEHICLE where plate_number = ?'
-            await conn.query(stmt, [plate_number])
-            let result = await conn.query(stmt2, [plate_number])
+            var stmt3 = 'delete FROM VEHICLE as v \
+            WHERE NOT EXISTS (SELECT vehicle_plate_number as plate_number \
+            FROM SCHEDULE as s WHERE v.plate_number = s.vehicle_plate_number) and plate_number = ?'
+            //await conn.query(stmt, [plate_number])
+            let result = await conn.query(stmt3, [plate_number])
+            console.log(result)
+            if (result[0].affectedRows == 0){
+                return Promise.reject('Cannot Delete Vehicle While Vehicle is Assigned')
+            }
             await conn.commit()
             return Promise.resolve(result)
         }

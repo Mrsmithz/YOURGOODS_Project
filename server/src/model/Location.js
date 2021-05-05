@@ -25,7 +25,7 @@ class Location{
             conn.release()
         }
     }
-    async getLocationByDriverId(driver_id){
+    static async getLocationByDriverId(driver_id){
         let conn = await pool.getConnection()
         await conn.beginTransaction()
         try{
@@ -42,11 +42,11 @@ class Location{
             conn.release()
         }
     }
-    async getLocationByOrderId(order_id){
+    static async getLocationByOrderId(order_id){
         let conn = await pool.getConnection()
         await conn.beginTransaction()
         try{
-            var stmt = 'select * from LOCATIONS where order_id = ?'
+            var stmt = 'select * from LOCATIONS where order_id = ? order by created_datetime'
             let [rows, fields] = await conn.query(stmt, [order_id])
             await conn.commit()
             return Promise.resolve(rows)

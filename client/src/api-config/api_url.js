@@ -3,6 +3,11 @@ const url = {
     login:'http://localhost:25800/api/auth/login',
     session:'http://localhost:25800/api/auth/get/session',
     logout:'http://localhost:25800/api/auth/logout',
+    User:{
+        updateProfile:'http://localhost:25800/api/user/update/profile',
+        updatePassword:'http://localhost:25800/api/user/update/password',
+        updateEmail:'http://localhost:25800/api/user/update/email'
+    },
     customer:{
         createRequest:'http://localhost:25800/api/request/createRequest',
         getAllRequestByCustomerId:'http://localhost:25800/api/request/getAllRequestByCustomerId',
@@ -49,7 +54,8 @@ const url = {
         getScheduleCompletedDetail:'http://localhost:25800/api/schedule/getScheduleCompletedDetail',
         getScheduleInProgressDetailByDriver:'http://localhost:25800/api/schedule/getScheduleInProgressDetailByDriver',
         updateScheduleStatus:'http://localhost:25800/api/schedule/updateScheduleStatus/',
-        getScheduleCompletedDetailByDriver:'http://localhost:25800/api/schedule/getScheduleCompletedDetailByDriver'
+        getScheduleCompletedDetailByDriver:'http://localhost:25800/api/schedule/getScheduleCompletedDetailByDriver',
+        getScheduleDetailByShipping:'http://localhost:25800/api/schedule/getScheduleDetailByShipping'
     },
     Vehicle:{
         getAllVehicleByManagerId:'http://localhost:25800/api/vehicle/getAllVehicleByManagerId',
@@ -58,6 +64,22 @@ const url = {
         updateVehicleStatus:'http://localhost:25800/api/vehicle/updateVehicleStatus',
         editVehicle:'http://localhost:25800/api/vehicle/editVehicle'
     },
+    Location:{
+        addLocation:'http://localhost:25800/api/location/addLocation',
+        getLocationByOrderId:'http://localhost:25800/api/location/getLocationByOrderId/'
+    },
+    Supervisor:{
+        getStaffDetail:'http://localhost:25800/api/user/getStaffDetail',
+        getLatestFeedback:'http://localhost:25800/api/feedback/getLatestFeedback'
+    },
+    Feedback:{
+        createFeedback:'http://localhost:25800/api/feedback/createFeedback'
+    },
+    Dashboard:{
+        CustomerAndOperator:'http://localhost:25800/api/user/dashboard/customerAndOperator',
+        StaffDashboard:'http://localhost:25800/api/user/dashboard/staff',
+        SupervisorDashboard:'http://localhost:25800/api/user/dashboard/supervisor'
+    }
 }
 
 export default url

@@ -24,12 +24,16 @@
           </template>
           <template v-slot:[`item.schedule`]="{ item }">
             <v-col cols="auto">
-              <v-btn small color="primary" @click="showManageSchedule(item)">View</v-btn>
+              <v-btn small color="primary" @click="showManageSchedule(item)"
+                >View</v-btn
+              >
             </v-col>
           </template>
           <template v-slot:[`item.order`]="{ item }">
             <v-col cols="auto">
-              <v-btn small color="primary" @click="showManageOrder(item)">View</v-btn>
+              <v-btn small color="primary" @click="showManageOrder(item)"
+                >View</v-btn
+              >
             </v-col>
           </template>
           <template v-slot:[`item.status`]="{ item }">
@@ -107,41 +111,61 @@
               </v-col>
             </v-row>
           </template>
+          <template v-slot:[`item.location`]="{ item }">
+            <v-col cols="auto">
+              <v-btn small color="primary" @click="showLocationModal(item)"
+                >View</v-btn
+              >
+            </v-col>
+          </template>
         </v-data-table>
       </v-col>
     </v-row>
     <v-row>
-      <v-data-table
-        :headers="headers"
-        :items="completed_orders"
-        :items-per-page="5"
-        :search="completed_search"
-        class="elevation-1"
-      >
-        <template v-slot:top>
-          <v-toolbar flat>
-            <v-toolbar-title>Completed Orders Detail</v-toolbar-title>
-            <v-spacer></v-spacer>
-            <v-text-field
-              v-model="search"
-              append-icon="mdi-magnify"
-              label="Search"
-              single-line
-              hide-details
-            ></v-text-field>
-          </v-toolbar>
-        </template>
-        <template v-slot:[`item.schedule`]="{ item }">
-          <v-col cols="auto">
-            <v-btn small color="primary" @click="showManageSchedule(item)">View</v-btn>
-          </v-col>
-        </template>
-        <template v-slot:[`item.order`]="{ item }">
-          <v-col cols="auto">
-            <v-btn small color="primary" @click="showManageOrder(item)">View</v-btn>
-          </v-col>
-        </template>
-      </v-data-table>
+      <v-col>
+        <v-data-table
+          :headers="headers"
+          :items="completed_orders"
+          :items-per-page="5"
+          :search="completed_search"
+          class="elevation-1"
+        >
+          <template v-slot:top>
+            <v-toolbar flat>
+              <v-toolbar-title>Completed Orders Detail</v-toolbar-title>
+              <v-spacer></v-spacer>
+              <v-text-field
+                v-model="completed_search"
+                append-icon="mdi-magnify"
+                label="Search"
+                single-line
+                hide-details
+              ></v-text-field>
+            </v-toolbar>
+          </template>
+          <template v-slot:[`item.schedule`]="{ item }">
+            <v-col cols="auto">
+              <v-btn small color="primary" @click="showManageSchedule(item)"
+                >View</v-btn
+              >
+            </v-col>
+          </template>
+          <template v-slot:[`item.order`]="{ item }">
+            <v-col cols="auto">
+              <v-btn small color="primary" @click="showManageOrder(item)"
+                >View</v-btn
+              >
+            </v-col>
+          </template>
+          <template v-slot:[`item.location`]="{ item }">
+            <v-col cols="auto">
+              <v-btn small color="primary" @click="showLocationModal(item)"
+                >View</v-btn
+              >
+            </v-col>
+          </template>
+        </v-data-table>
+      </v-col>
     </v-row>
   </div>
 </template>
@@ -161,9 +185,10 @@ export default {
       },
       { text: "Arrived At", value: "arrived_at", align: "start" },
       { text: "Status", value: "status", align: "center" },
-      { text: "Driver", value: "driver", align: "center" },
+      { text: "Location", value: "location", align: "center" },
       { text: "Schedule", value: "schedule", align: "center" },
       { text: "Order", value: "order", align: "center" },
+      { text: "Driver", value: "driver", align: "center" },
     ],
     orders: [],
     completed_orders: [],
@@ -176,13 +201,18 @@ export default {
   methods: {
     showManageOrder(item) {
       this.$store.commit("setTempOrderId", item.order_id);
-      this.$store.commit('setOrdersHistoryMode', true)
+      this.$store.commit("setOrdersHistoryMode", true);
       this.$store.commit("showOperatorManagePage", "ManageOrder");
     },
     showManageSchedule(item) {
-      this.$store.commit('setTempScheduleId', item.schedule_id)
-      this.$store.commit('setOrdersHistoryMode', true)
+      this.$store.commit("setTempScheduleId", item.schedule_id);
+      this.$store.commit("setOrdersHistoryMode", true);
       this.$store.commit("showOperatorManagePage", "ManageSchedule");
+    },
+    showLocationModal(item) {
+      item.driver_id = this.$store.getters.getUser.id;
+      this.$store.commit("setTempDriverData", item);
+      this.$store.commit("setLocationModal", true);
     },
     async updateOrderStatus(item, event) {
       if (event == "completed") {
@@ -191,27 +221,57 @@ export default {
           item.pickupDate.match(/\d{4}-\d{2}-\d{2}/)
         ) {
           try {
-            let form = new FormData();
-            form.append("request_id", item.request_id);
-            form.append("status", event);
-            form.append(
-              "arrived_datetime",
-              `${item.pickupDate} ${item.pickupTime}`
-            );
-            let result = await ScheduleService.updateScheduleStatus(
-              item.schedule_id,
-              form
-            );
-            console.log(result);
-            this.getSchedule()
-            this.getCompletedSchedule()
+            let value = await this.$swal({
+              title: "Confirm To Change Vehicle Status ?",
+              icon: "question",
+              showCancelButton: true,
+              confirmButtonText: "Yes",
+              cancelButtonText: "Cancel",
+              showCloseButton: true,
+            });
+            if (value.isConfirmed) {
+              let form = new FormData();
+              form.append("request_id", item.request_id);
+              form.append("status", event);
+              form.append(
+                "arrived_datetime",
+                `${item.pickupDate} ${item.pickupTime}`
+              );
+              let result = await ScheduleService.updateScheduleStatus(
+                item.schedule_id,
+                form
+              );
+              console.log(result);
+              this.getSchedule();
+              this.getCompletedSchedule();
+              this.$swal({
+              title: "Update Arrived Time Successfully",
+              icon: "success",
+              timer: 1000,
+              showConfirmButton: false,
+              showCancelButton: false,
+            });
+            }
           } catch (err) {
             console.log(err);
+             this.$swal({
+              title: "Update Arrived Time Fail, Please try again",
+              icon: "error",
+              timer: 1000,
+              showConfirmButton: false,
+              showCancelButton: false,
+            });
           }
         } else {
           item.status = "in progress";
           this.$forceUpdate();
-          alert("Please fill arrived date time");
+          this.$swal({
+              title: "Please fill arrived date time, and try again",
+              icon: "error",
+              timer: 1000,
+              showConfirmButton: false,
+              showCancelButton: false,
+            });
         }
       }
     },
@@ -226,9 +286,7 @@ export default {
             order_id: item.order_id,
             customer_name: item.customer_name,
             status: item.status.toUpperCase(),
-            arrived_at: `${this.getTime(item.arrived_datetime)} ${this.getDate(
-              item.arrived_datetime
-            )}`,
+            arrived_at: this.getFullTime(item.arrived_datetime),
           };
           this.completed_orders.push(obj);
         }
@@ -269,6 +327,15 @@ export default {
     },
     getTime(time) {
       return time.match(/\d+:\d+/)[0];
+    },
+    getFullTime(input) {
+      var date = new Date(input);
+      date.setTime(date.getTime() + 7 * 60 * 60 * 1000);
+      var time = date.toISOString();
+      let year = time.match(/.+(?=T)/)[0].split("-");
+      let time_result = time.match(/\d+:\d+/)[0];
+      let result = `${time_result} ${year[2]}/${year[1]}/${year[0]}`;
+      return result;
     },
   },
   mounted() {

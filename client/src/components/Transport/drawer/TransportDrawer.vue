@@ -4,7 +4,6 @@
     :permanent="sidebarMenuState"
     floating
     app
-    dark
     :mini-variant.sync="mini"
   >
     <v-list dense color="primary" dark>
@@ -14,7 +13,7 @@
         </v-list-item-action>
         <v-list-item-content>
           <v-list-item-title>
-            <h3>Transport Drawer</h3>
+            <h3 class="title white--text">MENU</h3>
           </v-list-item-title>
         </v-list-item-content>
       </v-list-item>
@@ -23,8 +22,8 @@
       <v-list-item-icon>
         <v-icon>{{expandCollapseIcon}}</v-icon>
       </v-list-item-icon>
-      <v-list-item-content class="text-truncate">
-          USERNAME
+      <v-list-item-content>
+          <strong class="overline text-truncate">{{getUser.name}}</strong>
       </v-list-item-content>
     </v-list-item>
     <v-list>
@@ -42,13 +41,14 @@
   </v-navigation-drawer>
 </template>
 <script>
+import {mapGetters} from 'vuex'
 export default {
   name: "OperatorDrawer",
   data: () => ({
     items: [
-      { title: "Dashboard", icon: "mdi-account-outline", key:'Dashboard'},
-      { title: "Manage Schedule", icon: "mdi-account-outline", key:'ManageSchedule'},
-      { title: "Manage Vehicle", icon: "mdi-account-outline", key:'ManageVehicle'},
+      { title: "Dashboard", icon: "mdi-view-dashboard-variant-outline", key:'Dashboard'},
+      { title: "Manage Schedule", icon: "mdi-clipboard-list-outline", key:'ManageSchedule'},
+      { title: "Manage Vehicle", icon: "mdi-car-lifted-pickup", key:'ManageVehicle'},
     ],
     toggleMini: false,
   }),
@@ -61,6 +61,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters([
+      'getUser'
+    ]),
     sidebarMenuState: {
       get: function() {
         return this.$store.getters.getSideBarMenu;

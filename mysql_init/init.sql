@@ -51,7 +51,7 @@ create table ORDERS(
     invoice_id varchar(255) not null,
     container_id varchar(255) not null,
     created_datetime datetime not null default now(),
-    modified_datetime datetime not null default now(),
+    modified_datetime datetime not null default now() on update now(),
     request_id int not null,
     operator_id int not null,
     foreign key (request_id) references CUSTOMER_OPERATOR(id),

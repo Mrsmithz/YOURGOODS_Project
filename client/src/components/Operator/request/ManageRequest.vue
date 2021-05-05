@@ -127,7 +127,7 @@ export default {
     ],
     select2: [
       { text: "In Progress", value: "in progress" },
-      { text: "Confirmed", value: "confirmed" },
+      { text: "Confirmed", value: "confirmed", disabled:true },
     ],
     statusList: [],
     headers: [

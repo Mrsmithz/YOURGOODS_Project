@@ -20,6 +20,8 @@ const GoodsRouter = require("./src/routes/GoodsRouter");
 const Contacts = require('./src/model/Contact')
 const VehicleRouter = require('./src/routes/VehicleRouter')
 const ScheduleRouter = require('./src/routes/ScheduleRouter')
+const LocationRouter = require('./src/routes/LocationRouter')
+const FeedbackRouter = require('./src/routes/FeedbackRouter')
 redisClient.on("error", function (err) {
   console.log("Could not establish a connection with redis. " + err);
 });
@@ -36,6 +38,7 @@ app.use(
     secret: "doggo_doggo",
     resave: false,
     saveUninitialized: false,
+    rolling:true,
     cookie: {
       secure: false,
       httpOnly: false,
@@ -74,6 +77,8 @@ app.use("/api/orders", OrdersRouter);
 app.use("/api/request", RequestRouter);
 app.use("/api/goods", GoodsRouter);
 app.use('/api/vehicle', VehicleRouter)
+app.use('/api/location', LocationRouter)
+app.use('/api/feedback', FeedbackRouter)
 app.get("/", (req, res) => {
   res.send("Hello");
 });

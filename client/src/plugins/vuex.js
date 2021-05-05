@@ -20,6 +20,7 @@ const store = new Vuex.Store({
         ContactModal:false,
         CustomerGoodsModal:false,
         OrderHistoryMode:false,
+        LocationModal:false,
         Temp:{
             temp_request_id:'',
             temp_request:'',
@@ -27,7 +28,8 @@ const store = new Vuex.Store({
             temp_order_id:'',
             temp_operator_contact_id:'',
             temp_company_name:'',
-            temp_schedule_id:''
+            temp_schedule_id:'',
+            temp_driver_data:{}
         },
         Customer:{
             Dashboard:true,
@@ -58,9 +60,28 @@ const store = new Vuex.Store({
             Dashboard:true,
             ViewOrders:false,
             SentLocation:false
+        },
+        Supervisor:{
+            Dashboard:true,
+            ManageOperator:false,
+            ManageTransport:false,
+            ManageDriver:false,
+            ManageShipping:false,
+            Feedback:false
+        },
+        Shipping:{
+            Dashboard:true,
+            ViewOrders:false,
+            TrackingOrder:false
         }
     },
     mutations:{
+        setTempDriverData(state, data){
+            state.Temp.temp_driver_data = data
+        },
+        setLocationModal(state, mode){
+            state.LocationModal = mode
+        },
         setOrdersHistoryMode(state, mode){
             state.OrderHistoryMode = mode
         },
@@ -162,6 +183,28 @@ const store = new Vuex.Store({
                 state.Customer[page] = true
             }
         },
+        showSupervisorPage(state, page){
+            if (state.Supervisor[page]){
+                return
+            }
+            else{
+                Object.keys(state.Supervisor).forEach(key => {
+                    state.Supervisor[key] = false
+                })
+                state.Supervisor[page] = true
+            }
+        },
+        showShippingPage(state, page){
+            if (state.Shipping[page]){
+                return
+            }
+            else{
+                Object.keys(state.Shipping).forEach(key => {
+                    state.Shipping[key] = false
+                })
+                state.Shipping[page] = true
+            }
+        },
         showOperatorManagePage(state, page){
             state.OperatorManage[page] = !state.OperatorManage[page]
         },
@@ -175,6 +218,9 @@ const store = new Vuex.Store({
     getters:{
         isAuthenticated: (state) => {
             return state.user.username ? true : false
+        },
+        getTempDriverData:state => {
+            return state.Temp.temp_driver_data
         },
         getOrdersHistoryMode: state => {
             return state.OrderHistoryMode
@@ -212,6 +258,12 @@ const store = new Vuex.Store({
         getDriver: state => {
             return state.Driver
         },
+        getSupervisor: state => {
+            return state.Supervisor
+        },
+        getShipping: state => {
+            return state.Shipping
+        },
         getOperatorManage: state => {
             return state.OperatorManage
         },
@@ -238,6 +290,9 @@ const store = new Vuex.Store({
         },
         getGoods: state => {
             return state.Goods
+        },
+        getLocationModal: state => {
+            return state.LocationModal
         },
     }
 })

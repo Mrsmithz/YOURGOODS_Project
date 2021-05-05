@@ -248,9 +248,9 @@ class Schedule{
             on co.customer_id = cus.id \
             join USER as u \
             on u.id = o.operator_id and u.type = \'operator\' \
-            left join USER as u1 \
+            join USER as u1 \
             on u1.id = s.driver_id \
-            left join VEHICLE as v \
+            join VEHICLE as v \
             on v.plate_number = s.vehicle_plate_number \
             where s.transport_id = ? and co.status = \'completed\''
             let [rows, field] = await conn.query(stmt, [transport_id])
@@ -310,9 +310,9 @@ class Schedule{
             on co.customer_id = cus.id \
             join USER as u \
             on u.id = o.operator_id and u.type = \'operator\' \
-            left join USER as u1 \
+            join USER as u1 \
             on u1.id = s.driver_id \
-            left join VEHICLE as v \
+            join VEHICLE as v \
             on v.plate_number = s.vehicle_plate_number \
             where s.driver_id = ? and co.status = \'completed\''
             let [rows, field] = await conn.query(stmt, [driver_id])
@@ -388,6 +388,134 @@ class Schedule{
             let result = await conn.query(stmt2, [arrived_datetime, schedule_id])
             await conn.commit()
             return Promise.resolve(result)
+        }
+        catch(err){
+            await conn.rollback()
+            return Promise.reject(err)
+        }
+        finally{
+            conn.release()
+        }
+    }
+
+    static async getDriverDetail(driver_id){
+        let conn = await pool.getConnection()
+        await conn.beginTransaction()
+        try{
+            let stmt = 'select count(status) as `count_status`, u.id, c.status, u.name from USER as u \
+            join `SCHEDULE` as s \
+            on s.driver_id = u.id \
+            join ORDERS as o \
+            on o.id = s.order_id \
+            join CUSTOMER_OPERATOR as c \
+            on c.id = o.request_id and (c.status = \'completed\' or c.status = \'in progress\') \
+            where u.id = ? \
+            group by status \
+            order by status'
+            let [rows, fields] = await conn.query(stmt, [driver_id])
+            await conn.commit()
+            return Promise.resolve(rows)
+        }
+        catch(err){
+            await conn.rollback()
+            return Promise.reject(err)
+        }
+        finally{
+            conn.release()
+        }
+    }
+    static async getOperatorDetail(operator_id){
+        let conn = await pool.getConnection()
+        await conn.beginTransaction()
+        try{
+            let stmt = 'select count(status) as `count_status`, u.id, c.status, u.name from USER as u \
+            join ORDERS as o \
+            on o.operator_id = u.id \
+            join CUSTOMER_OPERATOR as c \
+            on c.id = o.request_id \
+            where u.id = ? \
+            group by status \
+            order by status'
+            let [rows, fields] = await conn.query(stmt, [operator_id])
+            await conn.commit()
+            return Promise.resolve(rows)
+        }
+        catch(err){
+            await conn.rollback()
+            return Promise.reject(err)
+        }
+        finally{
+            conn.release()
+        }
+    }
+    static async getTransportDetail(transport_id){
+        let conn = await pool.getConnection()
+        await conn.beginTransaction()
+        try{
+            var stmt = 'select count(status) as `count_status`, u.id, c.status, u.name from USER as u \
+            join `SCHEDULE` as s \
+            on s.transport_id = u.id \
+            join ORDERS as o \
+            on s.order_id = o.id \
+            join CUSTOMER_OPERATOR as c \
+            on c.id = o.request_id and (c.status = \'completed\' or c.status = \'in progress\') \
+            where u.id = ? \
+            group by status \
+            order by status'
+            let [rows, fields] = await conn.query(stmt, [transport_id])
+            await conn.commit()
+            return Promise.resolve(rows)
+        }
+        catch(err){
+            await conn.rollback()
+            return Promise.reject(err)
+        }
+        finally{
+            conn.release()
+        }
+    }
+    static async getShippingDetail(shipping_id){
+        let conn = await pool.getConnection()
+        await conn.beginTransaction()
+        try{
+            var stmt = 'select count(status) as `count_status`, u.id, c.status, u.name from USER as u \
+            join `SCHEDULE` as s \
+            on s.shipping_id = u.id \
+            join ORDERS as o \
+            on s.order_id = o.id \
+            join CUSTOMER_OPERATOR as c \
+            on c.id = o.request_id and (c.status = \'completed\' or c.status = \'in progress\') \
+            where u.id = ? \
+            group by status \
+            order by status'
+            let [rows, fields] = await conn.query(stmt, [shipping_id])
+            await conn.commit()
+            return Promise.resolve(rows)
+        }
+        catch(err){
+            await conn.rollback()
+            return Promise.reject(err)
+        }
+        finally{
+            conn.release()
+        }
+    }
+    
+    static async getScheduleDetailByShipping(shipping_id){
+        let conn = await pool.getConnection()
+        await conn.beginTransaction()
+        try{
+            var stmt = 'select c.status, u.name as customer_name, s.id as schedule_id, o.id as order_id from SCHEDULE as s \
+            join ORDERS as o \
+            on o.id = s.order_id \
+            join CUSTOMER_OPERATOR as c \
+            on c.id = o.request_id \
+            join USER as u \
+            on u.id = c.customer_id \
+            where s.shipping_id = ?'
+            let [rows, fields] = await conn.query(stmt, [shipping_id])
+            await conn.commit()
+            return Promise.resolve(rows)
         }
         catch(err){
             await conn.rollback()

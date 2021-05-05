@@ -97,7 +97,11 @@
         </v-card-text>
       </v-card>
     </v-dialog>
-    <v-dialog v-model="createDialog" max-width="50%" @click:outside="resetCreate">
+    <v-dialog
+      v-model="createDialog"
+      max-width="50%"
+      @click:outside="resetCreate"
+    >
       <v-card>
         <v-card-title>
           Add Vehicle
@@ -186,21 +190,44 @@ export default {
   }),
   methods: {
     async editVehicle() {
-      let conf = confirm("Confirm edit ?");
-      if (conf && this.$refs.edit_form.validate()) {
+      if (this.$refs.edit_form.validate()) {
         try {
-          let form = new FormData();
-          form.append("plate_number", this.tempEdit.plate_number);
-          form.append("new_plate_number", this.edit_plate_number);
-          form.append("type", this.edit_type);
-          form.append("name", this.edit_name);
-          form.append("brand", this.edit_brand);
-          let result = await VehicleService.editVehicle(form);
-          console.log(result);
-          this.editMode = false;
-          this.getAllVehicle();
+          let value = await this.$swal({
+            title: "Confirm To Change Vehicle Status ?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonText: "Yes",
+            cancelButtonText: "Cancel",
+            showCloseButton: true,
+          });
+          if (value.isConfirmed) {
+            let form = new FormData();
+            form.append("plate_number", this.tempEdit.plate_number);
+            form.append("new_plate_number", this.edit_plate_number);
+            form.append("type", this.edit_type);
+            form.append("name", this.edit_name);
+            form.append("brand", this.edit_brand);
+            let result = await VehicleService.editVehicle(form);
+            console.log(result);
+            this.editMode = false;
+            this.getAllVehicle();
+            this.$swal({
+              title: "Edit Vehicle Successfully",
+              icon: "success",
+              timer: 1000,
+              showConfirmButton: false,
+              showCancelButton: false,
+            });
+          }
         } catch (err) {
           console.log(err);
+          this.$swal({
+            title: "Edit Vehicle Fail, Please try again",
+            icon: "error",
+            timer: 1000,
+            showConfirmButton: false,
+            showCancelButton: false,
+          });
         }
       }
     },
@@ -208,21 +235,35 @@ export default {
       if (this.$refs.create_form.validate()) {
         try {
           let form = new FormData();
-          form.append('plate_number', this.create_plate_number);
-          form.append('name', this.create_name);
-          form.append('type', this.create_type);
-          form.append('brand', this.create_brand);
-          let result = await VehicleService.addVehicle(form)
-          console.log(result)
-          this.$refs.create_form.reset()
+          form.append("plate_number", this.create_plate_number);
+          form.append("name", this.create_name);
+          form.append("type", this.create_type);
+          form.append("brand", this.create_brand);
+          let result = await VehicleService.addVehicle(form);
+          console.log(result);
+          this.$refs.create_form.reset();
           this.getAllVehicle();
+          this.$swal({
+            title: "Add Vehicle Successfully",
+            icon: "success",
+            timer: 1000,
+            showConfirmButton: false,
+            showCancelButton: false,
+          });
         } catch (err) {
-            console.log(err);
+          console.log(err);
+          this.$swal({
+            title: "Add Vehicle Fail, Please try again",
+            icon: "error",
+            timer: 1000,
+            showConfirmButton: false,
+            showCancelButton: false,
+          });
         }
       }
     },
-    resetCreate(){
-        this.$refs.create_form.reset()
+    resetCreate() {
+      this.$refs.create_form.reset();
     },
     resetEdit() {
       this.edit_plate_number = this.tempEdit.plate_number;
@@ -248,25 +289,70 @@ export default {
     },
     async editVehicleStatus(item, event) {
       try {
-        let form = new FormData();
-        form.append("status", event);
-        form.append("plate_number", item.plate_number);
-        let result = await VehicleService.updateVehicleStatus(form);
-        console.log(result);
+        let value = await this.$swal({
+          title: "Confirm To Change Vehicle Status ?",
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonText: "Yes",
+          cancelButtonText: "Cancel",
+          showCloseButton: true,
+        });
+        if (value.isConfirmed) {
+          let form = new FormData();
+          form.append("status", event);
+          form.append("plate_number", item.plate_number);
+          let result = await VehicleService.updateVehicleStatus(form);
+          console.log(result);
+          this.$swal({
+            title: "Change Vehicle Status Successfully",
+            icon: "success",
+            timer: 1000,
+            showConfirmButton: false,
+            showCancelButton: false,
+          });
+        }
       } catch (err) {
         console.log(err);
+        this.$swal({
+          title: "Change Vehicle Status Fail, Please try again",
+          icon: "error",
+          timer: 1000,
+          showConfirmButton: false,
+          showCancelButton: false,
+        });
       }
     },
     async deleteVehicle(item) {
-      let conf = confirm("Confirm Delete ?");
-      if (conf) {
-        try {
+      try {
+        let value = await this.$swal({
+          title: "Confirm Assign Driver ?",
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonText: "Yes",
+          cancelButtonText: "Cancel",
+          showCloseButton: true,
+        });
+        if (value.isConfirmed) {
           let result = await VehicleService.deleteVehicle(item.plate_number);
           this.getAllVehicle();
           console.log(result);
-        } catch (err) {
-          console.log(err);
+          this.$swal({
+            title: "Delete Vehicle Successfully",
+            icon: "success",
+            timer: 1000,
+            showConfirmButton: false,
+            showCancelButton: false,
+          });
         }
+      } catch (err) {
+        console.log(err.response.data);
+        this.$swal({
+          title: `${err.response.data}, Please try again`,
+          icon: "error",
+          timer: 1000,
+          showConfirmButton: false,
+          showCancelButton: false,
+        });
       }
     },
     async getAllVehicle() {

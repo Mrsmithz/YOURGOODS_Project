@@ -4,7 +4,6 @@
     :permanent="sidebarMenuState"
     floating
     app
-    dark
     :mini-variant.sync="mini"
   >
     <v-list dense color="primary" dark>
@@ -14,18 +13,19 @@
         </v-list-item-action>
         <v-list-item-content>
           <v-list-item-title>
-            <h3>Customer Drawer</h3>
+            <h3 class="title white--text">MENU</h3>
           </v-list-item-title>
         </v-list-item-content>
       </v-list-item>
     </v-list>
     <v-list-item @click="toggleMini = !toggleMini">
-      <v-list-item-icon>
+       <v-list-item-icon>
         <v-icon>{{expandCollapseIcon}}</v-icon>
       </v-list-item-icon>
-      <v-list-item-content class="text-truncate">
-          USERNAME
+      <v-list-item-content>
+          <strong class="overline text-truncate">{{getUser.name}}</strong>
       </v-list-item-content>
+      
     </v-list-item>
     <v-list>
       <v-list-item v-for="item in items" :key="item.title" link @click="showPage(item.key)">
@@ -42,14 +42,15 @@
   </v-navigation-drawer>
 </template>
 <script>
+import {mapGetters} from 'vuex'
 export default {
   name: "CustomerDrawer",
   data: () => ({
     items: [
-      { title: "Dashboard", icon: "mdi-account-outline", key:'Dashboard'},
-      { title: "Upload Document", icon: "mdi-account-outline", key:'UploadDocument'},
-      { title: "Orders History", icon: "mdi-account-outline", key:'OrdersHistory'},
-      { title: "Feedback", icon: "mdi-account-outline", key:'Feedback'},
+      { title: "Dashboard", icon: "mdi-view-dashboard-variant-outline", key:'Dashboard'},
+      { title: "Upload Document", icon: "mdi-cloud-upload-outline", key:'UploadDocument'},
+      { title: "Orders History", icon: "mdi-clipboard-list-outline", key:'OrdersHistory'},
+      { title: "Feedback", icon: "mdi-comment-edit-outline", key:'Feedback'},
     ],
     toggleMini: false,
   }),
@@ -62,6 +63,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters([
+      'getUser'
+    ]),
     sidebarMenuState: {
       get: function() {
         return this.$store.getters.getSideBarMenu;

@@ -37,5 +37,8 @@ class ScheduleService{
     static async getScheduleCompletedDetailByDriver(){
         return await axios.get(url.Schedule.getScheduleCompletedDetailByDriver)
     }
+    static async getScheduleDetailByShipping(){
+        return await axios.get(url.Schedule.getScheduleDetailByShipping)
+    }
 }
 export default ScheduleService

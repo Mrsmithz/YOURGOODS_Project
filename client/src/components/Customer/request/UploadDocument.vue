@@ -133,7 +133,7 @@
 <script>
 import CustomerService from "../../../services/CustomerService";
 import ContactsService from "../../../services/ContactsService";
-import Socket from '../../../services/SocketIO'
+import Socket from "../../../services/SocketIO";
 export default {
   name: "UploadDocument",
   components: {},
@@ -148,7 +148,7 @@ export default {
     editTemp: "",
     unreadMessage: [],
     interval: "",
-    newMsg:'',
+    newMsg: "",
     headers_upload_history: [
       {
         text: "File Name",
@@ -166,15 +166,14 @@ export default {
   mounted() {
     this.getUnReadMessage();
     this.getUploadHistory();
-    
   },
   beforeDestroy() {
     //clearInterval(this.interval);
   },
-  watch:{
+  watch: {
     newMessage(message) {
-      this.unreadMessage.push(message)
-      console.log(this.unreadMessage.length)
+      this.unreadMessage.push(message);
+      console.log(this.unreadMessage.length);
     },
   },
   computed: {
@@ -218,24 +217,46 @@ export default {
       this.$store.commit("setTempOperatorContactId", item.operator_id);
       this.$store.commit("showContactModal");
       setTimeout(() => {
-      this.getUnReadMessage();
-      //   this.getUploadHistory();
+        this.getUnReadMessage();
+        //   this.getUploadHistory();
       }, 1000);
-      
     },
     openDocument(file_url) {
       window.open(file_url);
     },
     async editUploaded(item) {
+      this.editTemp = {};
       this.editTemp = item;
       this.$refs.filebtn.click();
     },
     async deleteUploaded(item) {
       try {
-        let result = await CustomerService.deleteRequest(item.id);
-        this.getUploadHistory();
-        console.log(result);
+        let value = await this.$swal({
+          title: "Confirm Delete ?",
+          text:`File Name: ${item.file_name}`,
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonText: "Yes",
+          cancelButtonText: "Cancel",
+          showCloseButton: true,
+        });
+        if (value.isConfirmed) {
+          let result = await CustomerService.deleteRequest(item.id);
+          this.getUploadHistory();
+          console.log(result);
+          this.$swal({
+            title:'Delete Success',
+            icon:'success'
+          })
+        }
       } catch (err) {
+        this.$swal({
+          title: "Delete failed please try again",
+          icon: "error",
+          timer: 1000,
+          showConfirmButton: false,
+          showCancelButton: false,
+        })
         console.log(err);
       }
     },
@@ -267,12 +288,14 @@ export default {
       }
       this.getUploadHistory();
     },
-    getFullTime(time) {
-      var date = new Date(time);
+    getFullTime(input) {
+      var date = new Date(input);
       date.setTime(date.getTime() + 7 * 60 * 60 * 1000);
-      return `${
-        date.toISOString().match(/\d+:\d+:\d+/)[0]
-      } ${date.toDateString()}`;
+      var time = date.toISOString();
+      let year = time.match(/.+(?=T)/)[0].split("-");
+      let time_result = time.match(/\d+:\d+/)[0];
+      let result = `${time_result} ${year[2]}/${year[1]}/${year[0]}`;
+      return result;
     },
     async getUploadHistory() {
       try {
@@ -280,21 +303,20 @@ export default {
         let data = result.data;
         this.uploaded = [];
         for (let item of data) {
-          if (item.status == 'pending'){
+          if (item.status == "pending") {
             var obj = {
-            id: item.id,
-            file_name: item.document.match(/`.+`/)[0].replaceAll("`", ""),
-            operator: item.operator_name,
-            status: item.status,
-            created_datetime: this.getFullTime(item.created_datetime), //new Date(item.created_datetime).toDateString(),
-            modified_datetime: this.getFullTime(item.modified_datetime), //new Date(item.modified_datetime).toDateString(),
-            full_created_datetime: this.getFullTime(item.created_datetime),
-            full_modified_datetime: this.getFullTime(item.modified_datetime),
-            operator_id: item.operator_id,
-            file_url: `http://localhost:25800/${item.document}`,
-          };
-          this.uploaded.push(obj);
-
+              id: item.id,
+              file_name: item.document.match(/`.+`/)[0].replaceAll("`", ""),
+              operator: item.operator_name,
+              status: item.status,
+              created_datetime: this.getFullTime(item.created_datetime), //new Date(item.created_datetime).toDateString(),
+              modified_datetime: this.getFullTime(item.modified_datetime), //new Date(item.modified_datetime).toDateString(),
+              full_created_datetime: this.getFullTime(item.created_datetime),
+              full_modified_datetime: this.getFullTime(item.modified_datetime),
+              operator_id: item.operator_id,
+              file_url: `http://localhost:25800/${item.document}`,
+            };
+            this.uploaded.push(obj);
           }
         }
         //console.log(this.uploaded);
@@ -315,15 +337,16 @@ export default {
       this.$forceUpdate();
     },
     remove(file) {
-      if (!this.start_upload) {
-        this.files = this.files.filter((el) => {
-          return el.name != file.name;
-        });
-      }
+      //if (!this.start_upload) {
+      this.files = this.files.filter((el) => {
+        return el.name != file.name;
+      });
+      //}
     },
-    reset() {
-      this.getUploadHistory();
-      this.files = [];
+    async reset() {
+      // this.getUploadHistory();
+      // this.files = [];
+      // this.$forceUpdate();
     },
     drop(e) {
       e.preventDefault();
@@ -332,6 +355,7 @@ export default {
       if (this.editTemp) {
         this.AddToFiles(files, this.editTemp);
         this.upload();
+        this.$forceUpdate();
       } else {
         this.AddToFiles(files);
       }

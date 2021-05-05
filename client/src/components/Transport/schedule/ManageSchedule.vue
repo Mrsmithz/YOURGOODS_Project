@@ -23,14 +23,16 @@
             </v-toolbar>
           </template>
           <template v-slot:[`item.order`]="{ item }">
-            <v-btn small @click="showManageOrder(item)" color="success">view</v-btn>
+            <v-btn small @click="showManageOrder(item)" color="success"
+              >view</v-btn
+            >
           </template>
           <template v-slot:[`item.vehicle`]="{ item }">
             <v-col cols="auto">
               <v-select
                 class="statusSelector"
                 :items="vehicleList"
-                :value="{text:item.vehicle, value:item.vehicle}"
+                :value="{ text: item.vehicle, value: item.vehicle }"
                 item-value="value"
                 item-text="text"
                 @input="updateScheduleVehicle(item, $event)"
@@ -42,7 +44,7 @@
               <v-select
                 class="statusSelector"
                 :items="driverList"
-                :value="{text:item.driver, value:item.driver_id}"
+                :value="{ text: item.driver, value: item.driver_id }"
                 item-value="value"
                 item-text="text"
                 @input="updateScheduleDriver(item, $event)"
@@ -75,7 +77,9 @@
             </v-toolbar>
           </template>
           <template v-slot:[`item.order`]="{ item }">
-            <v-btn small @click="showManageOrder(item)" color="success">view</v-btn>
+            <v-btn small @click="showManageOrder(item)" color="success"
+              >view</v-btn
+            >
           </template>
         </v-data-table>
       </v-col>
@@ -84,12 +88,12 @@
 </template>
 <script>
 import ScheduleService from "../../../services/ScheduleService";
-import VehicleService from '../../../services/VehicleService'
+import VehicleService from "../../../services/VehicleService";
 export default {
   name: "ManageSchedule",
   data: () => ({
     search_inprogress_schedule: "",
-    search_completed_schedule:'',
+    search_completed_schedule: "",
     headers: [
       {
         text: "Operator Name",
@@ -120,54 +124,109 @@ export default {
       { text: "Modified At", value: "modified_at" },
     ],
     schedule: [],
-    completed_schedule:[],
-    vehicleList:[],
-    driverList:[]
+    completed_schedule: [],
+    vehicleList: [],
+    driverList: [],
   }),
   methods: {
-    getFullTime(time) {
-      var date = new Date(time);
-      date.setTime(date.getTime() + 7 * 60 * 60 * 1000);
-      return `${
-        date.toISOString().match(/\d+:\d+:\d+/)[0]
-      } ${date.toDateString()}`;
-    },
+    // getFullTime(time) {
+    //   var date = new Date(time);
+    //   date.setTime(date.getTime() + 7 * 60 * 60 * 1000);
+    //   return `${
+    //     date.toISOString().match(/\d+:\d+:\d+/)[0]
+    //   } ${date.toDateString()}`;
+    // },
     getDate(date) {
       return date.match(/.+(?=T)/)[0];
     },
     getTime(time) {
       return time.match(/\d+:\d+/)[0];
     },
+    getFullTime(input) {
+      var date = new Date(input);
+      date.setTime(date.getTime() + 7 * 60 * 60 * 1000);
+      var time = date.toISOString();
+      let year = time.match(/.+(?=T)/)[0].split("-");
+      let time_result = time.match(/\d+:\d+/)[0];
+      let result = `${time_result} ${year[2]}/${year[1]}/${year[0]}`;
+      return result;
+    },
     showManageOrder(item) {
       this.$store.commit("setTempOrderId", item.order_id);
-      this.$store.commit('setOrdersHistoryMode', true)
+      this.$store.commit("setOrdersHistoryMode", true);
       this.$store.commit("showOperatorManagePage", "ManageOrder");
     },
-    async updateScheduleVehicle(item, input){
-      try{
-        let form = new FormData()
-        form.append('plate_number', input)
-        await ScheduleService.updateScheduleVehicle(item.id, form)
-        this.getScheduleInProgressDetail()
-      }
-      catch(err){
-        console.log(err)
+    async updateScheduleVehicle(item, input) {
+      try {
+        let value = await this.$swal({
+          title: "Confirm Assign Vehicle ?",
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonText: "Yes",
+          cancelButtonText: "Cancel",
+          showCloseButton: true,
+        });
+        if (value.isConfirmed) {
+          let form = new FormData();
+          form.append("plate_number", input);
+          await ScheduleService.updateScheduleVehicle(item.id, form);
+          this.getScheduleInProgressDetail();
+          this.$swal({
+            title: "Assign Vehicle Successfully",
+            icon: "success",
+            timer: 1000,
+            showConfirmButton: false,
+            showCancelButton: false,
+          });
+        }
+      } catch (err) {
+        console.log(err);
+        this.$swal({
+          title: "Assign Vehicle Fail, Please try again",
+          icon: "error",
+          timer: 1000,
+          showConfirmButton: false,
+          showCancelButton: false,
+        });
       }
     },
-    async updateScheduleDriver(item, input){
-      try{
-        let form = new FormData()
-        form.append('driver_id', input)
-        await ScheduleService.updateScheduleDriver(item.id, form)
-        this.getScheduleDetail()
-      }
-      catch(err){
-        console.log(err)
+    async updateScheduleDriver(item, input) {
+      try {
+        let value = await this.$swal({
+          title: "Confirm Assign Driver ?",
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonText: "Yes",
+          cancelButtonText: "Cancel",
+          showCloseButton: true,
+        });
+        if (value.isConfirmed) {
+          let form = new FormData();
+          form.append("driver_id", input);
+          await ScheduleService.updateScheduleDriver(item.id, form);
+          this.getScheduleInProgressDetail();
+          this.$swal({
+            title: "Assign Driver Successfully",
+            icon: "success",
+            timer: 1000,
+            showConfirmButton: false,
+            showCancelButton: false,
+          });
+        }
+      } catch (err) {
+        console.log(err);
+        this.$swal({
+          title: "Assign Driver Fail, Please try again",
+          icon: "error",
+          timer: 1000,
+          showConfirmButton: false,
+          showCancelButton: false,
+        });
       }
     },
     async getScheduleInProgressDetail() {
       try {
-        let result = await ScheduleService.getScheduleInProgressDetail()
+        let result = await ScheduleService.getScheduleInProgressDetail();
         this.schedule = [];
         for (let item of result.data) {
           var obj = {
@@ -181,8 +240,8 @@ export default {
             driver: item.driver_name,
             created_at: this.getFullTime(item.create_datetime),
             modified_at: this.getFullTime(item.modified_datetime),
-            pickup_at:`${this.getTime(item.pickup_datetime)} ${this.getDate(item.pickup_datetime)}`,
-            customer_name:item.customer_name
+            pickup_at: this.getFullTime(item.pickup_datetime),
+            customer_name: item.customer_name,
           };
           this.schedule.push(obj);
         }
@@ -192,7 +251,7 @@ export default {
     },
     async getScheduleCompletedDetail() {
       try {
-        let result = await ScheduleService.getScheduleCompletedDetail()
+        let result = await ScheduleService.getScheduleCompletedDetail();
         this.completed_schedule = [];
         for (let item of result.data) {
           var obj = {
@@ -206,9 +265,9 @@ export default {
             driver: item.driver_name,
             created_at: this.getFullTime(item.create_datetime),
             modified_at: this.getFullTime(item.modified_datetime),
-            pickup_at:`${this.getTime(item.pickup_datetime)} ${this.getDate(item.pickup_datetime)}`,
-            customer_name:item.customer_name,
-            arrived_at:`${this.getTime(item.arrived_datetime)} ${this.getDate(item.arrived_datetime)}`
+            pickup_at: this.getFullTime(item.pickup_datetime),
+            customer_name: item.customer_name,
+            arrived_at: this.getFullTime(item.arrived_datetime),
           };
           this.completed_schedule.push(obj);
         }
@@ -216,45 +275,41 @@ export default {
         console.log(err);
       }
     },
-    async getAllVehicleByManagerId(){
-      try{
-        let result = await VehicleService.getAllVehicleByManagerId()
-        for(let item of result.data){
-          if (item.status == 'available'){
+    async getAllVehicleByManagerId() {
+      try {
+        let result = await VehicleService.getAllVehicleByManagerId();
+        for (let item of result.data) {
+          if (item.status == "available") {
             this.vehicleList.push({
-            text:item.plate_number,
-            value:item.plate_number
-          })
+              text: item.plate_number,
+              value: item.plate_number,
+            });
           }
         }
-      }
-      catch(err){
-        console.log(err)
+      } catch (err) {
+        console.log(err);
       }
     },
-    async getAllDriver(){
-      try{
-        let result = await ScheduleService.getAllDriver()
-        for(let item of result.data){
+    async getAllDriver() {
+      try {
+        let result = await ScheduleService.getAllDriver();
+        for (let item of result.data) {
           this.driverList.push({
-            text:item.name,
-            value:item.id,
-          })
+            text: item.name,
+            value: item.id,
+          });
         }
+      } catch (err) {
+        console.log(err);
       }
-      catch(err){
-        console.log(err)
-      }
-    }
+    },
   },
   mounted() {
     this.getScheduleInProgressDetail();
-    this.getScheduleCompletedDetail()
-    this.getAllVehicleByManagerId()
-    this.getAllDriver()
+    this.getScheduleCompletedDetail();
+    this.getAllVehicleByManagerId();
+    this.getAllDriver();
   },
 };
 </script>
-<style>
-
-</style>
+<style></style>

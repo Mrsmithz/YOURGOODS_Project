@@ -125,9 +125,17 @@
         </v-row>
         <v-row>
           <v-col>
-            <v-btn v-if="OrdersHistoryModeState" @click="showManageOrder">CLOSE</v-btn>
-            <v-btn @click="createOrder" v-if="TempRequestIdState && !OrdersHistoryModeState">Create</v-btn>
-            <v-btn @click="editOrder" v-if="TempOrderIdState && editMode && !OrdersHistoryModeState"
+            <v-btn v-if="OrdersHistoryModeState" @click="showManageOrder"
+              >CLOSE</v-btn
+            >
+            <v-btn
+              @click="createOrder"
+              v-if="TempRequestIdState && !OrdersHistoryModeState"
+              >Create</v-btn
+            >
+            <v-btn
+              @click="editOrder"
+              v-if="TempOrderIdState && editMode && !OrdersHistoryModeState"
               >Save</v-btn
             >
             <v-btn
@@ -144,7 +152,8 @@
             <v-btn
               class="ml-3"
               v-if="TempOrderIdState && editMode && !OrdersHistoryModeState"
-              @click="[getOrder, getAllGoods, editMode = false]">BACK</v-btn
+              @click="[getOrder, getAllGoods, (editMode = false)]"
+              >BACK</v-btn
             >
           </v-col>
         </v-row>
@@ -176,6 +185,12 @@ export default {
         return false;
       }
     },
+    getDate(date) {
+      return date.match(/.+(?=T)/)[0];
+    },
+    getTime(time) {
+      return time.match(/\d+:\d+/)[0];
+    },
     async checkGoods() {
       try {
         let result = await GoodsService.getGoodsByOrderId(
@@ -201,8 +216,9 @@ export default {
         this.receiver_address = data.receiver_address;
         this.invoice_id = data.invoice_id;
         this.container_id = data.container_id;
-        this.created_at = data.created_datetime;
-        this.modified_at = data.modified_datetime;
+        this.created_at = this.getFullTime(data.created_datetime);
+        this.modified_at = this.getFullTime(data.modified_datetime);
+        console.log(data.created_datetime, data.modified_datetime);
       } catch (err) {
         console.log(err);
       }
@@ -229,17 +245,19 @@ export default {
         console.log(err);
       }
     },
-    getFullTime(time) {
-      var date = new Date(time);
+    getFullTime(input) {
+      var date = new Date(input);
       date.setTime(date.getTime() + 7 * 60 * 60 * 1000);
-      return `${
-        date.toISOString().match(/\d+:\d+:\d+/)[0]
-      } ${date.toDateString()}`;
+      var time = date.toISOString();
+      let year = time.match(/.+(?=T)/)[0].split("-");
+      let time_result = time.match(/\d+:\d+/)[0];
+      let result = `${time_result} ${year[2]}/${year[1]}/${year[0]}`;
+      return result;
     },
     showManageOrder() {
       this.$store.commit("setTempOrderId", null);
-      this.$store.commit('setTempRequest', null)
-      this.$store.commit('setOrdersHistoryMode', false)
+      this.$store.commit("setTempRequest", null);
+      this.$store.commit("setOrdersHistoryMode", false);
       this.$store.commit("showOperatorManagePage", "ManageOrder");
     },
     showManageGoods(goods_id) {
@@ -247,7 +265,7 @@ export default {
       this.$store.commit("showOperatorManagePage", "ManageGoods");
     },
     showCreateGoods() {
-      this.$store.commit('setTempGoodsId', null)
+      this.$store.commit("setTempGoodsId", null);
       this.$store.commit("showOperatorManagePage", "ManageGoods");
     },
     createOrderFormData() {
@@ -266,52 +284,93 @@ export default {
           let result = await OrderService.createOrder(
             this.createOrderFormData()
           );
-          this.$root.$refs.ManageRequest.updateRequestStatus('unconfirmed', this.TempRequestIdState)
+          this.$root.$refs.ManageRequest.updateRequestStatus(
+            "unconfirmed",
+            this.TempRequestIdState
+          );
           this.$store.commit("setTempRequestId", null);
           this.$store.commit("setTempOrderId", result.data.id);
+          this.$swal({
+            title: "Create Order Successfully",
+            icon: "success",
+            timer: 1000,
+            showConfirmButton: false,
+            showCancelButton: false,
+          });
           console.log(result);
         } catch (err) {
           console.log(err);
         }
       }
     },
-    async deleteOrder(){
-      let r = confirm('Confirm Delete ?')
-      if (r == true){
-        try{
-          let result = await OrderService.deleteOrderById(this.TempOrderIdState)
-          this.$root.$refs.ManageRequest.getAllRequest()
-          this.showManageOrder()
-          console.log(result)
+    async deleteOrder() {
+      try {
+        let value = await this.$swal({
+          title: "Confirm Delete ?",
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonText: "Yes",
+          cancelButtonText: "Cancel",
+          showCloseButton: true,
+        });
+        if (value.isConfirmed) {
+          let result = await OrderService.deleteOrderById(
+            this.TempOrderIdState
+          );
+          this.$root.$refs.ManageRequest.getAllRequest();
+          this.showManageOrder();
+          this.$swal({
+              title: "Delete Order Successfully",
+              icon: "success",
+              timer: 1000,
+              showConfirmButton: false,
+              showCancelButton: false,
+          });
+          console.log(result);
         }
-        catch(err){
-          console.log(err)
-        }
+      } catch (err) {
+        console.log(err);
       }
     },
     async editOrder() {
       if (this.$refs.order_form.validate()) {
-        let r = confirm("Confirm Edit ?");
-        if (r == true) {
-          try {
+        try {
+          let value = await this.$swal({
+            title: "Confirm Edit ?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonText: "Yes",
+            cancelButtonText: "Cancel",
+            showCloseButton: true,
+          });
+          if (value.isConfirmed) {
             let result = await OrderService.editOrderById(
               this.TempOrderIdState,
               this.createOrderFormData()
             );
-            this.$root.$refs.ManageRequest.updateRequestStatus('unconfirmed', this.TempRequestState)
+            this.$root.$refs.ManageRequest.updateRequestStatus(
+              "unconfirmed",
+              this.TempRequestState
+            );
             this.getOrder();
             this.getAllGoods();
-            this.editMode = false
-            this.showManageOrder()
+            this.editMode = false;
+            this.showManageOrder();
+            this.$swal({
+              title: "Edit Order Successfully",
+              icon: "success",
+              timer: 1000,
+              showConfirmButton: false,
+              showCancelButton: false,
+            });
             console.log(result);
-          } catch (err) {
-            console.log(err);
+          } else {
+            this.getOrder();
+            this.getAllGoods();
+            this.editMode = false;
           }
-        }
-        else{
-          this.getOrder();
-          this.getAllGoods();
-          this.editMode = false
+        } catch (err) {
+          console.log(err);
         }
       }
     },
@@ -321,7 +380,7 @@ export default {
       if (visible && this.TempOrderIdState) {
         this.getOrder();
         this.getAllGoods();
-        this.$forceUpdate()
+        this.$forceUpdate();
       } else if (visible && this.TempRequestIdState) {
         console.log(this.TempRequestIdState);
       } else if (!visible) {

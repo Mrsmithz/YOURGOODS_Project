@@ -109,6 +109,8 @@ class Order{
             var stmt = 'delete from GOODS where order_id = ?'
             var stmt2 = 'delete from SCHEDULE where order_id = ?'
             var stmt3 = 'delete from ORDERS where id = ?'
+            var stmt4 = 'delete from LOCATIONS where order_id = ?'
+            await conn.query(stmt4, [id])
             await conn.query(stmt, [id])
             await conn.query(stmt2, [id])
             let result = await conn.query(stmt3, [id])

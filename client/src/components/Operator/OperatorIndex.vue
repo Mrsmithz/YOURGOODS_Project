@@ -1,10 +1,11 @@
 <template>
     <v-main>
-        <OperatorDrawer></OperatorDrawer>
+        <OperatorDrawer :name="getUser.name"></OperatorDrawer>
         <v-row>
             <v-col>
                 <v-container>
-                    <OperatorDashboard v-if="DashboardState"></OperatorDashboard>
+                    <SharedDashboard v-if="DashboardState"></SharedDashboard>
+                    <OperatorDashboard v-if="false"></OperatorDashboard>
                     <ManageRequest v-if="ManageRequestState"></ManageRequest>
                     <OrdersHistory v-if="OrdersHistoryState"></OrdersHistory>
                     <TrackingOrder v-if="TrackingOrderState"></TrackingOrder>
@@ -18,6 +19,7 @@
     </v-main>
 </template>
 <script>
+import {mapGetters} from 'vuex'
 import OperatorDrawer from './drawer/OperatorDrawer'
 import ManageRequest from './request/ManageRequest'
 import ManageOrder from './order/ManageOrder'
@@ -27,6 +29,7 @@ import OperatorDashboard from './dashboard/OperatorDashboard'
 import OrdersHistory from './order/OrdersHistory'
 import ContactModal from '../Modal/Contact'
 import TrackingOrder from './tracking/TrackingOrder'
+import SharedDashboard from '../Customer/dashboard/CustomerDashboard'
 export default {
     name:'OperatorIndex',
     components: {
@@ -38,9 +41,13 @@ export default {
         OrdersHistory,
         ManageSchedule,
         ContactModal,
-        TrackingOrder
+        TrackingOrder,
+        SharedDashboard
     },
     computed:{
+      ...mapGetters([
+        'getUser'
+      ]),
     DashboardState:{
       get:function(){
         return this.$store.getters.getOperator.Dashboard

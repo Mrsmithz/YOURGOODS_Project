@@ -1,12 +1,14 @@
 <template>
   <v-main>
-    <DriverDrawer></DriverDrawer>
+    <DriverDrawer :name="getUser.name"></DriverDrawer>
     <v-row>
       <v-col>
         <v-container fluid>
-          <DriverDashboard v-if="DashboardState"></DriverDashboard>
+          <DriverDashboard v-if="false"></DriverDashboard>
           <ViewOrders v-if="ViewOrdersState"></ViewOrders>
           <SentLocation v-if="SentLocationState"></SentLocation>
+          <StaffDashboard v-if="DashboardState"></StaffDashboard>
+          <ManageOrderLocation></ManageOrderLocation>
           <ManageGoods></ManageGoods>
           <ManageOrder></ManageOrder>
           <ManageSchedule></ManageSchedule>
@@ -16,6 +18,7 @@
   </v-main>
 </template>
 <script>
+import {mapGetters} from 'vuex'
 import DriverDashboard from "./dashboard/DriverDashboard";
 import SentLocation from "./location/SentLocation";
 import ViewOrders from "./orders/ViewOrders";
@@ -23,6 +26,8 @@ import DriverDrawer from "./drawer/DriverDrawer";
 import ManageGoods from '../Operator/goods/ManageGoods'
 import ManageOrder from '../Operator/order/ManageOrder'
 import ManageSchedule from '../Operator/schedule/ManageSchedule'
+import ManageOrderLocation from './location/ManageOrderLocation'
+import StaffDashboard from '../Transport/dashboard/TransportDashboard'
 export default {
   name: "DriverIndex",
   components: {
@@ -32,10 +37,15 @@ export default {
     ViewOrders,
     ManageGoods,
     ManageOrder,
-    ManageSchedule
+    ManageSchedule,
+    ManageOrderLocation,
+    StaffDashboard
   },
   data: () => ({}),
   computed: {
+    ...mapGetters([
+        'getUser'
+    ]),
     DashboardState: {
       get: function() {
         return this.$store.getters.getDriver.Dashboard;
