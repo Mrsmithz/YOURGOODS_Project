@@ -68,7 +68,7 @@
             <v-carousel
               cycle
               height="180"
-              interval="3000"
+              interval="4000"
               hide-delimiter-background
               show-arrows-on-hover
             >
@@ -103,7 +103,7 @@
             <v-carousel
               cycle
               height="180"
-              interval="3000"
+              interval="5000"
               hide-delimiter-background
               show-arrows-on-hover
             >
@@ -216,6 +216,7 @@ export default {
           break
         }
         else{
+          count++;
           this.labels.push(this.getTime(item.pickup_datetime))
           this.value.push(Math.ceil(Math.abs(new Date(item.pickup_datetime) - new Date(item.arrived_datetime))/(1000*60*60)))
         }

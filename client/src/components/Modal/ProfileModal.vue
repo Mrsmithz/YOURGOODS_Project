@@ -1,7 +1,7 @@
 <template>
   <v-dialog
     v-model="ProfileModalState"
-    max-width="50%"
+    max-width="65%"
     @click:outside="showProfileModal"
   >
     <v-card>
@@ -9,10 +9,11 @@
         <v-row align="center" justify="center">
           <v-col cols="12" sm="6" md="4" align="center" justify="center">
             <v-avatar size="200">
-              <img
+              <!-- <img
                 alt="user"
                 src="https://randomuser.me/api/portraits/women/81.jpg"
-              />
+              /> -->
+              <img src="https://picsum.photos/1920/1080?random"/>
             </v-avatar>
           </v-col>
         </v-row>
@@ -48,6 +49,7 @@
             </v-row>
             <v-row align="center" justify="center">
               <v-col cols="12" sm="6" md="4">
+                <v-form ref="email_form">
                 <v-text-field
                   label="Email"
                   required
@@ -57,6 +59,7 @@
                   :rules="emailRules"
                   @click:append="toggleEditEmail"
                 ></v-text-field>
+                </v-form>
               </v-col>
               <v-col cols="12" sm="6" md="4">
                 <v-text-field
@@ -110,7 +113,7 @@
                 justify="center"
                 v-show="edit_profile && email == user.email"
               >
-                <v-btn text class="button is-primary" @click="test">Update Profile</v-btn>
+                <v-btn text class="button is-primary" @click="updateProfile">Update Profile</v-btn>
                 <v-btn
                   text
                   class="button is-danger is-outlined ml-3"
@@ -126,7 +129,7 @@
                 justify="center"
                 v-show="email != user.email"
               >
-                <v-btn text class="button is-primary" @click="test">Update Email</v-btn>
+                <v-btn text class="button is-primary" @click="updateEmail">Update Email</v-btn>
                 <v-btn
                   text
                   class="button is-danger is-outlined ml-3"
@@ -142,6 +145,7 @@
   </v-dialog>
 </template>
 <script>
+import AccountService from '../../services/AccountService'
 export default {
   name: "ProfileModal",
   data: () => ({
@@ -207,11 +211,37 @@ export default {
       this.edit_tel = true;
       this.edit_address = true;
     },
-    test() {
+    async updateProfile() {
       if (this.$refs.profile_form.validate()) {
-        console.log("test");
+        try{
+          let form = new FormData()
+          form.append('name', `${this.first_name} ${this.last_name}`)
+          form.append('telephone', this.telephone)
+          form.append('address', this.address)
+          let result = await AccountService.updateProfile(form)
+          console.log(result)
+          alert('Success')
+        }
+        catch(err){
+          console.log(err.response)
+        }
       }
     },
+    async updateEmail(){
+      if (this.$refs.email_form.validate()) {
+        try{
+          let form = new FormData()
+          form.append('old_email', this.user.email)
+          form.append('new_email', this.email)
+          let result = await AccountService.updateEmail(form)
+          console.log(result)
+          alert('Success')
+        }
+        catch(err){
+          console.log(err.response)
+        }
+      }
+    }
   },
   computed: {
     user() {

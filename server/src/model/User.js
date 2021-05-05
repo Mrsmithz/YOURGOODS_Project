@@ -52,19 +52,13 @@ class User {
       conn.release();
     }
   }
-  async updateUserProfile(id, name, gender, telephone, address) {
+  async updateUserProfile(id, name, telephone, address) {
     let conn = await pool.getConnection();
     await conn.beginTransaction();
     try {
       var stmt =
-        "update USER set name = ?, gender = ?, telephone = ?, address = ? where id = ?";
-      let result = await conn.query(stmt, [
-        name,
-        gender,
-        telephone,
-        address,
-        id,
-      ]);
+        "update USER set name = ?, telephone = ?, address = ? where id = ?";
+      let result = await conn.query(stmt, [name, telephone, address, id]);
       await conn.commit();
       return Promise.resolve(result);
     } catch (err) {
@@ -131,6 +125,36 @@ class User {
     try {
       var stmt = "select * from USER where username = ? and password = ?";
       let [rows, field] = await conn.query(stmt, [username, password]);
+      await conn.commit();
+      var data = rows[0];
+      if (data) {
+        this.id = data.id;
+        this.username = data.username;
+        // this.password = data.password
+        this.name = data.name;
+        this.email = data.email;
+        this.telephone = data.telephone;
+        this.gender = data.gender;
+        this.address = data.address;
+        this.type = data.type;
+        this.manage_by = data.manage_by;
+        return Promise.resolve();
+      } else {
+        return Promise.reject(`couldn't find user or password didn't match`);
+      }
+    } catch (err) {
+      await conn.rollback();
+      return Promise.reject(err);
+    } finally {
+      conn.release();
+    }
+  }
+  async getUserById(id) {
+    let conn = await pool.getConnection();
+    await conn.beginTransaction();
+    try {
+      var stmt = "select * from USER where id = ?";
+      let [rows, field] = await conn.query(stmt, [id]);
       await conn.commit();
       var data = rows[0];
       if (data) {
@@ -274,6 +298,90 @@ class User {
       return Promise.resolve({
         status_count: status_count,
         request_detail: request_detail,
+      });
+    } catch (err) {
+      await conn.rollback();
+      return Promise.reject(err);
+    } finally {
+      conn.release();
+    }
+  }
+  static async getStaffDashboard(id) {
+    let conn = await pool.getConnection();
+    await conn.beginTransaction();
+    try {
+      var stmt =
+        "select user.name as customer_name, o.*, c.*, s.*, s.create_datetime as schedule_created_at, s.modified_datetime as schedule_created_at, \
+        s.vehicle_plate_number as plate_number \
+        from CUSTOMER_OPERATOR as c \
+        join ORDERS as o \
+        on o.request_id = c.id \
+        join SCHEDULE as s \
+        on s.order_id = o.id \
+        join USER as staff \
+        on staff.id = s.transport_id or staff.id = s.shipping_id or staff.id = s.driver_id \
+        join USER as user \
+        on user.id = c.customer_id \
+        where staff.id = ?";
+      var stmt2 =
+        "select count(status) as status_count, c.status from CUSTOMER_OPERATOR as c \
+        join ORDERS as o \
+        on o.request_id = c.id \
+        join SCHEDULE as s \
+        on s.order_id = o.id \
+        join USER as staff \
+        on staff.id = s.transport_id or staff.id = s.shipping_id or staff.id = s.driver_id \
+        where staff.id = ? \
+        group by status  \
+        order by c.status asc";
+      let [order_details, fields1] = await conn.query(stmt, [id]);
+      let [order_status_count, fields2] = await conn.query(stmt2, [id]);
+      await conn.commit();
+      return Promise.resolve({
+        order_details: order_details,
+        order_status_count: order_status_count,
+      });
+    } catch (err) {
+      await conn.rollback();
+      return Promise.reject(err);
+    } finally {
+      conn.release();
+    }
+  }
+  static async getSupervisorDashboard(id) {
+    let conn = await pool.getConnection();
+    await conn.beginTransaction();
+    try {
+      var stmt =
+        "select count(c.status) as status_count, c.status from USER as supervisor \
+        join USER as staff \
+        on staff.manage_by = supervisor.id \
+        join CUSTOMER_OPERATOR as c \
+        on c.operator_id = staff.id \
+        left join ORDERS as o \
+        on o.request_id = c.id \
+        left join SCHEDULE as s \
+        on s.order_id = o.id \
+        where supervisor.id = ? \
+        group by status";
+      var stmt2 =
+        "select o.*, c.status, s.arrived_datetime, s.pickup_datetime from USER as supervisor \
+        join USER as staff \
+        on staff.manage_by = supervisor.id \
+        join CUSTOMER_OPERATOR as c \
+        on c.operator_id = staff.id \
+        left join ORDERS as o \
+        on o.request_id = c.id \
+        left join SCHEDULE as s \
+        on s.order_id = o.id \
+        where supervisor.id = ? \
+        order by s.pickup_datetime";
+      let [status_count, fields1] = await conn.query(stmt, [id]);
+      let [order_details, fields2] = await conn.query(stmt2, [id])
+      await conn.commit();
+      return Promise.resolve({
+          status_count:status_count,
+          order_details:order_details
       });
     } catch (err) {
       await conn.rollback();

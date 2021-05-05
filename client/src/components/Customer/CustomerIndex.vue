@@ -5,7 +5,7 @@
           <v-row class="fill-height">
             <v-col>
               <CustomerDashboard v-if="DashboardState"></CustomerDashboard>
-              <UploadDocument v-if="UploadDocumentState"></UploadDocument>
+              <UploadDocument v-if="UploadDocumentState" ></UploadDocument>
               <OrdersHistory v-if="OrdersHistoryState"></OrdersHistory>
               <Feedback v-if="FeedbackState"></Feedback>
               <Contact v-if="ContactModalState"></Contact>
@@ -34,7 +34,7 @@ export default {
       OrdersHistory,
       Contact,
       Feedback,
-      GoodsModal
+      GoodsModal,
   },
   computed: {
     user() {

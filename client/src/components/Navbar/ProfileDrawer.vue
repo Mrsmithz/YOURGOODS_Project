@@ -4,7 +4,8 @@
     <template v-slot:prepend>
       <v-list-item two-line>
         <v-list-item-avatar>
-          <img src="https://randomuser.me/api/portraits/women/81.jpg" />
+          <!-- <img src="https://randomuser.me/api/portraits/women/81.jpg" /> -->
+          <img src="https://picsum.photos/1920/1080?random"/>
         </v-list-item-avatar>
 
         <v-list-item-content>
@@ -16,7 +17,7 @@
     <v-divider></v-divider>
     <v-list dense>
 
-      <v-list-item link>
+      <v-list-item link @click="reload">
         <v-list-item-icon>
           <v-icon>mdi-home-city</v-icon>
         </v-list-item-icon>
@@ -66,6 +67,9 @@ export default {
   methods: {
     showDrawer() {
       this.show = !this.show;
+    },
+    reload(){
+      window.location.reload()
     },
     showProfileModal(){
       this.$store.commit('showProfileModal')

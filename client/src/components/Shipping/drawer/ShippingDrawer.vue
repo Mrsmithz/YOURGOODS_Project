@@ -4,7 +4,6 @@
     :permanent="sidebarMenuState"
     floating
     app
-    dark
     :mini-variant.sync="mini"
   >
     <v-list dense color="primary" dark>
@@ -14,7 +13,7 @@
         </v-list-item-action>
         <v-list-item-content>
           <v-list-item-title>
-            <h3>Shipping Drawer</h3>
+            <h3 class="title white--text">MENU</h3>
           </v-list-item-title>
         </v-list-item-content>
       </v-list-item>
@@ -23,8 +22,8 @@
       <v-list-item-icon>
         <v-icon>{{ expandCollapseIcon }}</v-icon>
       </v-list-item-icon>
-      <v-list-item-content class="text-truncate">
-        USERNAME
+      <v-list-item-content>
+        <strong class="overline text-truncate">{{name}}</strong>
       </v-list-item-content>
     </v-list-item>
     <v-list>
@@ -49,17 +48,18 @@
 <script>
 export default {
   name: "ShippingDrawer",
+  props:['name'],
   data: () => ({
     items: [
-      { title: "Dashboard", icon: "mdi-account-outline", key: "Dashboard" },
+      { title: "Dashboard", icon: "mdi-view-dashboard-variant-outline", key: "Dashboard" },
       {
         title: "View Orders",
-        icon: "mdi-account-outline",
+        icon: "mdi-clipboard-list-outline",
         key: "ViewOrders",
       },
       {
         title: "Tracking Order",
-        icon: "mdi-account-outline",
+        icon: "mdi-go-kart-track",
         key: "TrackingOrder",
       },
     ],

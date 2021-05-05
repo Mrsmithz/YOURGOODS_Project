@@ -1,12 +1,13 @@
 <template>
     <v-main>
-        <ShippingDrawer></ShippingDrawer>
+        <ShippingDrawer :name="getUser.name"></ShippingDrawer>
         <v-row>
             <v-col>
                 <v-container fluid>
                     <ViewOrders v-if="getShipping.ViewOrders"></ViewOrders>
                     <TrackingOrder v-if="getShipping.TrackingOrder"></TrackingOrder>
-                    <ShippingDashboard v-if="getShipping.Dashboard"></ShippingDashboard>
+                    <ShippingDashboard v-if="false"></ShippingDashboard>
+                    <StaffDashboard v-if="getShipping.Dashboard"></StaffDashboard>
                     <ManageGoods></ManageGoods>
                     <ManageOrder></ManageOrder>
                     <ManageSchedule></ManageSchedule>
@@ -23,6 +24,7 @@ import ViewOrders from './view/ViewOrders'
 import ManageGoods from '../Operator/goods/ManageGoods'
 import ManageOrder from '../Operator/order/ManageOrder'
 import ManageSchedule from '../Operator/schedule/ManageSchedule'
+import StaffDashboard from '../Transport/dashboard/TransportDashboard'
 import { mapGetters } from "vuex";
 export default {
     name:'ShippingIndex',
@@ -33,11 +35,13 @@ export default {
         ViewOrders,
         ManageGoods,
         ManageOrder,
-        ManageSchedule
+        ManageSchedule,
+        StaffDashboard
     },
     computed:{
         ...mapGetters([
-            'getShipping'
+            'getShipping',
+            'getUser'
         ])
     }
 }

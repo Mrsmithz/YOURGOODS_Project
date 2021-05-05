@@ -7,5 +7,11 @@ class DashboardService{
     static async getCustomerAndOperator(){
         return await axios.get(url.Dashboard.CustomerAndOperator)
     }
+    static async getStaffDashboard(){
+        return await axios.get(url.Dashboard.StaffDashboard)
+    }
+    static async getSupervisorDashboard(){
+        return await axios.get(url.Dashboard.SupervisorDashboard)
+    }
 }
 export default DashboardService

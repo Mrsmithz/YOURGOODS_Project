@@ -50,7 +50,6 @@ export default {
               let result = await StaffService.getStaffDetail()
               this.detail = []
               for (let staff of result.data){
-                  console.log(staff)
                   if (staff.type == 'shipping'){
                       let obj = {
                           shipping_name:staff.name,

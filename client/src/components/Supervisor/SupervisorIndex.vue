@@ -1,6 +1,6 @@
 <template>
     <v-main>
-        <SupervisorDrawer></SupervisorDrawer>
+        <SupervisorDrawer :name="getUser.name"></SupervisorDrawer>
         <v-row>
             <v-col>
                 <v-container fluid>
@@ -41,7 +41,8 @@ export default {
     },
     computed:{
         ...mapGetters([
-            'getSupervisor'
+            'getSupervisor',
+            'getUser'
         ])
     }
 }

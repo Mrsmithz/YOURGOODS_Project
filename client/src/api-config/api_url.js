@@ -3,6 +3,11 @@ const url = {
     login:'http://localhost:25800/api/auth/login',
     session:'http://localhost:25800/api/auth/get/session',
     logout:'http://localhost:25800/api/auth/logout',
+    User:{
+        updateProfile:'http://localhost:25800/api/user/update/profile',
+        updatePassword:'http://localhost:25800/api/user/update/password',
+        updateEmail:'http://localhost:25800/api/user/update/email'
+    },
     customer:{
         createRequest:'http://localhost:25800/api/request/createRequest',
         getAllRequestByCustomerId:'http://localhost:25800/api/request/getAllRequestByCustomerId',
@@ -71,7 +76,9 @@ const url = {
         createFeedback:'http://localhost:25800/api/feedback/createFeedback'
     },
     Dashboard:{
-        CustomerAndOperator:'http://localhost:25800/api/user/dashboard/customerAndOperator'
+        CustomerAndOperator:'http://localhost:25800/api/user/dashboard/customerAndOperator',
+        StaffDashboard:'http://localhost:25800/api/user/dashboard/staff',
+        SupervisorDashboard:'http://localhost:25800/api/user/dashboard/supervisor'
     }
 }
 

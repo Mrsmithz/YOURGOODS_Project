@@ -68,7 +68,6 @@ exports.updateUserPassword = async (req, res, next) => {
     let data = req.body;
     let user = new User();
     await user.updateUserPassword(id, data.old_password, data.new_password);
-    req.session.destroy();
     res.sendStatus(200);
   } catch (err) {
     console.log(err);
@@ -83,10 +82,11 @@ exports.updateUserProfile = async (req, res, next) => {
     await user.updateUserProfile(
       id,
       data.name,
-      data.gender,
       data.telephone,
       data.address
     );
+    await user.getUserById(id)
+    req.session.user = user
     res.sendStatus(200);
   } catch (err) {
     console.log(err);
@@ -100,6 +100,8 @@ exports.updateUserEmail = async (req, res) => {
     let user = new User();
     await user.checkEmailDuplicate(req.body.new_email);
     await user.updateUserEmail(id, req.body.old_email, req.body.new_email);
+    await user.getUserById(id)
+    req.session.user = user
     res.sendStatus(200);
   } catch (err) {
     console.log(err);
@@ -143,6 +145,27 @@ exports.getStaffDetail = async (req, res) => {
 exports.getCustomerOrOperatorDashboard = async (req, res) => {
     try{
         let result = await User.getCustomerOrOperatorDashboard(req.session.user.id)
+        res.status(200).send(result)
+    }
+    catch(err){
+        console.log(err)
+        res.sendStatus(400)
+    }
+}
+
+exports.getStaffDashboard = async (req, res) => {
+    try{
+        let result = await User.getStaffDashboard(req.session.user.id)
+        res.status(200).send(result)
+    }
+    catch(err){
+        console.log(err)
+        res.sendStatus(400)
+    }
+}
+exports.getSupervisorDashboard = async (req, res) => {
+    try{
+        let result = await User.getSupervisorDashboard(req.session.user.id)
         res.status(200).send(result)
     }
     catch(err){

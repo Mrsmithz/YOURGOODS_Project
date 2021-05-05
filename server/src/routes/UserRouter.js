@@ -1,10 +1,12 @@
 const express = require('express')
 const router = express.Router()
 const UserController = require('../controller/UserController')
-
-router.put('/update/profile', UserController.updateUserProfile)
-router.post('/update/password', UserController.updateUserPassword)
-router.put('/update/email', UserController.updateUserEmail)
+const uploader = require('../uploader/DocumentUploader')
+router.put('/update/profile', uploader.none(), UserController.updateUserProfile)
+router.post('/update/password', uploader.none(), UserController.updateUserPassword)
+router.put('/update/email', uploader.none(), UserController.updateUserEmail)
 router.get('/getStaffDetail', UserController.getStaffDetail)
 router.get('/dashboard/customerAndOperator', UserController.getCustomerOrOperatorDashboard)
+router.get('/dashboard/staff', UserController.getStaffDashboard)
+router.get('/dashboard/supervisor', UserController.getSupervisorDashboard)
 module.exports = router

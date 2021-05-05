@@ -38,6 +38,7 @@ app.use(
     secret: "doggo_doggo",
     resave: false,
     saveUninitialized: false,
+    rolling:true,
     cookie: {
       secure: false,
       httpOnly: false,

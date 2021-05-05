@@ -1,6 +1,6 @@
 <template>
     <v-main>
-        <OperatorDrawer></OperatorDrawer>
+        <OperatorDrawer :name="getUser.name"></OperatorDrawer>
         <v-row>
             <v-col>
                 <v-container>
@@ -19,6 +19,7 @@
     </v-main>
 </template>
 <script>
+import {mapGetters} from 'vuex'
 import OperatorDrawer from './drawer/OperatorDrawer'
 import ManageRequest from './request/ManageRequest'
 import ManageOrder from './order/ManageOrder'
@@ -44,6 +45,9 @@ export default {
         SharedDashboard
     },
     computed:{
+      ...mapGetters([
+        'getUser'
+      ]),
     DashboardState:{
       get:function(){
         return this.$store.getters.getOperator.Dashboard

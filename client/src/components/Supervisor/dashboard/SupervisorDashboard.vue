@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-row>
-      <v-col lg="4" cols="sm" class="pb-2">
+      <v-col lg="4" cols="auto" class="pb-2">
         <v-card>
           <v-row class="no-gutters">
             <v-col cols="auto">
@@ -9,7 +9,7 @@
             </v-col>
             <div class="col pa-3 py-4 cyan--text">
               <h5 class="text-truncate text-uppercase">Pending</h5>
-              <h1>53</h1>
+              <h1>{{ pending_orders.status_count }}</h1>
             </div>
           </v-row>
         </v-card>
@@ -22,7 +22,7 @@
             </v-col>
             <div class="col pa-3 py-4 primary--text">
               <h5 class="text-truncate text-uppercase">In Progress</h5>
-              <h1>23%</h1>
+              <h1>{{ in_progress_orders.status_count }}</h1>
             </div>
           </v-row>
         </v-card>
@@ -35,39 +35,32 @@
             </v-col>
             <div class="col pa-3 py-4 success--text">
               <h5 class="text-truncate text-uppercase">Completed</h5>
-              <h1>213</h1>
+              <h1>{{ completed_orders.status_count }}</h1>
             </div>
           </v-row>
         </v-card>
       </v-col>
     </v-row>
     <v-row>
-      <v-col lg="4" cols="md" class="pb-2">
+      <v-col lg="6" cols="md" class="pb-2">
         <v-card>
-          <v-card-title>
-            Pending
+          <v-card-title class="light-blue--text">
+            IN PROGRESS
           </v-card-title>
           <v-card-text>
             <v-carousel
               cycle
               height="180"
-              interval="2000"
+              interval="3000"
               hide-delimiter-background
               show-arrows-on-hover
             >
-              <v-carousel-item>
+              <v-carousel-item v-for="item in in_progress_orders_details" :key="item.id">
                 <v-row class="no-gutters">
                   <v-col>
-                    <div class="black--text">
-                      <h2 class="cyan--text">Randy Sheets</h2>
-                      <p class="mt-1">Tutankum, WI 33192</p>
-                      <h3 class="mb-0">
-                        $217.00
-                        <i
-                          class="mdi mdi-36px mdi-credit-card-outline float-right"
-                        ></i>
-                      </h3>
-                      <p>Total items: 5</p>
+                    <div>
+                      <h2 class="green--text text-truncate overline accent-4">Company Name: {{item.company_name}}</h2>
+                      <h2 class="green--text text-truncate overline accent-4">Receiver Address: {{item.receiver_address}}</h2>
                     </div>
                   </v-col>
                 </v-row>
@@ -76,51 +69,32 @@
           </v-card-text>
         </v-card>
       </v-col>
-      <v-col lg="4" cols="md" class="pb-2">
-        <v-card min-height="252">
-          <v-card-title class="font-weight-light text-truncate primary--text">
-            In Progress
+      <v-col lg="6" cols="md" class="pb-2">
+        <v-card>
+          <v-card-title class="deep-orange--text">
+            COMPLETED
           </v-card-title>
           <v-card-text>
-            <p class="primary--text subtitle-1">
-              Results from last campaign
-            </p>
-            <div class="my-5">
-              <v-progress-linear
-                indeterminate
-                height="8"
-                color="success"
-              ></v-progress-linear>
-              <h6>SINCE JAN 2020</h6>
-            </div>
+            <v-carousel
+              cycle
+              height="180"
+              interval="5000"
+              hide-delimiter-background
+              show-arrows-on-hover
+            >
+              <v-carousel-item v-for="item in completed_orders_details" :key="item.id">
+                <v-row class="no-gutters">
+                  <v-col>
+                    <div>
+                      <h2 class="teal--text text-truncate overline darken-4">Company Name: {{item.company_name}}</h2>
+                      <h2 class="teal--text text-truncate overline darken-4">Arrived At: {{getTime(item.arrived_datetime)}}</h2>
+                      <h2 class="teal--text text-truncate overline darken-4">Receiver Address: {{item.receiver_address}}</h2>
+                    </div>
+                  </v-col>
+                </v-row>
+              </v-carousel-item>
+            </v-carousel>
           </v-card-text>
-          <v-card-actions>
-            <v-btn outlined rounded color="primary">
-              Details
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-col>
-      <v-col lg="4" cols="md" class="pb-2">
-        <v-card min-height="252">
-          <v-card-title class="font-weight-light text-truncate success--text">
-            Completed
-          </v-card-title>
-          <v-card-text>
-            <span class="success--text subtitle-1">
-              Judy Pincus
-            </span>
-            <div class="mb-3">
-              @jpincus
-              <h3>Service Manager</h3>
-              <span class="overline">Start date: 5/12/2020</span>
-            </div>
-          </v-card-text>
-          <v-card-actions>
-            <v-btn outlined rounded color="success">
-              View
-            </v-btn>
-          </v-card-actions>
         </v-card>
       </v-col>
     </v-row>
@@ -128,41 +102,96 @@
       <v-col>
         <v-card class="mx-auto text-center">
           <v-card-title class="primary--text">
-            GRAPH
+            Orders Status GRAPH
           </v-card-title>
           <v-sparkline
-            :value="sparklineData"
             padding="18"
             label-size="4"
             color="cyan"
-            :gradient="['#007bff', 'cyan']"
+            :gradient="['red','cyan', 'orange', 'amber', ]"
             :line-width="2"
             :stroke-linecap="'round'"
+            :labels="labels"
+            :value="value"
+            auto-draw
+            auto-draw-duration="5000"
             smooth
           >
-            <template v-slot:label="item"> ${{ item.value }} </template>
+            <template v-slot:label="item"> {{ item.value }} </template>
           </v-sparkline>
-          <v-card-actions class="py-4 justify-center">
-            <v-btn color="primary">View Report</v-btn>
-          </v-card-actions>
         </v-card>
       </v-col>
     </v-row>
   </div>
 </template>
 <script>
+import DashboardService from "../../../services/DashboardService";
 export default {
   name: "SupervisorDashboard",
   data: () => ({
-      sparklineData: [
-        423,
-        446,
-        675,
-        510,
-        590,
-        610,
-        423,
-      ],
-  })
+    pending_orders: {},
+    in_progress_orders: {},
+    completed_orders: {},
+    completed_orders_details: [],
+    in_progress_orders_details: [],
+    labels:[],
+    value:[]
+  }),
+  methods: {
+    async getDashboard() {
+      try {
+        let result = await DashboardService.getSupervisorDashboard();
+        this.addStatusCount(result.data.status_count);
+        this.addOrderDetails(result.data.order_details);
+        this.plotGraph(result.data.status_count)
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    plotGraph(list){
+        for(let item of list){
+            this.labels.push(item.status)
+            this.value.push(item.status_count)
+        }
+    },
+    getTime(input) {
+      var date = new Date(input);
+      date.setTime(date.getTime() + 7 * 60 * 60 * 1000);
+      var time = date.toISOString();
+      let year = time.match(/.+(?=T)/)[0].split("-");
+      let time_result = time.match(/\d+:\d+/)[0];
+      let result = `${time_result} ${year[2]}/${year[1]}/${year[0]}`;
+      return result;
+    },
+    addStatusCount(list) {
+      for (let item of list) {
+        if (item.status == "completed") {
+          this.completed_orders = item;
+        } else if (item.status == "in progress") {
+          this.in_progress_orders = item;
+        } else if (item.status == "pending") {
+          this.pending_orders = item;
+        }
+      }
+    },
+    addOrderDetails(list) {
+      for (let item of list) {
+        if (
+          item.status == "completed" &&
+          this.completed_orders_details.length != 5
+        ) {
+          this.completed_orders_details.push(item);
+        } else if (
+          item.status == "in progress" &&
+          this.in_progress_orders_details.length != 5
+        ) {
+          this.in_progress_orders_details.push(item);
+        }
+      }
+    },
+  },
+  mounted() {
+    this.getDashboard();
+  },
 };
 </script>
