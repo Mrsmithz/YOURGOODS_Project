@@ -164,41 +164,76 @@ export default {
       this.$store.commit("setTempCompanyName", item.company_name);
       this.$store.commit("setCustomerGoodsModal");
     },
-    getFullTime(time) {
-      var date = new Date(time);
+    getFullTime(input) {
+      // var date = new Date(time);
+      // date.setTime(date.getTime() + 7 * 60 * 60 * 1000);
+      // return `${
+      //   date.toISOString().match(/\d+:\d+:\d+/)[0]
+      // } ${date.toDateString()}`;
+      var date = new Date(input);
       date.setTime(date.getTime() + 7 * 60 * 60 * 1000);
-      return `${
-        date.toISOString().match(/\d+:\d+:\d+/)[0]
-      } ${date.toDateString()}`;
+      var time = date.toISOString();
+      let year = time.match(/.+(?=T)/)[0].split("-");
+      let time_result = time.match(/\d+:\d+/)[0];
+      let result = `${time_result} ${year[2]}/${year[1]}/${year[0]}`;
+      return result;
     },
     async confirmOrder(item) {
-      let conf = confirm("Confirm Order ?");
-      if (conf) {
-        try {
+      try {
+        let value = await this.$swal({
+          title: "Confirm Order ?",
+          html: `Company Name: ${item.company_name} <br/> Pickup Address: ${item.pickup_address} <br/> Receiver Address: ${item.receiver_address}`,
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonText: "Yes",
+          cancelButtonText: "Cancel",
+          showCloseButton: true,
+        });
+        if (value.isConfirmed) {
           let form = new FormData();
           form.append("status", "confirmed");
           await OperatorService.updateRequestStatus(item.request_id, form);
-          alert("Order confirmed");
           this.getOrderUnConfirmedHistory();
           this.getOrdersHistory();
-        } catch (err) {
-          console.log(err);
+          this.$swal({
+            title: "Order Confimred",
+            icon: "success",
+            timer: 1000,
+            showConfirmButton: false,
+            showCancelButton: false,
+          });
         }
+      } catch (err) {
+        console.log(err);
       }
     },
     async rejectOrder(item) {
-      let conf = confirm("Reject Order ?");
-      if (conf) {
-        try {
+      try {
+        let value = await this.$swal({
+          title:'Confirm Reject',
+          html: `Company Name: ${item.company_name} <br/> Pickup Address: ${item.pickup_address} <br/> Receiver Address: ${item.receiver_address}`,
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonText: "Yes",
+          cancelButtonText: "Cancel",
+          showCloseButton: true,
+        });
+        if (value.isConfirmed) {
           let form = new FormData();
           form.append("status", "reject");
           await OperatorService.updateRequestStatus(item.request_id, form);
-          alert("Order rejected");
           this.getOrderUnConfirmedHistory();
           this.getOrdersHistory();
-        } catch (err) {
-          console.log(err);
+          this.$swal({
+            title: "Order Rejected",
+            icon: "success",
+            timer: 1000,
+            showConfirmButton: false,
+            showCancelButton: false,
+          });
         }
+      } catch (err) {
+        console.log(err);
       }
     },
     async getOrderUnConfirmedHistory() {

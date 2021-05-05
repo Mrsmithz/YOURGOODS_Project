@@ -13,7 +13,7 @@
                 alt="user"
                 src="https://randomuser.me/api/portraits/women/81.jpg"
               /> -->
-              <img src="https://picsum.photos/1920/1080?random"/>
+              <img src="https://picsum.photos/1920/1080?random" />
             </v-avatar>
           </v-col>
         </v-row>
@@ -50,15 +50,15 @@
             <v-row align="center" justify="center">
               <v-col cols="12" sm="6" md="4">
                 <v-form ref="email_form">
-                <v-text-field
-                  label="Email"
-                  required
-                  v-model="email"
-                  :readonly="edit_email"
-                  :append-icon="edit_email ? 'mdi-pencil-off' : 'mdi-pencil'"
-                  :rules="emailRules"
-                  @click:append="toggleEditEmail"
-                ></v-text-field>
+                  <v-text-field
+                    label="Email"
+                    required
+                    v-model="email"
+                    :readonly="edit_email"
+                    :append-icon="edit_email ? 'mdi-pencil-off' : 'mdi-pencil'"
+                    :rules="emailRules"
+                    @click:append="toggleEditEmail"
+                  ></v-text-field>
                 </v-form>
               </v-col>
               <v-col cols="12" sm="6" md="4">
@@ -113,7 +113,9 @@
                 justify="center"
                 v-show="edit_profile && email == user.email"
               >
-                <v-btn text class="button is-primary" @click="updateProfile">Update Profile</v-btn>
+                <v-btn text class="button is-primary" @click="updateProfile"
+                  >Update Profile</v-btn
+                >
                 <v-btn
                   text
                   class="button is-danger is-outlined ml-3"
@@ -129,7 +131,9 @@
                 justify="center"
                 v-show="email != user.email"
               >
-                <v-btn text class="button is-primary" @click="updateEmail">Update Email</v-btn>
+                <v-btn text class="button is-primary" @click="updateEmail"
+                  >Update Email</v-btn
+                >
                 <v-btn
                   text
                   class="button is-danger is-outlined ml-3"
@@ -145,7 +149,7 @@
   </v-dialog>
 </template>
 <script>
-import AccountService from '../../services/AccountService'
+import AccountService from "../../services/AccountService";
 export default {
   name: "ProfileModal",
   data: () => ({
@@ -213,35 +217,87 @@ export default {
     },
     async updateProfile() {
       if (this.$refs.profile_form.validate()) {
-        try{
-          let form = new FormData()
-          form.append('name', `${this.first_name} ${this.last_name}`)
-          form.append('telephone', this.telephone)
-          form.append('address', this.address)
-          let result = await AccountService.updateProfile(form)
-          console.log(result)
-          alert('Success')
-        }
-        catch(err){
-          console.log(err.response)
+        try {
+          let value = await this.$swal({
+            title: "Confirm To Change Update Profile ?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonText: "Yes",
+            cancelButtonText: "Cancel",
+            showCloseButton: true,
+          });
+          if (value.isConfirmed) {
+            let form = new FormData();
+            form.append("name", `${this.first_name} ${this.last_name}`);
+            form.append("telephone", this.telephone);
+            form.append("address", this.address);
+            let result = await AccountService.updateProfile(form);
+            console.log(result);
+            this.$swal({
+              title: "Update Profile Successfully",
+              icon: "success",
+              timer: 1000,
+              showConfirmButton: false,
+              showCancelButton: false,
+            }).then((result) => {
+              if (result.dismiss) {
+                window.location.reload();
+              }
+            });
+          }
+        } catch (err) {
+          console.log(err.response);
+          this.$swal({
+            title: "Update Profile Fail, Please try again",
+            icon: "error",
+            timer: 1000,
+            showConfirmButton: false,
+            showCancelButton: false,
+          });
         }
       }
     },
-    async updateEmail(){
+    async updateEmail() {
       if (this.$refs.email_form.validate()) {
-        try{
-          let form = new FormData()
-          form.append('old_email', this.user.email)
-          form.append('new_email', this.email)
-          let result = await AccountService.updateEmail(form)
-          console.log(result)
-          alert('Success')
-        }
-        catch(err){
-          console.log(err.response)
+        try {
+          let value = await this.$swal({
+            title: "Confirm To Change Update Email ?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonText: "Yes",
+            cancelButtonText: "Cancel",
+            showCloseButton: true,
+          });
+          if (value.isConfirmed) {
+            let form = new FormData();
+            form.append("old_email", this.user.email);
+            form.append("new_email", this.email);
+            let result = await AccountService.updateEmail(form);
+            console.log(result);
+            this.$swal({
+              title: "Update Email Successfully",
+              icon: "success",
+              timer: 1000,
+              showConfirmButton: false,
+              showCancelButton: false,
+            }).then((result) => {
+              if (result.dismiss) {
+                window.location.reload();
+              }
+            });
+          }
+        } catch (err) {
+          console.log(err.response);
+          this.$swal({
+            title: err.response.data,
+            icon: "error",
+            timer: 1000,
+            showConfirmButton: false,
+            showCancelButton: false,
+          });
         }
       }
-    }
+    },
   },
   computed: {
     user() {

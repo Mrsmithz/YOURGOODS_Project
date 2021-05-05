@@ -87,7 +87,7 @@
                 <v-window-item :value="2">
                   <v-row>
                     <v-col cols="12" md="4" class="text-center">
-                      <p class="pt-16 has-text-weight-bold login_font">
+                      <p class="pt-16 has-text-weight-bold login_font2">
                         You Already have an account?
                       </p>
                       <v-btn
@@ -105,7 +105,7 @@
                       <v-card-text class="mt12">
                         <h1
                           class="text-center pt-10 pb-10 register_head has-text-weight-bold is-size-1"
-                          style="color: #1e212d"
+
                         >
                           Sign Up
                         </h1>
@@ -117,7 +117,7 @@
                           :complete="e6 > 1"
                           step="1"
                         >
-                          Read Before Do
+                          Register Form
                           <small>Description</small>
                         </v-stepper-step>
 
@@ -437,8 +437,17 @@ export default {
       try {
         var result = await AccountService.createAccount(this.createJSON());
         console.log(result);
-        alert("Register Successfully!!");
-        this.switchToSignin();
+        this.$swal({
+          title: "Register Successfully",
+          icon: "success",
+          timer: 1000,
+          showConfirmButton: false,
+          showCancelButton: false,
+        }).then((result) => {
+          if (result.dismiss) {
+            this.switchToSignin();
+          }
+        });
       } catch (err) {
         console.log(err.response);
         this.register_error = err.response.data;
@@ -471,7 +480,17 @@ export default {
           var result = await AccountService.Login(this.createLoginJSON());
           console.log(result);
           this.$store.commit("setUser", result.data);
-          this.$router.push({ name: "Index" });
+          this.$swal({
+            title: "Login Successfully",
+            icon: "success",
+            timer: 1000,
+            showConfirmButton: false,
+            showCancelButton: false,
+          }).then((result) => {
+            if (result.dismiss) {
+              this.$router.push({ name: "Index" });
+            }
+          });
         } catch (err) {
           console.log(err.response);
           this.login_error = err.response.data;
@@ -519,11 +538,11 @@ export default {
 </script>
 <style>
 .whole_pane {
-  background: linear-gradient(90deg, #b68973, #eac09fe3);
+  background: linear-gradient(90deg, #E1F5FE, #eac09fe3);
   opacity: 1;
 }
 .whole_screen {
-  background: linear-gradient(90deg, #eac09fe3, #faf3e0);
+  background: linear-gradient(90deg, #fbe0c4, #E1F5FE);
 }
 h1.login_head {
   color: #aa96da;
@@ -536,9 +555,15 @@ h1.login_head {
   color: white;
   -webkit-text-stroke: 0.25px black;
 }
+.login_font2 {
+  font-size: 2rem;
+  color: black;
+  -webkit-text-stroke: 0.25px white;
+}
 h1.register_head {
-  color: #fcbad3;
+  color: whitesmoke;
   font-size: 10em;
+  -webkit-text-stroke: 0.25px black;
 }
 .v-stepper__step__step.primary {
   background-color: red !important;
@@ -559,10 +584,10 @@ h1.register_head {
   font-size: 1rem;
 }
 .login_pane {
-  background-color: #fdfaf2 !important;
+  /* background-color: #fdfaf2 !important; */
 }
 .register_pane {
-  background-color: #fdfaf2 !important;
+  /* background-color: #fdfaf2 !important; */
 }
 .regis_alert {
   color: #ff5252;

@@ -1,5 +1,9 @@
 <template>
-  <v-dialog v-model="ChangePasswordModalState" max-width="60rem" @click:outside="[clearForm(), showChangePasswordModal()]">
+  <v-dialog
+    v-model="ChangePasswordModalState"
+    max-width="60rem"
+    @click:outside="[clearForm(), showChangePasswordModal()]"
+  >
     <v-card>
       <v-card-title>
         <v-row align="center" justify="center">
@@ -14,7 +18,7 @@
             <v-col cols="12" sm="6" md="4" align="center" justify="center">
               <v-slide-x-transition>
                 <v-alert dense outlined type="error" max-width="20rem">
-                  {{password_error}}
+                  {{ password_error }}
                 </v-alert>
               </v-slide-x-transition>
             </v-col>
@@ -68,7 +72,10 @@
                 <v-btn text class="button is-primary" @click="updatePassword"
                   >Update Password</v-btn
                 >
-                <v-btn text class="button is-danger is-outlined ml-3" @click="showChangePasswordModal"
+                <v-btn
+                  text
+                  class="button is-danger is-outlined ml-3"
+                  @click="showChangePasswordModal"
                   >Close</v-btn
                 >
               </v-col>
@@ -80,7 +87,7 @@
   </v-dialog>
 </template>
 <script>
-import AccountService from '../../services/AccountService'
+import AccountService from "../../services/AccountService";
 export default {
   name: "ChangePasswordModal",
   data: () => ({
@@ -91,7 +98,7 @@ export default {
     current_password: "",
     new_password: "",
     confirm_password: "",
-    password_error:"",
+    password_error: "",
     passwordRules: [
       (v) => !!v || "Password is required",
       (v) =>
@@ -102,44 +109,67 @@ export default {
   methods: {
     async updatePassword() {
       if (this.$refs.password_form.validate()) {
-        try{
-          let form = new FormData()
-          form.append('old_password', this.current_password)
-          form.append('new_password', this.new_password)
-          form.append('confirmed_new_password', this.confirm_password)
-          let result = await AccountService.updatePassword(form)
-          console.log(result)
-          this.$refs.password_form.reset()
-          alert('Success')
-        }
-        catch(err){
-          console.log(err.response)
+        try {
+          let value = await this.$swal({
+            title: "Confirm To Change Password ?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonText: "Yes",
+            cancelButtonText: "Cancel",
+            showCloseButton: true,
+          });
+          if (value.isConfirmed) {
+            let form = new FormData();
+            form.append("old_password", this.current_password);
+            form.append("new_password", this.new_password);
+            form.append("confirmed_new_password", this.confirm_password);
+            let result = await AccountService.updatePassword(form);
+            console.log(result);
+            this.$refs.password_form.reset();
+            this.$swal({
+              title: "Update Password Successfully",
+              icon: "success",
+              timer: 1000,
+              showConfirmButton: false,
+              showCancelButton: false,
+            });
+          }
+        } catch (err) {
+          console.log(err.response);
+          this.$swal({
+              title: err.response.data,
+              icon: "error",
+              timer: 1000,
+              showConfirmButton: false,
+              showCancelButton: false,
+            });
         }
       }
     },
-    clearForm(){
-        this.$refs.password_form.reset()
+    clearForm() {
+      this.$refs.password_form.reset();
     },
-    showChangePasswordModal(){
-        this.$store.commit('showChangePasswordModal')
-    }
+    showChangePasswordModal() {
+      this.$store.commit("showChangePasswordModal");
+    },
   },
   computed: {
     passwordConfirmRules() {
       return () =>
-        this.confirm_password == this.new_password || "New Password and Confirm Password Must Matched";
+        this.confirm_password == this.new_password ||
+        "New Password and Confirm Password Must Matched";
     },
-    ChangePasswordModalState:{
-        get:function(){
-            return this.$store.getters.getChangePasswordModal
-        },
-        set:function(newValue){
-            return newValue
-        }
-    }
+    ChangePasswordModalState: {
+      get: function() {
+        return this.$store.getters.getChangePasswordModal;
+      },
+      set: function(newValue) {
+        return newValue;
+      },
+    },
   },
-  created(){
-      this.$root.$refs.ChangePasswordModal = this
-  }
+  created() {
+    this.$root.$refs.ChangePasswordModal = this;
+  },
 };
 </script>

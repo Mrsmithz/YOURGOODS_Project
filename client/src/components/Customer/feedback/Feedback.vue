@@ -44,6 +44,10 @@ export default {
           let result = await CustomerService.createFeedback(form);
           console.log(result);
           this.$refs.feedback_form.reset();
+          this.$swal({
+            title:'We got your feedback!',
+            icon:'success'
+          })
         } catch (err) {
           console.log(err);
         }

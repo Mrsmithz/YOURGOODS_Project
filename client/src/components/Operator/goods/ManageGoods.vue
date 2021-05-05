@@ -44,7 +44,9 @@
           </v-row>
           <v-row>
             <v-col>
-              <v-btn v-if="!TempGoodsIdState && !OrdersHistoryModeState" @click="createGoods"
+              <v-btn
+                v-if="!TempGoodsIdState && !OrdersHistoryModeState"
+                @click="createGoods"
                 >Create</v-btn
               >
               <v-btn
@@ -61,10 +63,15 @@
               <v-btn v-if="TempGoodsIdState && editMode" @click="editGoods"
                 >Save</v-btn
               >
-              <v-btn class="ml-3" v-if="TempGoodsIdState && editMode"
-                @click="getGoods">Reset</v-btn
+              <v-btn
+                class="ml-3"
+                v-if="TempGoodsIdState && editMode"
+                @click="getGoods"
+                >Reset</v-btn
               >
-              <v-btn v-if="OrdersHistoryModeState" @click="showManageGoods">CLOSE</v-btn>
+              <v-btn v-if="OrdersHistoryModeState" @click="showManageGoods"
+                >CLOSE</v-btn
+              >
             </v-col>
           </v-row>
         </v-form>
@@ -90,7 +97,8 @@ export default {
     ],
     weightRules: [
       (v) => !!v || "This Field is required",
-      (v) => /(^[0-9]+[.]{1}[0-9]+$|^[1-9]+[0-9]*$)/.test(v) || "Weight Invalid",
+      (v) =>
+        /(^[0-9]+[.]{1}[0-9]+$|^[1-9]+[0-9]*$)/.test(v) || "Weight Invalid",
     ],
   }),
   beforeUpdate() {},
@@ -110,9 +118,16 @@ export default {
     },
     async editGoods() {
       if (this.$refs.goods_form.validate()) {
-        let r = confirm("Confirm Edit ?");
-        if (r == true) {
-          try {
+        try {
+          let value = await this.$swal({
+          title: "Confirm Edit ?",
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonText: "Yes",
+          cancelButtonText: "Cancel",
+          showCloseButton: true,
+        });
+          if (value.isConfirmed) {
             let result = await GoodsService.editGoodsById(
               this.TempGoodsIdState,
               this.createFormData()
@@ -120,26 +135,53 @@ export default {
             this.$root.$refs.ManageOrder.getAllGoods();
             this.editMode = false;
             console.log(result);
-          } catch (err) {
-            console.log(err);
+            this.$swal({
+            title: "Edit Goods Successfully",
+            icon: "success",
+            timer: 1000,
+            showConfirmButton: false,
+            showCancelButton: false,
+          });
           }
+        } catch (err) {
+          console.log(err);
+          this.$swal({
+            title: "Edit Goods Failed, Please try again",
+            icon: "error",
+            timer: 1000,
+            showConfirmButton: false,
+            showCancelButton: false,
+          });
         }
-        else{
-          this.getGoods()
-          this.editMode = false;
-        }
+      } else {
+        this.getGoods();
+        this.editMode = false;
       }
     },
     async deleteGoods() {
       try {
-        let r = confirm("Confirm Delete ?");
-        if (r == true) {
+        let value = await this.$swal({
+          title: "Confirm Delete ?",
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonText: "Yes",
+          cancelButtonText: "Cancel",
+          showCloseButton: true,
+        });
+        if (value.isConfirmed) {
           let result = await GoodsService.deleteGoodsById(
             this.TempGoodsIdState
           );
           this.$root.$refs.ManageOrder.getAllGoods();
-          this.showManageGoods()
+          this.showManageGoods();
           console.log(result);
+          this.$swal({
+            title: "Delete Goods Successfully",
+            icon: "success",
+            timer: 1000,
+            showConfirmButton: false,
+            showCancelButton: false,
+          });
         }
       } catch (err) {
         console.log(err);
@@ -150,9 +192,15 @@ export default {
         try {
           let result = await GoodsService.createGoods(this.createFormData());
           this.$root.$refs.ManageOrder.getAllGoods();
-          alert("Create Success");
-          this.showManageGoods()
+          this.showManageGoods();
           console.log(result);
+          this.$swal({
+            title: "Create Goods Successfully",
+            icon: "success",
+            timer: 1000,
+            showConfirmButton: false,
+            showCancelButton: false,
+          });
         } catch (err) {
           console.log(err);
         }
@@ -166,7 +214,7 @@ export default {
         this.name = data.name;
         this.weight = data.weight;
         this.quantity = data.quantity;
-        this.editMode = false
+        this.editMode = false;
       } catch (err) {
         console.log(err);
       }
