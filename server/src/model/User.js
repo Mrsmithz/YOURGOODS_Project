@@ -1,5 +1,5 @@
 const pool = require("../database/mysql_connector");
-const bcrypt = require('bcrypt')
+const bcrypt = require("bcrypt");
 class User {
   constructor(
     id,
@@ -72,13 +72,17 @@ class User {
     let conn = await pool.getConnection();
     await conn.beginTransaction();
     try {
-      var stmt = "update USER set password = ? where id = ? and password = ?";
-      let result = await conn.query(stmt, [new_password, id, old_password]);
-      await conn.commit();
-      if (result[0].affectedRows == 0) {
+      var check_pass = "select password from USER where id = ?";
+      let [current_password, fields] = await conn.query(check_pass, [id]);
+      if (await bcrypt.compare(old_password, current_password[0].password)) {
+        var stmt = "update USER set password = ? where id = ?";
+        await conn.query(stmt, [new_password, id]);
+      } else {
+        await conn.commit();
         return Promise.reject("Current password is invalid");
       }
-      return Promise.resolve(result);
+      await conn.commit();
+      return Promise.resolve();
     } catch (err) {
       await conn.rollback();
       return Promise.reject(err);
@@ -377,11 +381,11 @@ class User {
         where supervisor.id = ? \
         order by s.pickup_datetime";
       let [status_count, fields1] = await conn.query(stmt, [id]);
-      let [order_details, fields2] = await conn.query(stmt2, [id])
+      let [order_details, fields2] = await conn.query(stmt2, [id]);
       await conn.commit();
       return Promise.resolve({
-          status_count:status_count,
-          order_details:order_details
+        status_count: status_count,
+        order_details: order_details,
       });
     } catch (err) {
       await conn.rollback();

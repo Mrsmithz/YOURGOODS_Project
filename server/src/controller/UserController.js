@@ -146,7 +146,8 @@ exports.updateUserPassword = async (req, res, next) => {
     let id = req.session.user.id;
     let data = req.body;
     let user = new User();
-    await user.updateUserPassword(id, data.old_password, data.new_password);
+    let hash = await bcrypt.hash(data.new_password, SaltRounds)
+    await user.updateUserPassword(id, data.old_password, hash);
     res.sendStatus(200);
   } catch (err) {
     console.log(err);
