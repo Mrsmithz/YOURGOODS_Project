@@ -583,12 +583,12 @@ h1.register_head {
   height: 4em;
   font-size: 1rem;
 }
-.login_pane {
-  /* background-color: #fdfaf2 !important; */
+/* .login_pane {
+  background-color: #fdfaf2 !important;
 }
 .register_pane {
-  /* background-color: #fdfaf2 !important; */
-}
+  background-color: #fdfaf2 !important;
+} */
 .regis_alert {
   color: #ff5252;
   font-size: 0.75em;
