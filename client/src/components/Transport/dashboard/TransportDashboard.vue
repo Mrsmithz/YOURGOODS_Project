@@ -75,7 +75,7 @@
               show-arrows-on-hover
             >
               <v-carousel-item
-                v-for="item in in_progress_orders"
+                v-for="item in completed_orders"
                 :key="item.id"
               >
                 <v-row class="no-gutters">
