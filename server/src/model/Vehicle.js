@@ -106,7 +106,7 @@ class Vehicle{
         try{
             var stmt = 'update VEHICLE set status = ? where plate_number = ?'
             if (status == 'not_available'){
-                var stmt2 = 'update SCHEDULE set vehicle_plate_number = null where vehicle_plate_number = ?'
+                var stmt2 = 'update SCHEDULE set vehicle_plate_number = null where vehicle_plate_number = ? and arrived_datetime is null'
                 await conn.query(stmt2, [plate_number])
             }
             let result = await conn.query(stmt, [status, plate_number])
