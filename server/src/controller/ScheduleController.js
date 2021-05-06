@@ -19,7 +19,8 @@ const updateScheduleStatusSchema = Joi.object({
   status:Joi.string().valid('pending', 'completed', 'in progress', 'confirmed', 'unconfirmed', 'reject')
 })
 const editPickupScheduleSchema = Joi.object({
-  pickup_datetime:Joi.date().required().greater('now')
+  pickup_datetime:Joi.date().required().greater('now'),
+  order_id:Joi.any()
 })
 const paramsValidate = Joi.object({
   id:Joi.number().integer().required()

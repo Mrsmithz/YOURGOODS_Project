@@ -105,7 +105,6 @@
                       <v-card-text class="mt12">
                         <h1
                           class="text-center pt-10 pb-10 register_head has-text-weight-bold is-size-1"
-
                         >
                           Sign Up
                         </h1>
@@ -493,7 +492,24 @@ export default {
           });
         } catch (err) {
           console.log(err.response);
-          this.login_error = err.response.data;
+          //this.login_error = Object.keys(err.response.data).length > 0 ? err.response.data : 'Something wrong, Please try again';
+          if (Object.keys(err.response.data).length > 0) {
+            this.$swal({
+              title: err.response.data,
+              icon: "error",
+              timer: 1000,
+              showConfirmButton: false,
+              showCancelButton: false,
+            });
+          } else {
+            this.$swal({
+              title: "Something wrong, Please try again",
+              icon: "error",
+              timer: 1000,
+              showConfirmButton: false,
+              showCancelButton: false,
+            });
+          }
         }
       }
     },
@@ -538,11 +554,11 @@ export default {
 </script>
 <style>
 .whole_pane {
-  background: linear-gradient(90deg, #E1F5FE, #eac09fe3);
+  background: linear-gradient(90deg, #e1f5fe, #eac09fe3);
   opacity: 1;
 }
 .whole_screen {
-  background: linear-gradient(90deg, #fbe0c4, #E1F5FE);
+  background: linear-gradient(90deg, #fbe0c4, #e1f5fe);
 }
 h1.login_head {
   color: #aa96da;

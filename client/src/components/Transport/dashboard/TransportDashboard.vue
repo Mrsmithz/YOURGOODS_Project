@@ -125,8 +125,8 @@ import DashboardService from "../../../services/DashboardService";
 export default {
   name: "TransportDashboard",
   data: () => ({
-    in_progress_count: {},
-    completed_count: {},
+    in_progress_count: null,
+    completed_count: null,
     in_progress_orders: [],
     completed_orders: [],
     value:[],

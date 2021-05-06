@@ -105,9 +105,7 @@
         </v-data-table>
       </v-col>
     </v-row>
-    <v-row>
-      
-    </v-row>
+    <v-row> </v-row>
   </div>
 </template>
 <script>
@@ -123,11 +121,11 @@ export default {
     select: [
       { text: "Pending", value: "pending" },
       { text: "Unconfirmed", value: "unconfirmed" },
-      { text: "Reject", value: "reject", disabled:true},
+      { text: "Reject", value: "reject", disabled: true },
     ],
     select2: [
       { text: "In Progress", value: "in progress" },
-      { text: "Confirmed", value: "confirmed", disabled:true },
+      { text: "Confirmed", value: "confirmed", disabled: true },
     ],
     statusList: [],
     headers: [
@@ -151,12 +149,11 @@ export default {
     newMessage(message) {
       this.unreadMessage.push(message);
     },
-    ManageOrderState(visible){
-      if (!visible){
-        this.getAllRequest()
+    ManageOrderState(visible) {
+      if (!visible) {
+        this.getAllRequest();
       }
-
-    }
+    },
   },
   computed: {
     newMessage() {
@@ -183,16 +180,23 @@ export default {
     },
   },
   methods: {
-    getSelect(status){
-      if (status == 'pending' || status == 'reject' || status == 'unconfirmed'){
-        return this.select
-      }
-      else if (status == 'in progress' || status == 'completed' || status == 'confirmed'){
-        return this.select2
+    getSelect(status) {
+      if (
+        status == "pending" ||
+        status == "reject" ||
+        status == "unconfirmed"
+      ) {
+        return this.select;
+      } else if (
+        status == "in progress" ||
+        status == "completed" ||
+        status == "confirmed"
+      ) {
+        return this.select2;
       }
     },
     showManageOrder(item) {
-      this.$store.commit('setTempRequest', item.id)
+      this.$store.commit("setTempRequest", item.id);
       this.$store.commit("setTempOrderId", item.order_id);
       this.$store.commit("showOperatorManagePage", "ManageOrder");
     },
@@ -201,10 +205,10 @@ export default {
       this.$store.commit("showOperatorManagePage", "ManageOrder");
     },
     showManageSchedule(schedule_id) {
-      this.$store.commit('setTempScheduleId', schedule_id)
+      this.$store.commit("setTempScheduleId", schedule_id);
       this.$store.commit("showOperatorManagePage", "ManageSchedule");
     },
-    showCreateSchedule(order_id){
+    showCreateSchedule(order_id) {
       this.$store.commit("setTempOrderId", order_id);
       this.$store.commit("showOperatorManagePage", "ManageSchedule");
     },
@@ -213,16 +217,29 @@ export default {
       this.$store.commit("setTempOperatorContactId", item.customer_id);
       this.getUnReadMessage();
     },
-    async updateRequestStatus(input, id){
-      try{
-        let form = new FormData()
-        form.append('status', input)
-        let result = await OperatorService.updateRequestStatus(id, form)
-        this.getAllRequest()
-        console.log(result)
-      }
-      catch(err){
-        console.log(err)
+    async updateRequestStatus(input, id) {
+      try {
+        let form = new FormData();
+        form.append("status", input);
+        let result = await OperatorService.updateRequestStatus(id, form);
+        this.getAllRequest();
+        console.log(result);
+        this.$swal({
+          title: "Update Status Successfully",
+          icon: "success",
+          timer: 1000,
+          showConfirmButton: false,
+          showCancelButton: false,
+        });
+      } catch (err) {
+        console.log(err);
+        this.$swal({
+          title: "Update Fail, Please try again",
+          icon: "error",
+          timer: 1000,
+          showConfirmButton: false,
+          showCancelButton: false,
+        });
       }
     },
     getFullTime(time) {
@@ -253,23 +270,23 @@ export default {
         let data = result.data;
         this.request = [];
         for (let item of data) {
-          if (item.status != 'completed'){
+          if (item.status != "completed") {
             var obj = {
-            id: item.id,
-            document: item.document.match(/`.+`/)[0].replaceAll("`", ""),
-            customer_name: item.customer_name,
-            status: item.status,
-            created_at: this.getFullTime(item.created_datetime),
-            modified_at: this.getFullTime(item.modified_datetime),
-            operator_id: item.operator_id,
-            file_url: `http://localhost:25800/${item.document}`,
-            message_count: this.countMessage(item.customer_id),
-            order_id: item.order_id,
-            customer_id: item.customer_id,
-            schedule_id:item.schedule_id
-          };
-          this.statusList.push(status);
-          this.request.push(obj);
+              id: item.id,
+              document: item.document.match(/`.+`/)[0].replaceAll("`", ""),
+              customer_name: item.customer_name,
+              status: item.status,
+              created_at: this.getFullTime(item.created_datetime),
+              modified_at: this.getFullTime(item.modified_datetime),
+              operator_id: item.operator_id,
+              file_url: `http://localhost:25800/${item.document}`,
+              message_count: this.countMessage(item.customer_id),
+              order_id: item.order_id,
+              customer_id: item.customer_id,
+              schedule_id: item.schedule_id,
+            };
+            this.statusList.push(status);
+            this.request.push(obj);
           }
         }
       } catch (err) {
@@ -285,8 +302,8 @@ export default {
     //   this.getAllRequest();
     // }, 1000);
   },
-  created(){
-    this.$root.$refs.ManageRequest = this
+  created() {
+    this.$root.$refs.ManageRequest = this;
   },
   beforeDestroy() {
     //clearInterval(this.interval);

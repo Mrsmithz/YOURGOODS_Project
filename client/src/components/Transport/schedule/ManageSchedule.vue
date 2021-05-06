@@ -179,6 +179,9 @@ export default {
             showCancelButton: false,
           });
         }
+        else{
+          this.getScheduleInProgressDetail();
+        }
       } catch (err) {
         console.log(err);
         this.$swal({
@@ -212,6 +215,9 @@ export default {
             showConfirmButton: false,
             showCancelButton: false,
           });
+        }
+        else{
+          this.getScheduleInProgressDetail();
         }
       } catch (err) {
         console.log(err);

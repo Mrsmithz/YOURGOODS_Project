@@ -68,7 +68,7 @@
         <v-data-table
           :headers="headers_history"
           :items="orders"
-          :search="search"
+          :search="search_history"
           class="elevation-1"
         >
           <template v-slot:top>
@@ -76,7 +76,7 @@
               <v-toolbar-title>Orders History</v-toolbar-title>
               <v-spacer></v-spacer>
               <v-text-field
-                v-model="search"
+                v-model="search_history"
                 append-icon="mdi-magnify"
                 label="Search"
                 single-line
@@ -121,6 +121,7 @@ export default {
   name: "OrdersHistory",
   data: () => ({
     search: "",
+    search_history:'',
     headers_not_confirmed: [
       {
         text: "Company Name",

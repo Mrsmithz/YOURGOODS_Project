@@ -129,9 +129,9 @@ import DashboardService from "../../../services/DashboardService";
 export default {
   name: "SupervisorDashboard",
   data: () => ({
-    pending_orders: {},
-    in_progress_orders: {},
-    completed_orders: {},
+    pending_orders: null,
+    in_progress_orders: null,
+    completed_orders: null,
     completed_orders_details: [],
     in_progress_orders_details: [],
     labels:[],
