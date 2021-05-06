@@ -109,14 +109,14 @@ export default {
     interval: "",
     socket: "",
     newMsg: "",
-    sentMsg:''
+    sentMsg: "",
   }),
   async mounted() {
     //this.$root.$refs.Contact = this
     try {
       await this.getName();
       await this.getMessageBySender();
-      await this.updateMessageStatus()
+      await this.updateMessageStatus();
       this.scrollToTop();
     } catch (err) {
       console.log(err);
@@ -137,20 +137,21 @@ export default {
     },
     sendMessage() {
       try {
-        let message = {
-          sender_id: this.UserState.id,
-          receiver_id: this.TempOperatorContactIdState,
-          message: this.message,
-        };
-        Socket.emit("sent-message", message);
-        this.message = "";
+        if (this.message) {
+          let message = {
+            sender_id: this.UserState.id,
+            receiver_id: this.TempOperatorContactIdState,
+            message: this.message,
+          };
+          Socket.emit("sent-message", message);
+          this.message = "";
+        }
       } catch (err) {
         console.log(err);
       }
     },
     showContactModal() {
       this.$store.commit("showContactModal");
-      
     },
     getFullTime(time) {
       var date = new Date(time);
@@ -246,16 +247,16 @@ export default {
       this.messages.push(obj);
       setTimeout(() => {
         this.scrollToTop();
-      }, 10)
+      }, 10);
     },
   },
   watch: {
     newMessage(message) {
       this.getMessage(message);
     },
-    sentMessage(message){
-      this.getMessage(message)
-    }
+    sentMessage(message) {
+      this.getMessage(message);
+    },
   },
   computed: {
     newMessage() {
@@ -264,7 +265,7 @@ export default {
       });
       return this.newMsg;
     },
-    sentMessage(){
+    sentMessage() {
       Socket.on(`sent-message-${this.UserState.id}`, (data) => {
         this.sentMsg = data;
       });

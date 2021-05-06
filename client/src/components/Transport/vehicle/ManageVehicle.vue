@@ -220,14 +220,24 @@ export default {
             });
           }
         } catch (err) {
-          console.log(err);
-          this.$swal({
-            title: "Edit Vehicle Fail, Please try again",
-            icon: "error",
-            timer: 1000,
-            showConfirmButton: false,
-            showCancelButton: false,
-          });
+          console.log(err.response);
+          if (err.response.data) {
+            this.$swal({
+              title: err.response.data,
+              icon: "error",
+              timer: 1000,
+              showConfirmButton: false,
+              showCancelButton: false,
+            });
+          } else {
+            this.$swal({
+              title: "Edit Vehicle Fail, Please try again",
+              icon: "error",
+              timer: 1000,
+              showConfirmButton: false,
+              showCancelButton: false,
+            });
+          }
         }
       }
     },
@@ -251,14 +261,24 @@ export default {
             showCancelButton: false,
           });
         } catch (err) {
-          console.log(err);
-          this.$swal({
-            title: "Add Vehicle Fail, Please try again",
-            icon: "error",
-            timer: 1000,
-            showConfirmButton: false,
-            showCancelButton: false,
-          });
+          console.log(err.response);
+          if (err.response.data) {
+            this.$swal({
+              title: err.response.data,
+              icon: "error",
+              timer: 1000,
+              showConfirmButton: false,
+              showCancelButton: false,
+            });
+          } else {
+            this.$swal({
+              title: "Add Vehicle Fail, Please try again",
+              icon: "error",
+              timer: 1000,
+              showConfirmButton: false,
+              showCancelButton: false,
+            });
+          }
         }
       }
     },
@@ -325,8 +345,8 @@ export default {
     async deleteVehicle(item) {
       try {
         let value = await this.$swal({
-          title: "Confirm Assign Driver ?",
-          icon: "question",
+          title: "Confirm To Delete Vehicle ?",
+          icon: "warning",
           showCancelButton: true,
           confirmButtonText: "Yes",
           cancelButtonText: "Cancel",

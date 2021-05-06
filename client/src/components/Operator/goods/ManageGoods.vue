@@ -185,6 +185,13 @@ export default {
         }
       } catch (err) {
         console.log(err);
+        this.$swal({
+            title: "Delete Goods Fail, Please try again",
+            icon: "error",
+            timer: 1000,
+            showConfirmButton: false,
+            showCancelButton: false,
+          });
       }
     },
     async createGoods() {
@@ -203,6 +210,13 @@ export default {
           });
         } catch (err) {
           console.log(err);
+          this.$swal({
+            title: "Create Goods Fail, Please try again",
+            icon: "error",
+            timer: 1000,
+            showConfirmButton: false,
+            showCancelButton: false,
+          });
         }
       }
     },

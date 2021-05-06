@@ -290,6 +290,7 @@ export default {
           );
           this.$store.commit("setTempRequestId", null);
           this.$store.commit("setTempOrderId", result.data.id);
+          this.getOrder();
           this.$swal({
             title: "Create Order Successfully",
             icon: "success",
@@ -300,6 +301,13 @@ export default {
           console.log(result);
         } catch (err) {
           console.log(err);
+          this.$swal({
+              title: "Create Order Fail, Please try again",
+              icon: "error",
+              timer: 1000,
+              showConfirmButton: false,
+              showCancelButton: false,
+            });
         }
       }
     },
@@ -330,6 +338,13 @@ export default {
         }
       } catch (err) {
         console.log(err);
+        this.$swal({
+              title: "Delete Order Fail, Please try again",
+              icon: "error",
+              timer: 1000,
+              showConfirmButton: false,
+              showCancelButton: false,
+            });
       }
     },
     async editOrder() {
@@ -371,6 +386,13 @@ export default {
           }
         } catch (err) {
           console.log(err);
+          this.$swal({
+              title: "Edit Order Fail, Please try again",
+              icon: "error",
+              timer: 1000,
+              showConfirmButton: false,
+              showCancelButton: false,
+            });
         }
       }
     },

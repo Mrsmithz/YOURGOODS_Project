@@ -40,5 +40,8 @@ class ScheduleService{
     static async getScheduleDetailByShipping(){
         return await axios.get(url.Schedule.getScheduleDetailByShipping)
     }
+    static async editPickupSchedule(id, form){
+        return await axios.put(url.Schedule.editPickupSchedule+id, form)
+    }
 }
 export default ScheduleService

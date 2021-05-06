@@ -1,5 +1,5 @@
 const pool = require("../database/mysql_connector");
-
+const bcrypt = require('bcrypt')
 class User {
   constructor(
     id,
@@ -76,7 +76,7 @@ class User {
       let result = await conn.query(stmt, [new_password, id, old_password]);
       await conn.commit();
       if (result[0].affectedRows == 0) {
-        return Promise.reject("current password is invalid");
+        return Promise.reject("Current password is invalid");
       }
       return Promise.resolve(result);
     } catch (err) {
@@ -94,7 +94,7 @@ class User {
       let result = await conn.query(stmt, [new_email, id, old_email]);
       await conn.commit();
       if (result[0].affectedRows == 0) {
-        return Promise.reject("email did not matched");
+        return Promise.reject("Email did not matched");
       }
       return Promise.resolve(result);
     } catch (err) {
@@ -123,11 +123,11 @@ class User {
     let conn = await pool.getConnection();
     await conn.beginTransaction();
     try {
-      var stmt = "select * from USER where username = ? and password = ?";
-      let [rows, field] = await conn.query(stmt, [username, password]);
+      var stmt = "select * from USER where username = ?";
+      let [rows, field] = await conn.query(stmt, [username]);
       await conn.commit();
       var data = rows[0];
-      if (data) {
+      if (await bcrypt.compare(password, data.password)) {
         this.id = data.id;
         this.username = data.username;
         // this.password = data.password
@@ -140,7 +140,7 @@ class User {
         this.manage_by = data.manage_by;
         return Promise.resolve();
       } else {
-        return Promise.reject(`couldn't find user or password didn't match`);
+        return Promise.reject(`Couldn't find user or password didn't match`);
       }
     } catch (err) {
       await conn.rollback();
@@ -170,7 +170,7 @@ class User {
         this.manage_by = data.manage_by;
         return Promise.resolve();
       } else {
-        return Promise.reject(`couldn't find user or password didn't match`);
+        return Promise.reject(`Couldn't find user or password didn't match`);
       }
     } catch (err) {
       await conn.rollback();
@@ -187,7 +187,7 @@ class User {
       let [rows, fields] = await conn.query(stmt, [username]);
       await conn.commit();
       if (rows.length > 0) {
-        return Promise.reject("username duplicated");
+        return Promise.reject("Username duplicated");
       }
       return Promise.resolve();
     } catch (err) {
@@ -205,7 +205,7 @@ class User {
       let [rows, fields] = await conn.query(stmt, [email]);
       await conn.commit();
       if (rows.length > 0) {
-        return Promise.reject("email duplicated");
+        return Promise.reject("Email duplicated");
       }
       return Promise.resolve();
     } catch (err) {

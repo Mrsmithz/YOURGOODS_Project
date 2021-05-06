@@ -237,6 +237,7 @@ export default {
                 "arrived_datetime",
                 `${item.pickupDate} ${item.pickupTime}`
               );
+              form.append('pickup_datetime', item.pickup_datetime)
               let result = await ScheduleService.updateScheduleStatus(
                 item.schedule_id,
                 form
@@ -300,6 +301,7 @@ export default {
         this.orders = [];
         for (let item of result.data) {
           let obj = {
+            pickup_datetime:item.pickup_datetime,
             schedule_id: item.id,
             driver: item.driver_name,
             order_id: item.order_id,

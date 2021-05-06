@@ -14,4 +14,5 @@ router.get('/getScheduleInProgressDetailByDriver', ScheduleController.getSchedul
 router.put('/updateScheduleStatus/:id', uploader.none(), ScheduleController.updateScheduleStatus)
 router.get('/getScheduleCompletedDetailByDriver', ScheduleController.getScheduleCompletedDetailByDriver)
 router.get('/getScheduleDetailByShipping', ScheduleController.getScheduleDetailByShipping)
+router.put('/editPickupSchedule/:id', uploader.none(), ScheduleController.editPickupSchedule)
 module.exports = router

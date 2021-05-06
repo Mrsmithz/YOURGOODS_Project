@@ -11,6 +11,7 @@ const redisClient = redis.createClient({ host: "redis" });
 const corsConfig = require("./config/cors-config");
 const path = require("path");
 const upload = multer();
+const Joi = require('joi');
 const AuthRouter = require("./src/routes/AuthRouter");
 const ContactsRouter = require("./src/routes/ContactsRouter");
 const OrdersRouter = require("./src/routes/OrdersRouter");
@@ -92,10 +93,16 @@ const socket = require("socket.io")(server, {
       credentials: true
     },
   });
+const messageSchema = Joi.object({
+  sender_id:Joi.number().integer().required(),
+  receiver_id:Joi.number().integer().required(),
+  message:Joi.any().required()
+})
 const event = socket.of('/contacts')
 event.on('connection', client => {
     client.on('sent-message', async data => {
         try{
+            await messageSchema.validateAsync(data, { abortEarly: false })
             let contact = new Contacts()
             let result = await contact.sendMessage(data.sender_id, data.receiver_id, data.message)
             event.emit(`new-message-${data.receiver_id}`, result)
