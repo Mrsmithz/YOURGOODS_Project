@@ -71,7 +71,10 @@ export default {
     locations: [],
   }),
   methods: {
-    getTime(time) {
+    getTime(input) {
+      var date = new Date(input);
+      date.setTime(date.getTime() + 7 * 60 * 60 * 1000);
+      var time = date.toISOString();
       let year = time.match(/.+(?=T)/)[0].split("-");
       let time_result = time.match(/\d+:\d+/)[0];
       let result = `${time_result} ${year[2]}/${year[1]}/${year[0]}`;

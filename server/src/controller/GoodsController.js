@@ -10,6 +10,7 @@ const editGoodsSchema = Joi.object({
     name:Joi.string().required(),
     weight:Joi.number().required().greater(0),
     quantity:Joi.number().integer().required().min(1),
+    order_id:Joi.any()
 })
 const paramsValidate = Joi.object({
     id:Joi.number().integer().required()

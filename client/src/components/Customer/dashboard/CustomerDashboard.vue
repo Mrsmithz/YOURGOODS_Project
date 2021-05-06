@@ -5,8 +5,6 @@
         lg="4"
         cols="sm"
         class="pb-2"
-        v-for="(item, index) in status_count"
-        :key="index"
       >
         <v-card>
           <v-row class="no-gutters">
@@ -19,8 +17,52 @@
               </div>
             </v-col>
             <div class="col pa-3 py-4" :style="{ color: randomColor() }">
-              <h5 class="text-truncate text-uppercase">{{ item.status }}</h5>
-              <h1>{{ item.status_count }}</h1>
+              <h5 class="text-truncate text-uppercase">PENDING</h5>
+              <h1>{{ pending_count ? pending_count.status_count : 0}}</h1>
+            </div>
+          </v-row>
+        </v-card>
+      </v-col>
+      <v-col
+        lg="4"
+        cols="sm"
+        class="pb-2"
+      >
+        <v-card>
+          <v-row class="no-gutters">
+            <v-col cols="auto">
+              <div
+                class="fill-height"
+                :style="{ backgroundColor: randomColor() }"
+              >
+                {{ "\xa0" }}
+              </div>
+            </v-col>
+            <div class="col pa-3 py-4" :style="{ color: randomColor() }">
+              <h5 class="text-truncate text-uppercase">IN PROGRESS</h5>
+              <h1>{{ in_progress_count ? in_progress_count.status_count:0 }}</h1>
+            </div>
+          </v-row>
+        </v-card>
+      </v-col>
+      <v-col
+        lg="4"
+        cols="sm"
+        class="pb-2"
+      >
+        <v-card>
+          <v-row class="no-gutters">
+            <v-col cols="auto">
+              <div
+                class="fill-height"
+                :style="{ backgroundColor: randomColor() }"
+              >
+                {{ "\xa0" }}
+              </div>
+            </v-col>
+            <div class="col pa-3 py-4" :style="{ color: randomColor() }">
+              <h5 class="text-truncate text-uppercase">COMPLETED</h5>
+              <h1>{{ completed_count ? completed_count.status_count : 0 }}</h1>
             </div>
           </v-row>
         </v-card>
@@ -173,20 +215,35 @@ export default {
     completed_order: [],
     labels:[],
     value:[],
+    in_progress_count:null,
+    pending_count:null,
+    completed_count:null,
     gradients:['#f72047', '#ffd200', '#1feaea', '#00c6ff', '#F0F', '#FF0'],
   }),
   methods: {
     async getDashboard() {
       try {
         let result = await DashboardService.getCustomerAndOperator();
-        this.status_count.push(result.data.status_count[0])
-        this.status_count.push(result.data.status_count[2])
-        this.status_count.push(result.data.status_count[1])
+        console.log(result)
+        this.addStatusCount(result.data.status_count)
         this.addOrders(result.data.request_detail);
         this.plotGraph(result.data.request_detail)
         console.log(result);
       } catch (err) {
         console.log(err);
+      }
+    },
+    addStatusCount(list){
+      for(let item of list){
+        if (item.status == 'in progress'){
+          this.in_progress_count = item
+        }
+        else if (item.status == 'completed'){
+          this.completed_count = item
+        }
+        else{
+          this.pending_count = item
+        }
       }
     },
     randomColor() {

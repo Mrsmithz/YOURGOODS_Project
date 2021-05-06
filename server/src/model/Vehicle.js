@@ -72,10 +72,12 @@ class Vehicle{
         let conn = await pool.getConnection()
         await conn.beginTransaction()
         try{
-            var check_stmt = 'select plate_number from VEHICLE where plate_number = ?'
-            let [plate, cols] = await conn.query(check_stmt, [new_plate_number])
-            if (plate.length > 0){
-                return Promise.reject('Plate Number Already Exists')
+            if (plate_number != new_plate_number){
+                var check_stmt = 'select plate_number from VEHICLE where plate_number = ?'
+                let [plate, cols] = await conn.query(check_stmt, [new_plate_number])
+                if (plate.length > 0){
+                    return Promise.reject('Plate Number Already Exists')
+                }
             }
             var stmt = 'select id from SCHEDULE where vehicle_plate_number = ?'
             let [rows, fields] = await conn.query(stmt, [plate_number])
@@ -128,9 +130,7 @@ class Vehicle{
             var stmt3 = 'delete FROM VEHICLE as v \
             WHERE NOT EXISTS (SELECT vehicle_plate_number as plate_number \
             FROM SCHEDULE as s WHERE v.plate_number = s.vehicle_plate_number) and plate_number = ?'
-            //await conn.query(stmt, [plate_number])
             let result = await conn.query(stmt3, [plate_number])
-            console.log(result)
             if (result[0].affectedRows == 0){
                 return Promise.reject('Cannot Delete Vehicle While Vehicle is Assigned')
             }

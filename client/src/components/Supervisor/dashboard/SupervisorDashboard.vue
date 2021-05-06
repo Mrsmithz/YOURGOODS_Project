@@ -9,7 +9,7 @@
             </v-col>
             <div class="col pa-3 py-4 cyan--text">
               <h5 class="text-truncate text-uppercase">Pending</h5>
-              <h1>{{ pending_orders.status_count }}</h1>
+              <h1>{{ pending_orders ? pending_orders.status_count : 0 }}</h1>
             </div>
           </v-row>
         </v-card>
@@ -22,7 +22,7 @@
             </v-col>
             <div class="col pa-3 py-4 primary--text">
               <h5 class="text-truncate text-uppercase">In Progress</h5>
-              <h1>{{ in_progress_orders.status_count }}</h1>
+              <h1>{{ in_progress_orders ? in_progress_orders.status_count : 0 }}</h1>
             </div>
           </v-row>
         </v-card>
@@ -35,7 +35,7 @@
             </v-col>
             <div class="col pa-3 py-4 success--text">
               <h5 class="text-truncate text-uppercase">Completed</h5>
-              <h1>{{ completed_orders.status_count }}</h1>
+              <h1>{{ completed_orders ? completed_orders.status_count : 0 }}</h1>
             </div>
           </v-row>
         </v-card>

@@ -16,11 +16,12 @@
         <v-card-text class="mt-3" v-if="showAdd">
           <v-row>
             <v-col>
-              <v-form ref="location_form">
+              <v-form ref="location_form" @submit.prevent>
                 <v-text-field
                   label="Location"
                   v-model="location"
                   :rules="requiredRules"
+                  @keyup.enter="addLocation"
                 ></v-text-field>
               </v-form>
               <v-btn outlined dark class="success mt-3" @click="addLocation"
@@ -100,7 +101,10 @@ export default {
         }
       }
     },
-    getTime(time) {
+    getTime(input) {
+      var date = new Date(input);
+      date.setTime(date.getTime() + 7 * 60 * 60 * 1000);
+      var time = date.toISOString();
       let year = time.match(/.+(?=T)/)[0].split("-");
       let time_result = time.match(/\d+:\d+/)[0];
       let result = `${time_result} ${year[2]}/${year[1]}/${year[0]}`;

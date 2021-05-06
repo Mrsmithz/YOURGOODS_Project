@@ -12,6 +12,16 @@
       </v-card-title>
       <v-card-text>
         <v-form ref="order_form">
+          <v-row v-if="TempOrderIdState">
+            <v-col>
+              <v-text-field
+                label="ORDER ID"
+                :value="TempOrderIdState"
+                disabled
+              >
+              </v-text-field>
+            </v-col>
+          </v-row>
           <v-row>
             <v-col>
               <v-text-field
