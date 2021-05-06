@@ -1,6 +1,32 @@
 const Schedule = require("../model/Schedule");
+const Joi = require('joi')
+const pool = require('../database/mysql_connector')
+
+const createScheduleSchema = Joi.object({
+  pickup_datetime:Joi.date().required().greater('now'),
+  order_id:Joi.number().integer().required()
+})
+const updateScheduleDriverSchema = Joi.object({
+  driver_id:Joi.number().integer().required()
+})
+const updateScheduleVehicleSchema = Joi.object({
+  plate_number:Joi.string().required().max(20)
+})
+const updateScheduleStatusSchema = Joi.object({
+  request_id:Joi.number().integer().required(),
+  pickup_datetime:Joi.date().required(),
+  arrived_datetime:Joi.date().required().greater(Joi.ref('pickup_datetime')),
+  status:Joi.string().valid('pending', 'completed', 'in progress', 'confirmed', 'unconfirmed', 'reject')
+})
+const editPickupScheduleSchema = Joi.object({
+  pickup_datetime:Joi.date().required().greater('now')
+})
+const paramsValidate = Joi.object({
+  id:Joi.number().integer().required()
+})
 exports.createSchedule = async (req, res) => {
   try {
+    await createScheduleSchema.validateAsync(req.body, {abortEarly:false})
     let data = req.body;
     let transport_id = (await Schedule.getTransportId()).reduce(
       (previous, current) => {
@@ -29,6 +55,18 @@ exports.createSchedule = async (req, res) => {
     res.sendStatus(400);
   }
 };
+exports.editPickupSchedule = async (req, res) => {
+  try{
+    await paramsValidate.validateAsync(req.params, {abortEarly:false})
+    await editPickupScheduleSchema.validateAsync(req.body, {abortEarly:false})
+    let result = await Schedule.editPickupSchedule(req.params.id, req.body.pickup_datetime)
+    res.status(200).send(result)
+  }
+  catch(err){
+    console.log(err)
+    res.sendStatus(400)
+  }
+}
 exports.getScheduleByOrder = async (req, res) => {
   try {
     let schedule = new Schedule();
@@ -82,6 +120,8 @@ exports.getAllDriver = async (req, res) => {
 }
 exports.updateScheduleDriver = async (req, res) => {
   try{
+    await paramsValidate.validateAsync(req.params, {abortEarly:false})
+    await updateScheduleDriverSchema.validateAsync(req.body, {abortEarly:false})
     let result = await Schedule.updateScheduleDriver(req.params.id, req.body.driver_id)
     res.status(200).send(result)
   }
@@ -92,6 +132,8 @@ exports.updateScheduleDriver = async (req, res) => {
 }
 exports.updateScheduleVehicle = async (req, res) => {
   try{
+    await paramsValidate.validateAsync(req.params, {abortEarly:false})
+    await updateScheduleVehicleSchema.validateAsync(req.body, {abortEarly:false})
     let result = await Schedule.updateScheduleVehicle(req.params.id, req.body.plate_number)
     res.status(200).send(result)
   }
@@ -122,6 +164,8 @@ exports.getScheduleCompletedDetailByDriver = async (req, res) => {
 }
 exports.updateScheduleStatus = async (req, res) => {
   try{
+    await paramsValidate.validateAsync(req.params, {abortEarly:false})
+    await updateScheduleStatusSchema.validateAsync(req.body, {abortEarly:false})
     let data = req.body
     let result = await Schedule.updateScheduleStatus(req.params.id, data.request_id, data.arrived_datetime, data.status)
     res.status(200).send(result)

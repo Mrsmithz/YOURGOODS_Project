@@ -16,7 +16,7 @@ class Vehicle{
             var check_stmt = 'select plate_number from VEHICLE where plate_number = ?'
             let [plate, cols] = await conn.query(check_stmt, [this.plate_number])
             if (plate.length > 0){
-                return Promise.reject('Plate Number Exists')
+                return Promise.reject('Plate Number Already Exists')
             }
             var stmt = 'insert into VEHICLE (plate_number, name, type, brand, manage_by) \
             values(?,?,?,?,?)'
@@ -72,6 +72,11 @@ class Vehicle{
         let conn = await pool.getConnection()
         await conn.beginTransaction()
         try{
+            var check_stmt = 'select plate_number from VEHICLE where plate_number = ?'
+            let [plate, cols] = await conn.query(check_stmt, [new_plate_number])
+            if (plate.length > 0){
+                return Promise.reject('Plate Number Already Exists')
+            }
             var stmt = 'select id from SCHEDULE where vehicle_plate_number = ?'
             let [rows, fields] = await conn.query(stmt, [plate_number])
             var stmt2 = 'update SCHEDULE set vehicle_plate_number = null where vehicle_plate_number = ?'

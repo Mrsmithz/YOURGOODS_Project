@@ -60,7 +60,7 @@ create table ORDERS(
 create table GOODS(
     id int primary key auto_increment,
     `name` varchar(255) not null,
-    `weight` float(10,2) not null,
+    `weight` float not null,
     quantity int not null,
     created_datetime datetime not null default now(),
     modified_datetime datetime not null default now() on update now(),

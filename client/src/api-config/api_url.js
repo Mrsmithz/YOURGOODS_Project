@@ -55,7 +55,8 @@ const url = {
         getScheduleInProgressDetailByDriver:'http://localhost:25800/api/schedule/getScheduleInProgressDetailByDriver',
         updateScheduleStatus:'http://localhost:25800/api/schedule/updateScheduleStatus/',
         getScheduleCompletedDetailByDriver:'http://localhost:25800/api/schedule/getScheduleCompletedDetailByDriver',
-        getScheduleDetailByShipping:'http://localhost:25800/api/schedule/getScheduleDetailByShipping'
+        getScheduleDetailByShipping:'http://localhost:25800/api/schedule/getScheduleDetailByShipping',
+        editPickupSchedule:'http://localhost:25800/api/schedule/editPickupSchedule/'
     },
     Vehicle:{
         getAllVehicleByManagerId:'http://localhost:25800/api/vehicle/getAllVehicleByManagerId',

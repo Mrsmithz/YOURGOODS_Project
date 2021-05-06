@@ -146,6 +146,23 @@ class Schedule{
             conn.release()
         }
     }
+    static async editPickupSchedule(id, pickup_datetime){
+        let conn = await pool.getConnection()
+        await conn.beginTransaction()
+        try{
+            var stmt = 'update SCHEDULE set pickup_datetime = ? where id = ?'
+            let result = await conn.query(stmt, [pickup_datetime, id])
+            await conn.commit()
+            return Promise.resolve(result)
+        }
+        catch(err){
+            await conn.rollback()
+            return Promise.reject(err)
+        }
+        finally{
+            conn.release()
+        }
+    }
     async deleteSchedule(id){
         let conn = await pool.getConnection()
         await conn.beginTransaction()

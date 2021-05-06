@@ -24,9 +24,17 @@
             <v-slide-x-transition>
               <v-icon
                 :key="file.name + 'icon'"
+                color="error"
+                class="pl-2"
+                v-if="file.error"
+              >
+                mdi-alert-circle-outline
+              </v-icon>
+              <v-icon
+                :key="file.name + 'icon'"
                 color="success"
                 class="pl-2"
-                v-if="file.uploadProgress == 100"
+                v-if="file.uploadProgress == 100 && !file.error"
               >
                 mdi-checkbox-marked-circle-outline
               </v-icon>
@@ -36,7 +44,7 @@
           <v-progress-linear
             :value="file.uploadProgress"
             :key="file.name + 'progress'"
-            v-show="start_upload"
+            v-show="file.uploadProgress > 0"
           ></v-progress-linear>
         </template>
       </div>
@@ -52,7 +60,7 @@
     <v-row class="mt-2">
       <v-col align="center" justify="center">
         <v-btn @click="upload">SUBMIT</v-btn>
-        <v-btn class="ml-3 button is-danger" @click="reset">RESET</v-btn>
+        <!-- <v-btn class="ml-3 button is-danger" @click="reset">RESET</v-btn> -->
       </v-col>
     </v-row>
     <v-row class="pt-6">
@@ -225,7 +233,6 @@ export default {
       window.open(file_url);
     },
     async editUploaded(item) {
-      this.editTemp = {};
       this.editTemp = item;
       this.$refs.filebtn.click();
     },
@@ -233,7 +240,7 @@ export default {
       try {
         let value = await this.$swal({
           title: "Confirm Delete ?",
-          text:`File Name: ${item.file_name}`,
+          text: `File Name: ${item.file_name}`,
           icon: "question",
           showCancelButton: true,
           confirmButtonText: "Yes",
@@ -245,9 +252,9 @@ export default {
           this.getUploadHistory();
           console.log(result);
           this.$swal({
-            title:'Delete Success',
-            icon:'success'
-          })
+            title: "Delete Success",
+            icon: "success",
+          });
         }
       } catch (err) {
         this.$swal({
@@ -256,7 +263,7 @@ export default {
           timer: 1000,
           showConfirmButton: false,
           showCancelButton: false,
-        })
+        });
         console.log(err);
       }
     },
@@ -271,8 +278,8 @@ export default {
               file,
               this.progressBar
             );
-            this.editTemp = "";
-            file.editTemp = "";
+            this.editTemp = null;
+            file.editTemp = null;
             console.log(result);
           } else if (file.uploadProgress == 0) {
             let result = await CustomerService.createRequest(
@@ -283,9 +290,22 @@ export default {
             console.log(result);
           }
         } catch (err) {
-          console.log(err);
+          if (file.editTemp) {
+            this.editTemp = null;
+            file.editTemp = null;
+          }
+          console.log(err.response);
+          file.error = true;
+          this.$swal({
+            title: err.response.data,
+            icon: "error",
+            timer: 1500,
+            showConfirmButton: false,
+            showCancelButton: false,
+          });
         }
       }
+      this.start_upload = false;
       this.getUploadHistory();
     },
     getFullTime(input) {
@@ -355,7 +375,6 @@ export default {
       if (this.editTemp) {
         this.AddToFiles(files, this.editTemp);
         this.upload();
-        this.$forceUpdate();
       } else {
         this.AddToFiles(files);
       }
@@ -377,6 +396,7 @@ export default {
           if (editTemp) {
             file.editTemp = editTemp;
           }
+          
           this.files.push(file);
         }
       }
