@@ -9,7 +9,7 @@
             </v-col>
             <div class="col pa-3 py-4 primary--text">
               <h5 class="text-truncate text-uppercase">In Progress</h5>
-              <h1 class="mt-1">{{ in_progress_count.status_count }}</h1>
+              <h1 class="mt-1">{{ in_progress_count ? in_progress_count.status_count : 0 }}</h1>
             </div>
           </v-row>
         </v-card>
@@ -22,7 +22,7 @@
             </v-col>
             <div class="col pa-3 py-4 success--text">
               <h5 class="text-truncate text-uppercase">Completed</h5>
-              <h1 class="mt-1">{{ completed_count.status_count }}</h1>
+              <h1 class="mt-1">{{ completed_count ? completed_count.status_count : 0 }}</h1>
             </div>
           </v-row>
         </v-card>
