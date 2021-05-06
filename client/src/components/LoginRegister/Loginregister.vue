@@ -493,7 +493,7 @@ export default {
           });
         } catch (err) {
           console.log(err.response);
-          this.login_error = err.response.data;
+          this.login_error = Object.keys(err.response.data).length > 0 ? err.response.data : 'Something wrong, Please try again';
         }
       }
     },
